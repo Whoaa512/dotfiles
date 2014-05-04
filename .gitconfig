@@ -56,6 +56,11 @@
 	# Remove branches that have already been merged with master
 	# a.k.a. ‘delete merged’
 	dm = "!git branch --merged | grep -v '\\*' | xargs -n 1 git branch -d"
+	# # pull alias with submodule updates
+	# pull = !"p(){ git pull \"$@\" && git submodule update --checkout --init --recursive; }; p"
+	# # checkout alias with submodule updates
+	# checkout = !"c(){ git checkout \"$@\" && git submodule update --init --recursive; }; c"
+
 
 	# List contributors with number of commits
 	contributors = shortlog --summary --numbered
@@ -80,7 +85,7 @@
 [core]
 
 	# Use custom `.gitignore` and `.gitattributes`
-	excludesfile = ~/.gitignore
+	excludesfile = ~/.gitignore_global
 	attributesfile = ~/.gitattributes
 
 	# Treat spaces before tabs and all kinds of trailing whitespace as an error
@@ -91,6 +96,8 @@
 	# Make `git rebase` safer on OS X
 	# More info: <http://www.git-tower.com/blog/make-git-rebase-safe-on-osx/>
 	trustctime = false
+	# editor = vim
+	editor = subl -w
 
 	# Prevent showing files whose names contain non-ASCII symbols as unversioned.
 	# http://michael-kuehnel.de/git/2014/11/21/git-mac-osx-and-german-umlaute.html
@@ -135,6 +142,12 @@
 
 	# Include summaries of merged commits in newly created merge commit messages
 	log = true
+	ff = false
+
+# Use `origin` as the default remote on the `master` branch in all cases
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
 
 [push]
 
@@ -164,3 +177,18 @@
 [url "git://gist.github.com/"]
 
 	insteadOf = "gist:"
+
+[push]
+	default = matching
+[user]
+	email = YOUR_EMAIL@mail.com
+	name = YOUR NAME
+[http]
+	sslVerify = false
+[credential]
+	helper = osxkeychain
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
