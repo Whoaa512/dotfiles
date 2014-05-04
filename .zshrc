@@ -228,17 +228,17 @@ lastfailswat() {
 
 
 # Common cd for convenience
-  alias cc='/Users/carey.winslow/c_personal/Dropbox/devWork/code'
-  alias cce='/Users/carey.winslow/c_personal/Dropbox/devWork/code/elm'
-  alias cn='/Users/carey.winslow/c_personal/Dropbox/devWork/nonCodeProjects'
-  alias cw='/Users/carey.winslow/work'
-  alias cwj='/Users/carey.winslow/work/code_work/jeeves'
-  alias cwc='/Users/carey.winslow/work/code_work'
-  alias cwa='/Users/carey.winslow/work/app'
-  alias cwad='/Users/carey.winslow/work/devApp'
-  alias cwt='/Users/carey.winslow/work/testApp'
-  alias cwas='/Users/carey.winslow/work/code_work/edited_account_creation_scripts'
-  alias ccp='/Users/carey.winslow/c_personal'
+  alias cc='~/c_personal/Dropbox/devWork/code'
+  alias cce='~/c_personal/Dropbox/devWork/code/elm'
+  alias cn='~/c_personal/Dropbox/devWork/nonCodeProjects'
+  alias cw='~/work'
+  alias cwj='~/work/code_work/jeeves'
+  alias cwc='~/work/code_work'
+  alias cwa='~/work/app'
+  alias cwad='~/work/devApp'
+  alias cwt='~/work/testApp'
+  alias cwas='~/work/code_work/edited_account_creation_scripts'
+  alias ccp='~/c_personal'
   alias d='cd ~/c_personal/Dropbox'
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
 
