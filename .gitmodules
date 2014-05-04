@@ -1,0 +1,10 @@
+[submodule ".oh-my-zsh"]
+  path = .oh-my-zsh
+  url = /Users/carey.winslow/dotfiles/.oh-my-zsh
+	update = checkout
+  branch = master
+[submodule "zsh-completions"]
+  path = zsh-completions
+  url = /Users/carey.winslow/dotfiles/.zsh/zsh-completions
+	update = checkout
+  branch = master
