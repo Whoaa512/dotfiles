@@ -1,10 +1,13 @@
 {
-	"color_scheme": "Packages/Color Scheme - Default/Solarized (Dark).tmTheme",
-	"default_encoding": "UTF-8",
-	"default_line_ending": "unix",
-	"detect_indentation": false,
-	"draw_white_space": "all",
+	"auto_indent": true,
+	"bold_folder_labels": true,
+	"color_scheme": "Packages/Theme - Cobalt2/cobalt2.tmTheme",
+	"create_window_at_startup": false,
+	"detect_indentation": true,
+	"enable_tab_scrolling": false,
 	"ensure_newline_at_eof_on_save": false,
+	"fade_fold_buttons": false,
+	"font_face": "Source Code Pro",
 	"file_exclude_patterns":
 	[
 		".DS_Store",
@@ -18,24 +21,68 @@
 	"folder_exclude_patterns":
 	[
 		".git",
-		"node_modules"
+		// "node_modules"
 	],
-	"font_face": "Monaco",
-	"font_size": 13,
-	"highlight_modified_tabs": true,
-	"hot_exit": false,
-	"line_padding_bottom": 5,
 	"match_brackets": true,
 	"match_brackets_angle": true,
-	"remember_open_files": false,
-	"rulers":
+	"font_size": 15,
+	"ignored_packages":
 	[
-		80
+		"ColorSchemeEditor",
+		"Gutter Color",
+		"CoffeeLint",
+		"File Navigator",
+		"SublimeCodeIntel",
+		"FileBrowser",
+		"JSHint",
+		"Theme - Tech49",
+		"SublimeLinter",
+		"RubyEval",
+		"Front End Snippets",
+		"Future Funk - Color Scheme",
+		"Twitter Bootstrap Snippets",
+		"Pretty JSON",
+		"Toggl Timer",
+		"SchemeCycler",
+		"JavaScript",
+		"CodeFormatter",
+		"Monokai Extended",
+		"JsDebuggr",
+		"Ruby Block Converter",
+		"Perv - Color Scheme",
+		"Scaffolding",
+		"Vintage",
+		"Writing Style",
+		"Agile",
+		"Monokai Blueberry Color Scheme",
+		"SublimeGit",
+		"Todo Manager",
+		"DictionaryAutoComplete",
+		"Markdown",
+		"SyncedSideBar",
+		"SublimeLinter-jshint",
+		"Git Config",
+		"Handlebars"
 	],
-	"show_encoding": true,
+	"indent_guide_options":
+	[
+		"draw_normal",
+		"draw_active"
+	],
+	"indent_to_bracket": false,
+	"margin": 1,
+	"overlay_scroll_bars": "enabled",
+	"remember_open_files": false,
+	"scroll_past_end": true,
+	"scroll_speed": 1.65,
+	"shift_tab_unindent": true,
 	"show_line_endings": true,
+	"smart_indent": true,
+	"spell_check": true,
+	"tab_completion": true,
 	"tab_size": 2,
-	"translate_tabs_to_spaces": false,
-	"trim_trailing_white_space_on_save": true,
-	"word_wrap": true
+	"theme": "Cobalt2.sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"trim_automatic_white_space": false,
+	"use_tab_stops": true
 }
