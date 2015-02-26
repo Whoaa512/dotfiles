@@ -290,7 +290,7 @@ EOF
 }
 
 # Originally taken from: http://hints.macworld.com/article.php?story=2007091814022049
-function keycopy () {
+function cpkey () {
 
 	local KEY="$HOME/.ssh/id_rsa.pub"
 
