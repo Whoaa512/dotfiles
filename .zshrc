@@ -59,9 +59,9 @@ source $ZSH/oh-my-zsh.sh
 # No sudo on npm -- run once
   # sudo chown -R $USER /usr/local
 
-source ~/zshrc.sh
-source ~/.aliases
-source ~/.functions
+source ~/dotfiles/zshrc.sh
+source ~/dotfiles/.aliases
+source ~/dotfiles/.functions
 source ~/.fresh/build/shell.sh
 ###################################
 
