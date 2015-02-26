@@ -727,6 +727,13 @@ defaults write com.google.Chrome.canary DisablePrintPreview -bool true
 defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault -bool false
 
 ###############################################################################
+# Sublime Text                                                                #
+###############################################################################
+
+# Install Sublime Text settings
+cp -r init/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text*/Packages/User/Preferences.sublime-settings 2> /dev/null
+
+###############################################################################
 # SizeUp.app                                                                  #
 ###############################################################################
 
