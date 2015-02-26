@@ -308,7 +308,7 @@ function cpkey () {
 
 	echo "Putting your key on $1... "
 
-	local KEYCODE=`cat $KEY`
+	KEYCODE=`cat $KEY`
 	ssh -q $1 "mkdir ~/.ssh 2>/dev/null; chmod 700 ~/.ssh; echo "$KEYCODE" >> ~/.ssh/authorized_keys; chmod 644 ~/.ssh/authorized_keys"
 
 	echo "done!"
