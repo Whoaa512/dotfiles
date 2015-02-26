@@ -1,6 +1,7 @@
 # Customize to your needs...
+export GOPATH=~/go
 
-export PATH=$HOME/bin:/usr/local/sbin:/usr/local/bin:$HOME/.rvm/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
+export PATH=$GOPATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:$HOME/.rvm/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
 
 source ~/.nvm/nvm.sh
 
@@ -115,6 +116,7 @@ lastfailswat() {
   open -a /Applications/Google\ Chrome\ Canary.app "file://localhost/Users/carey.winslow/rynced_copies/build_jenkins-Martini0_Deploy-$1";
 }
 
+ext-ip () { curl http://ipecho.net/plain; echo; }
 
 
 # Alias vi => vim
@@ -128,20 +130,20 @@ lastfailswat() {
   alias tczf='tar czf'
   alias s='subl'
   alias s.='subl .'
-  alias o.='open .'
   alias l='ls -al'
   alias ll='ls -l'
   alias t='tree'
-  alias sz='s ~/.zshrc'
-  alias szh='s ~/.zsh_history'
+  alias sz='subl ~/.zshrc'
+  alias szh='subl ~/.zsh_history'
   alias srz='source ~/.zshrc'
-  alias sbp='s ~/.bash_profile'
+  alias sbp='subl ~/.bash_profile'
+  alias ssh_='sshrc'
 
 # Short Git aliases
   alias gi='git init'
   alias gir='git init; touch README.md;gaa;'
   alias gii='git init; touch .gitignore;gaa;'
-  alias giir='git init; touch .gitignore README.md;gaa;'
+  alias giir='git init; touch .gitignore README.md; echo "node_modules/\ncoverage/\n" > .gitignore;gaa;'
   alias inm='echo "node_modules/" >> .gitignore'
   alias gs='git status'
   alias gss='git status -s'
@@ -154,7 +156,7 @@ lastfailswat() {
   alias gap='git add -p'
   alias gaa='git add .;gss'
   alias gre='git reset'
-  alias gmm='git mv'
+  alias gmv='git mv'
   alias grm='git rm'
   alias grmf='git rm -f'
   alias grmrf='git rm -rf'
@@ -204,9 +206,9 @@ lastfailswat() {
   alias gra='git remote add'
   alias grao='git remote add origin'
   alias grau='git remote add upst'
-  alias grr='git remote rm'
-  alias grro='git remote rm origin'
-  alias grru='git remote rm upst'
+  alias grr='git remote remove'
+  alias grro='git remote remove origin'
+  alias grru='git remote remove upst'
   alias grv='git remote -v'
   alias gsu='git submodule update --init --recursive'
   alias gsuc='git submodule update --init --recursive --checkout'
@@ -225,30 +227,98 @@ lastfailswat() {
   alias az1='ssh carey.winslow@10.150.4.21'
   alias az2='ssh carey.winslow@10.150.4.42'
   alias tanq='ssh carey.winslow@tanqueray.docusignhq.com'
+  # use az2
+  #   su - docusign
+  #   ssh ec2-jenkins01
 
 
 # Common cd for convenience
-  alias cc='~/c_personal/Dropbox/devWork/code'
-  alias cce='~/c_personal/Dropbox/devWork/code/elm'
-  alias cn='~/c_personal/Dropbox/devWork/nonCodeProjects'
-  alias cw='~/work'
-  alias cwj='~/work/code_work/jeeves'
-  alias cwc='~/work/code_work'
-  alias cwa='~/work/app'
-  alias cwad='~/work/devApp'
-  alias cwt='~/work/testApp'
-  alias cwas='~/work/code_work/edited_account_creation_scripts'
-  alias ccp='~/c_personal'
+  alias cc='cd ~/c_personal/Dropbox/devWork/code'
+  alias cce='cd ~/c_personal/Dropbox/devWork/code/elm'
+  alias cn='cd ~/c_personal/Dropbox/devWork/nonCodeProjects'
+  alias cw='cd ~/work'
+  alias cwa='cd ~/work/app'
+  alias cwad='cd ~/work/devApp'
+  alias cwas='cd ~/work/code_work/edited_account_creation_scripts'
+  alias cwc='cd ~/work/code_work'
+  alias cwf='cd ~/work/flo'
+  alias cwj='cd ~/work/code_work/jeeves'
+  alias cco='cd ~/c_personal/Dropbox/devWork/open_source'
+  alias ccp='cd ~/c_personal'
+  alias cws='cd ~/work/code_work/statsBoard'
+  alias cwt='cd ~/work/testApp'
+  alias cww='cd ~/work/code_work/wookie'
+  alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias d='cd ~/c_personal/Dropbox'
+  alias p="cd ~/c_personal/Dropbox/devWork/code/node/projects"
+  alias lew="cd ~/c_personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
 
 ########### appended aliases
   alias met='meteor'
   alias metls='meteor list'
   alias metlu='meteor list --using'
-  alias npm='npm substack'
+  # alias npm='npm substack'
   alias ni='npm i'
   alias nis='npm i --save'
   alias nisd='npm i --save-dev'
+  alias nise='npm i --save --save-exact'
+  alias nisde='npm i --save-dev --save-exact'
   alias nodeh='node --harmony'
   alias chr='open -a /Applications/Google\ Chrome\ Canary.app'
+
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH"
+###-begin-npm-completion-###
+#
+# npm command completion script
+#
+# Installation: npm completion >> ~/.bashrc  (or ~/.zshrc)
+# Or, maybe: npm completion > /usr/local/etc/bash_completion.d/npm
+#
+
+COMP_WORDBREAKS=${COMP_WORDBREAKS/=/}
+COMP_WORDBREAKS=${COMP_WORDBREAKS/@/}
+export COMP_WORDBREAKS
+
+if type complete &>/dev/null; then
+  _npm_completion () {
+    local si="$IFS"
+    IFS=$'\n' COMPREPLY=($(COMP_CWORD="$COMP_CWORD" \
+                           COMP_LINE="$COMP_LINE" \
+                           COMP_POINT="$COMP_POINT" \
+                           npm completion -- "${COMP_WORDS[@]}" \
+                           2>/dev/null)) || return $?
+    IFS="$si"
+  }
+  complete -F _npm_completion npm
+elif type compdef &>/dev/null; then
+  _npm_completion() {
+    si=$IFS
+    compadd -- $(COMP_CWORD=$((CURRENT-1)) \
+                 COMP_LINE=$BUFFER \
+                 COMP_POINT=0 \
+                 npm completion -- "${words[@]}" \
+                 2>/dev/null)
+    IFS=$si
+  }
+  compdef _npm_completion npm
+elif type compctl &>/dev/null; then
+  _npm_completion () {
+    local cword line point words si
+    read -Ac words
+    read -cn cword
+    let cword-=1
+    read -l line
+    read -ln point
+    si="$IFS"
+    IFS=$'\n' reply=($(COMP_CWORD="$cword" \
+                       COMP_LINE="$line" \
+                       COMP_POINT="$point" \
+                       npm completion -- "${words[@]}" \
+                       2>/dev/null)) || return $?
+    IFS="$si"
+  }
+  compctl -K _npm_completion npm
+fi
+###-end-npm-completion-###
