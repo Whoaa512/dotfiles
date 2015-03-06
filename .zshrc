@@ -248,7 +248,8 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias cww='cd ~/work/code_work/wookie'
   alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias d='cd ~/c_personal/Dropbox'
-  alias p="cd ~/c_personal/Dropbox/devWork/code/node/projects"
+  alias p='cd ~/c_personal/Dropbox/devWork/code/node/projects'
+  alias dot='cd ~/c_personal/Dropbox/devEnv/dotfiles'
   alias lew="cd ~/c_personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
 
