@@ -259,6 +259,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias metlu='meteor list --using'
   # alias npm='npm substack'
   alias ni='npm i'
+  alias nr='npm run'
   alias nis='npm i --save'
   alias nisd='npm i --save-dev'
   alias nise='npm i --save --save-exact'
