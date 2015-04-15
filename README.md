@@ -1,4 +1,4 @@
-# Mathias’s dotfiles
+# CJ’s dotfiles
 
 ![Screenshot of my shell prompt](http://i.imgur.com/EkEtphC.png)
 
@@ -115,3 +115,4 @@ Suggestions/improvements
     + [Source Code Pro Font](https://github.com/adobe-fonts/source-code-pro)
     + [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)
     + [Better Touch Tool](http://www.bettertouchtool.net/)
+  - Move work specific `cd` aliases to separate optionally installed file
