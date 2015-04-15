@@ -9,7 +9,7 @@
 You can clone the repository wherever you want. (I like to keep it in `~/Projects/dotfiles`, with `~/dotfiles` as a symlink.) The bootstrapper script will pull in the latest version and copy the files to your home folder.
 
 ```bash
-git clone https://github.com/mathiasbynens/dotfiles.git && cd dotfiles && source bootstrap.sh
+git clone https://github.com/whoaa512/dotfiles.git && cd dotfiles && source bootstrap.sh
 ```
 
 To update, `cd` into your local `dotfiles` repository and then:
@@ -106,3 +106,12 @@ Suggestions/improvements
 * [Kevin Suttle](http://kevinsuttle.com/) and his [dotfiles repository](https://github.com/kevinSuttle/dotfiles) and [OSXDefaults project](https://github.com/kevinSuttle/OSXDefaults), which aims to provide better documentation for [`~/.osx`](https://mths.be/osx)
 * [Haralan Dobrev](http://hkdobrev.com/)
 * anyone who [contributed a patch](https://github.com/mathiasbynens/dotfiles/contributors) or [made a helpful suggestion](https://github.com/mathiasbynens/dotfiles/issues)
+
+
+## CJ todo:
+  - Add scripts to auto-intall:
+    + [Sublime Text 3](http://www.sublimetext.com/3)
+    + [Sublime Text 3 - Package Control](https://packagecontrol.io/installation)
+    + [Source Code Pro Font](https://github.com/adobe-fonts/source-code-pro)
+    + [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)
+    + [Better Touch Tool](http://www.bettertouchtool.net/)
