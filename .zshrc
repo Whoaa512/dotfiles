@@ -163,7 +163,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gcfg='git config'
   alias gcl='git clone'
   alias gclr='git clone --recursive'
-  alias gc='git commit -v'
+  alias gc='git commit'
   alias gcm='git commit -v -m'
   alias gcam='git commit -v --amend -m'
   alias gco='git checkout'
