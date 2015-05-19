@@ -2,7 +2,7 @@ ulimit -n 9999
 # Customize to your needs...
 export GOPATH=~/go
 
-export PATH=$GOPATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:$HOME/.rvm/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
+export PATH=$GOPATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
 
 source ~/.nvm/nvm.sh
 
