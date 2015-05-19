@@ -252,6 +252,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias ccp='cd ~/c_personal'
   alias cws='cd ~/work/code_work/statsBoard'
   alias cwt='cd ~/work/testApp'
+  alias cwb='cd ~/work/debugApp'
   alias cww='cd ~/work/code_work/wookie'
   alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias d='cd ~/c_personal/Dropbox'
