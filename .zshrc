@@ -1,3 +1,4 @@
+ulimit -n 9999
 # Customize to your needs...
 export GOPATH=~/go
 
