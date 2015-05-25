@@ -79,6 +79,7 @@ brew install xz
 
 # Install other useful binaries.
 brew install ack
+brew install dark-mode
 #brew install exiv2
 brew install git
 brew install imagemagick --with-webp
