@@ -63,6 +63,7 @@ source $ZSH/oh-my-zsh.sh
 source ~/dotfiles/zshrc.sh
 source ~/dotfiles/.aliases
 source ~/dotfiles/.functions
+source ~/dotfiles/.extra
 source ~/.fresh/build/shell.sh
 ###################################
 
@@ -135,6 +136,9 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias sz='subl ~/.zshrc'
   alias szh='subl ~/.zsh_history'
   alias srz='source ~/.zshrc'
+  alias se='subl ~/dotfiles/.extra'
+  alias sre='source ~/dotfiles/.extra'
+  alias st3='cd Library/Application\ Support/Sublime\ Text\ 3/'
   alias sbp='subl ~/.bash_profile'
   alias ssh_='sshrc'
 
@@ -172,6 +176,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gco='git checkout'
   alias gcob='git checkout -b'
   alias gd='git diff'
+  alias gdc='git diff --cached'
   alias gdh='git diff head'
   alias gf='git fetch'
   alias gl='git log --oneline'
@@ -209,9 +214,9 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gra='git remote add'
   alias grao='git remote add origin'
   alias grau='git remote add upst'
-  alias grr='git remote remove'
-  alias grro='git remote remove origin'
-  alias grru='git remote remove upst'
+  alias grr='git remote rm'
+  alias grro='git remote rm origin'
+  alias grru='git remote rm upst'
   alias grv='git remote -v'
   alias gsu='git submodule update --init --recursive'
   alias gsuc='git submodule update --init --recursive --checkout'
@@ -247,6 +252,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias cwf='cd ~/work/code_work/flo'
   alias cwj='cd ~/work/code_work/jeeves'
   alias cwn='cd ~/work/npmE-ds'
+  alias cwr='cd ~/work/code_work/radmin'
   alias cco='cd ~/c_personal/Dropbox/devWork/open_source'
   alias ccm='cd ~/c_personal/Dropbox/devWork/code/node/modules'
   alias ccp='cd ~/c_personal'
