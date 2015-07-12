@@ -138,7 +138,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias srz='source ~/.zshrc'
   alias se='subl ~/dotfiles/.extra'
   alias sre='source ~/dotfiles/.extra'
-  alias st3='cd Library/Application\ Support/Sublime\ Text\ 3/'
+  alias st3='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias sbp='subl ~/.bash_profile'
   alias ssh_='sshrc'
 
