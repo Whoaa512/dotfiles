@@ -251,6 +251,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias cwc='cd ~/work/code_work'
   alias cwf='cd ~/work/code_work/flo'
   alias cwj='cd ~/work/code_work/jeeves'
+  alias cwo='cd ~/work/code_work/olive'
   alias cwn='cd ~/work/npmE-ds'
   alias cwr='cd ~/work/code_work/radmin'
   alias cco='cd ~/c_personal/Dropbox/devWork/open_source'
