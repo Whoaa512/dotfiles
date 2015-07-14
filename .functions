@@ -327,3 +327,9 @@ function git-aliases {
 function git-fame() {
 	git ls-tree -r -z --name-only HEAD -- "${@}"  | xargs -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|sort|uniq -c|sort -nr
 }
+
+function add-brc-url() {
+	local URL="https://github.com/$1/$2/commit"
+	echo "Adding browse-commit.url to local git-config: $URL"
+	git config --add browse-commit.url "$URL"
+}
