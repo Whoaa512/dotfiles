@@ -333,3 +333,7 @@ function add-brc-url() {
 	echo "Adding browse-commit.url to local git-config: $URL"
 	git config --add browse-commit.url "$URL"
 }
+
+function del-merged () {
+	git branch --merged | grep -v "\*" | grep -v "master|develop|stage|demo" | xargs -n 1 git branch -d
+}
