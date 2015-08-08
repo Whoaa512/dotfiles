@@ -337,3 +337,12 @@ function add-brc-url() {
 function del-merged () {
 	git branch --merged | grep -v "\*" | grep -v "master|develop|stage|demo" | xargs -n 1 git branch -d
 }
+
+# Functions to emit TTS from english to russian
+# See https://npmjs.com/package/normit
+function ru {
+	normit en ru "$@" -t
+}
+function en {
+	normit ru en "$@" -t
+}
