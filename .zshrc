@@ -270,12 +270,11 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias lew="cd ~/c_personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
 
-########### appended aliases
-  alias met='meteor'
-  alias metls='meteor list'
-  alias metlu='meteor list --using'
-  # alias npm='npm substack'
+# npm aliases
   alias ni='npm i'
+  alias nig='npm i -g'
+  alias nupdate='npm i -g npm'
+  alias nt='npm test'
   alias nr='npm run'
   alias nig='npm install -g'
   alias nis='npm install --save'
@@ -284,7 +283,13 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias nusd='npm uninstall --save-dev'
   alias nise='npm i --save --save-exact'
   alias nisde='npm i --save-dev --save-exact'
-  alias nodeh='node --harmony'
+
+
+########### appended aliases
+  alias met='meteor'
+  alias metls='meteor list'
+  alias metlu='meteor list --using'
+  # alias npm='npm substack'
   alias chr='open -a /Applications/Google\ Chrome\ Canary.app'
 
 ### Added by the Heroku Toolbelt
