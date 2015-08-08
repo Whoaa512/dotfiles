@@ -248,6 +248,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias cw='cd ~/work'
   alias cwa='cd ~/work/app'
   alias cwad='cd ~/work/devApp'
+  alias cwd='cd ~/work/debugApp'
   alias cwas='cd ~/work/code_work/edited_account_creation_scripts'
   alias cwc='cd ~/work/code_work'
   alias cwf='cd ~/work/code_work/flo'
