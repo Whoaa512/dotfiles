@@ -273,6 +273,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   # alias npm='npm substack'
   alias ni='npm i'
   alias nr='npm run'
+  alias nig='npm install -g'
   alias nis='npm install --save'
   alias nisd='npm install --save-dev'
   alias nus='npm uninstall --save'
