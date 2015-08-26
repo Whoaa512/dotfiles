@@ -4,8 +4,6 @@ export GOPATH=~/go
 
 export PATH=$GOPATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
 
-source ~/.nvm/nvm.sh
-
 # Path to your oh-my-zsh configuration.
 ZSH=$HOME/.oh-my-zsh
 
