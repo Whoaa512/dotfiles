@@ -346,3 +346,7 @@ function ru {
 function en {
 	normit ru en "$@" -t
 }
+
+clonecd () {
+  hub clone --recursive $1 && cd $(basename ${1%.git})
+}

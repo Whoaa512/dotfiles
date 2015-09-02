@@ -166,7 +166,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias grmdel='git rm $(git ls-files --deleted)'
   alias gb='git branch'
   alias gcfg='git config'
-  alias gcl='git clone'
+  alias gcl=clonecd
   alias gclr='git clone --recursive'
   alias gc='git commit'
   alias gc!='git commit --amend'
