@@ -209,12 +209,14 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
 
 
 # Common cd for convenience
-  alias cc='cd ~/c_personal/Dropbox/devWork/code'
-  alias cce='cd ~/c_personal/Dropbox/devWork/code/elm'
-  alias cn='cd ~/c_personal/Dropbox/devWork/nonCodeProjects'
+  alias cc='cd ~/personal/Dropbox/devWork/code'
+  alias cce='cd ~/personal/Dropbox/devWork/code/elm'
+  alias cn='cd ~/personal/Dropbox/devWork/nonCodeProjects'
   alias cw='cd ~/work'
   alias cwa='cd ~/work/app'
   alias cwad='cd ~/work/devApp'
+  alias cwar='cd ~/work/code_work/aperture-rift'
+  alias cwarf='cd ~/work/code_work/aperture-rift/dev-portal'
   alias cwd='cd ~/work/debugApp'
   alias cwas='cd ~/work/code_work/edited_account_creation_scripts'
   alias cwc='cd ~/work/code_work'
@@ -223,18 +225,19 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias cwo='cd ~/work/code_work/olive'
   alias cwn='cd ~/work/npmE-ds'
   alias cwr='cd ~/work/code_work/radmin'
-  alias cco='cd ~/c_personal/Dropbox/devWork/open_source'
-  alias ccm='cd ~/c_personal/Dropbox/devWork/code/node/modules'
-  alias ccp='cd ~/c_personal'
+  alias cco='cd ~/personal/Dropbox/devWork/open_source'
+  alias ccm='cd ~/personal/Dropbox/devWork/code/node/modules'
+  alias ccp='cd ~/personal'
   alias cws='cd ~/work/code_work/statsBoard'
   alias cwt='cd ~/work/testApp'
   alias cwb='cd ~/work/debugApp'
   alias cww='cd ~/work/code_work/wookie'
   alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
-  alias d='cd ~/c_personal/Dropbox'
-  alias p='cd ~/c_personal/Dropbox/devWork/code/node/projects'
-  alias dot='cd ~/c_personal/Dropbox/devEnv/dotfiles'
-  alias lew="cd ~/c_personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
+  alias d='cd ~/personal/Dropbox'
+  alias p='cd ~/personal/Dropbox/devWork/code/node/projects'
+  alias dot='cd ~/personal/Dropbox/devEnv/dotfiles'
+  alias lew="cd ~/personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
+
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
 
 # npm aliases
