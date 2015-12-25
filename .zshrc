@@ -104,6 +104,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias srz='source ~/.zshrc'
   alias st3='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias sbp='subl ~/.bash_profile'
+  alias sj='subl "~/personal/Google Drive/journal.md"'
   alias ssh_='sshrc'
 
 # Short Git aliases
