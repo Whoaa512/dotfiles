@@ -80,42 +80,6 @@ source ~/.fresh/build/shell.sh
 #
 
 
-
-# Handy functions
-  findit() {
-    grep -iHR $1 .
-  }
-
-  replacefilename () {
-    original_name="$1"
-    new_name="$2"
-    # original line from StackOverflow
-    # find . -depth -name "*foo.*" -execdir bash -c 'mv -i "$1" "${1//foo/bar}"' bash {} \;
-    find . -depth -name "*$original_name*" -execdir bash -c 'mv -i "$1" "${1//$original_name/$new_name}"' bash {} \;
-  }
-
-  # gcm() { # @todo
-  #   git commit -m "$1"
-  # }
-
-stashgrep() {
-  for i in `git stash list |  awk -F ':' '{print $1}'`; git stash show -p $i | grep -H --label="$i" "$1"
-}
-
-# Work functions
-lastfails() {
-  rsync -avz -e ssh carey.winslow@10.150.4.21:/home/docusign/jenkins/workspace/Martini0_Auto_Deploy/jenkins-Martini0_Auto_Deploy-"$1"/test-results ~/rynced_copies/jenkins-Martini0_Auto_Deploy-"$1";
-  open -a /Applications/Google\ Chrome\ Canary.app "file://localhost/Users/carey.winslow/rynced_copies/jenkins-Martini0_Auto_Deploy-$1/test-results";
-}
-lastfailsacc() {
-  rsync -avz -e ssh root@10.10.50.25:/home/docusign/saved-test-results/build_jenkins-Martini_Acceptance_Test-"$1" ~/rynced_copies;
-  open -a /Applications/Google\ Chrome\ Canary.app "file://localhost/Users/carey.winslow/rynced_copies/build_jenkins-Martini_Acceptance_Test-$1";
-}
-lastfailswat() {
-  rsync -avz -e ssh root@martini-ut0.docusignhq.com:/home/docusign/saved-test-results/build_jenkins-Martini0_Deploy-"$1" ~/rynced_copies;
-  open -a /Applications/Google\ Chrome\ Canary.app "file://localhost/Users/carey.winslow/rynced_copies/build_jenkins-Martini0_Deploy-$1";
-}
-
 ext-ip () { curl http://ipecho.net/plain; echo; }
 
 
