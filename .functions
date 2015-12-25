@@ -378,3 +378,7 @@ supertouch() {
     touch -- "$f"
   done
 }
+
+findit() {
+  grep -iHR $1 .
+}
