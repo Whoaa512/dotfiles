@@ -238,7 +238,9 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias dot='cd ~/personal/Dropbox/devEnv/dotfiles'
   alias lew="cd ~/personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
 
+# bin Shortcuts
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
+  alias py3='python3 '
 
 # npm aliases
   alias ni='npm i'
