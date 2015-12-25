@@ -249,8 +249,8 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias nig='npm install -g'
   alias nis='npm install --save'
   alias nisd='npm install --save-dev'
-  alias nus='npm uninstall --save'
-  alias nusd='npm uninstall --save-dev'
+  alias nus="npm uninstall $@ --save"
+  alias nusd="npm uninstall $@ --save-dev"
   alias nise='npm i --save --save-exact'
   alias nisde='npm i --save-dev --save-exact'
 
