@@ -119,7 +119,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gst='git stash'
   alias gstl='git stash list'
   alias gsta='git stash apply'
-  alias gstp='git stash --patch'
+  alias gstp='git stash save --patch'
   alias ga='git add'
   alias gap='git add -p'
   alias gaa='git add .;gss'
