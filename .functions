@@ -341,6 +341,19 @@ function del-merged () {
 	git branch --merged | grep -v "\*" | grep -v "master|develop|stage|demo" | xargs -n 1 git branch -d
 }
 
+function gh-deploy () {
+	if [ -z "$1" ]
+	then
+	  echo "Which folder do you want to deploy to GitHub Pages?"
+	  exit 1
+	fi
+	git subtree push --prefix $1 origin gh-pages
+}
+
+elm-init() {
+  hi -p $1 -m $2 -a "C.J. Winslow" -e whoaa512@gmail.com -r https://github.com/joefiorini/hi-elm.git
+}
+
 # Functions to emit TTS from english to russian
 # See https://npmjs.com/package/normit
 function ru {
