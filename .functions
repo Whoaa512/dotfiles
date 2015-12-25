@@ -264,8 +264,7 @@ function tre() {
 #     tab [PATH] [CMD] ...  You can prob'ly guess
 
 # Only for teh Mac users
-[ `uname -s` != "Darwin" ] && return
-
+if [ `uname -s` = "Darwin" ]; then
 function tab () {
     local cmd=""
     local cdto="$PWD"
@@ -291,6 +290,7 @@ function tab () {
         end tell
 EOF
 }
+fi;
 
 # Originally taken from: http://hints.macworld.com/article.php?story=2007091814022049
 function cpkey () {
