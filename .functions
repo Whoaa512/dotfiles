@@ -382,3 +382,15 @@ supertouch() {
 findit() {
   grep -iHR $1 .
 }
+
+replacefilename () {
+  original_name="$1"
+  new_name="$2"
+  # original line from StackOverflow
+  # find . -depth -name "*foo.*" -execdir bash -c 'mv -i "$1" "${1//foo/bar}"' bash {} \;
+  find . -depth -name "*$original_name*" -execdir bash -c 'mv -i "$1" "${1//$original_name/$new_name}"' bash {} \;
+}
+
+stashgrep() {
+  for i in `git stash list |  awk -F ':' '{print $1}'`; git stash show -p $i | grep -H --label="$i" "$1";
+}
