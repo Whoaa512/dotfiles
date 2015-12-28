@@ -89,6 +89,7 @@ brew install ccat
 brew install git
 brew install git-lfs
 brew install htop
+brew install hub
 brew install imagemagick --with-webp
 brew install lua
 brew install lynx
