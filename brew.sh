@@ -83,9 +83,12 @@ brew install xz
 # Install other useful binaries.
 brew install ack
 brew install dark-mode
+brew install bro
+brew install ccat
 #brew install exiv2
 brew install git
 brew install git-lfs
+brew install htop
 brew install imagemagick --with-webp
 brew install lua
 brew install lynx
@@ -97,6 +100,8 @@ brew install rhino
 brew install speedtest_cli
 brew install ssh-copy-id
 brew install tree
+brew install unrar
+brew install watch
 brew install webkit2png
 brew install zopfli
 
