@@ -2,4 +2,23 @@
 git clone https://github.com/tj/n.git
 cd n && make install
 cd -
-echo "Please pick a node version with n"
+
+n stable
+npm i -g \
+airplane-mode \
+brightness-cli \
+bunyan \
+coffee-script \
+emoji-random \
+iron-node \
+n_ \
+node-inspector \
+normit \
+np \
+pipeable-js \
+pm2 \
+speed-test \
+standard \
+wallpaper \
+wifi-password \
+;
