@@ -317,13 +317,13 @@ function cpkey () {
 	echo "done!"
 }
 
-function ListAllCommands {
+function ListAllCommands() {
   COMMANDS=`echo -n $PATH | xargs -d : -I {} find {} -maxdepth 1 \
       -executable -type f -printf '%P\n'`
   ALIASES=`alias | cut -d '=' -f 1`
   echo "$COMMANDS"$'\n'"$ALIASES" | sort -u
 }
-function git-aliases {
+function git-aliases() {
 	alias | grep -E '^g'
 }
 
@@ -350,7 +350,7 @@ function gh-deploy () {
 	git subtree push --prefix $1 origin gh-pages
 }
 
-elm-init() {
+function elm-init() {
   hi -p $1 -m $2 -a "C.J. Winslow" -e whoaa512@gmail.com -r https://github.com/joefiorini/hi-elm.git
 }
 
