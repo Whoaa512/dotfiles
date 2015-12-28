@@ -105,5 +105,27 @@ brew install watch
 brew install webkit2png
 brew install zopfli
 
+# Cask installs
+# prerequisites:
+brew tap caskroom/fonts
+brew tap caskroom/versions
+
+brew cask install disk-inventory-x
+brew cask install bettertouchtool
+brew cask install omnifocus
+brew cask install font-source-code-pro
+brew cask install vlc
+brew cask install dropbox
+brew cask install google-drive
+brew cask install google-chrome
+brew cask install alfred
+brew cask install iterm2
+brew cask install stay
+# Dash should be installed via AppStore, since I purchased v3 from there
+# brew cask install dash
+
+# Quick look plugins https://github.com/sindresorhus/quick-look-plugins
+brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql qlimagesize webpquicklook suspicious-package
+
 # Remove outdated versions from the cellar.
 brew cleanup
