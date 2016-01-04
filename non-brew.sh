@@ -28,6 +28,7 @@ pipeable-js \
 pm2 \
 speed-test \
 standard \
+tldr \
 wallpaper \
 wifi-password \
 ;
