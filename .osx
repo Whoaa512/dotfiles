@@ -712,7 +712,10 @@ defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault
 ###############################################################################
 
 # Install Sublime Text settings
-cp -r init/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text*/Packages/User/Preferences.sublime-settings 2> /dev/null
+cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/
+rm -r User
+ln -s ~/personal/Dropbox/devEnv/Sublime/User
+cd -
 
 ###############################################################################
 # SizeUp.app                                                                  #
