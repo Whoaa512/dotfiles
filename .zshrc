@@ -64,7 +64,7 @@ source ~/dotfiles/zshrc.sh
 source ~/dotfiles/.aliases
 source ~/dotfiles/.functions
 source ~/dotfiles/.extra
-source ~/.fresh/build/shell.sh
+# source ~/.fresh/build/shell.sh
 ###################################
 
 ###
