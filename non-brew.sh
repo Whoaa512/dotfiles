@@ -7,7 +7,7 @@ ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ~/bin/sub
 sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 # Node
-git clone https://github.com/tj/n.git
+cd ~/code && git clone https://github.com/tj/n.git
 cd n && make install
 cd -
 

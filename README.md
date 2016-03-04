@@ -1,6 +1,6 @@
 # CJ’s dotfiles
 
-![Screenshot of my shell prompt](http://i.imgur.com/EkEtphC.png)
+![Screenshot of my shell prompt](http://i.imgur.com/1GBQURy.png)
 
 ## Installation
 
@@ -8,7 +8,7 @@
 
 ### Using Git and the bootstrap script
 
-You can clone the repository wherever you want. (I like to keep it in `~/Projects/dotfiles`, with `~/dotfiles` as a symlink.) The bootstrapper script will pull in the latest version and copy the files to your home folder.
+You can clone the repository wherever you want. (I like to keep it in `~/code/dotfiles`, with `~/dotfiles` as a symlink.) The bootstrapper script will pull in the latest version and copy the files to your home folder.
 
 ```bash
 git clone https://github.com/whoaa512/dotfiles.git && cd dotfiles && bash bootstrap.sh
@@ -31,7 +31,7 @@ set -- -f; source bootstrap.sh
 To install these dotfiles without Git:
 
 ```bash
-cd; curl -#L https://github.com/mathiasbynens/dotfiles/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,bootstrap.sh,LICENSE-MIT.txt}
+cd; curl -#L https://github.com/whoaa512/dotfiles/tarball/master | tar -xzv --strip-components 1 --exclude={README.md,bootstrap.sh,LICENSE-MIT.txt}
 ```
 
 To update later on, just run that command again.
@@ -55,15 +55,15 @@ My `~/.extra` looks something like this:
 ```bash
 # Git credentials
 # Not in the repository, to prevent people from accidentally committing under my name
-GIT_AUTHOR_NAME="Mathias Bynens"
+GIT_AUTHOR_NAME="C.J. Winslow"
 GIT_COMMITTER_NAME="$GIT_AUTHOR_NAME"
 git config --global user.name "$GIT_AUTHOR_NAME"
-GIT_AUTHOR_EMAIL="mathias@mailinator.com"
+GIT_AUTHOR_EMAIL="cj@mailinator.com"
 GIT_COMMITTER_EMAIL="$GIT_AUTHOR_EMAIL"
 git config --global user.email "$GIT_AUTHOR_EMAIL"
 ```
 
-You could also use `~/.extra` to override settings, functions and aliases from my dotfiles repository. It’s probably better to [fork this repository](https://github.com/mathiasbynens/dotfiles/fork) instead, though.
+You could also use `~/.extra` to override settings, functions and aliases from my dotfiles repository. It’s probably better to [fork this repository](https://github.com/whoaa512/dotfiles/fork) instead, though.
 
 ### Sensible OS X defaults
 
@@ -81,10 +81,25 @@ When setting up a new Mac, you may want to install some common [Homebrew](http:/
 ./brew.sh
 ```
 
+### General Order
+In general I do the following on a new laptop:
+```bash
+# Install brew
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# Clone repo & bootstrap
+cd ~ && mkdir code && cd code; git clone https://github.com/whoaa512/dotfiles.git && cd dotfiles && bash bootstrap.sh
+# Run the brew formulae
+bash brew.sh
+# Run the non-brew stuff, mainly Node.js
+bash non-brew.sh
+# OS X Defaults
+~/code/dotfiles/.osx
+```
+
 ## Feedback
 
 Suggestions/improvements
-[welcome](https://github.com/mathiasbynens/dotfiles/issues)!
+[welcome](https://github.com/whoaa512/dotfiles/issues)!
 
 ## Author
 
@@ -108,13 +123,3 @@ Suggestions/improvements
 * [Kevin Suttle](http://kevinsuttle.com/) and his [dotfiles repository](https://github.com/kevinSuttle/dotfiles) and [OSXDefaults project](https://github.com/kevinSuttle/OSXDefaults), which aims to provide better documentation for [`~/.osx`](https://mths.be/osx)
 * [Haralan Dobrev](http://hkdobrev.com/)
 * anyone who [contributed a patch](https://github.com/mathiasbynens/dotfiles/contributors) or [made a helpful suggestion](https://github.com/mathiasbynens/dotfiles/issues)
-
-
-## CJ todo:
-  - Add scripts to auto-intall:
-    + [Sublime Text 3](http://www.sublimetext.com/3)
-    + [Sublime Text 3 - Package Control](https://packagecontrol.io/installation)
-    + [Source Code Pro Font](https://github.com/adobe-fonts/source-code-pro)
-    + [Oh My Zsh](https://github.com/robbyrussell/oh-my-zsh)
-    + [Better Touch Tool](http://www.bettertouchtool.net/)
-  - Move work specific `cd` aliases to separate optionally installed file

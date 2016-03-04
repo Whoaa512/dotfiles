@@ -41,4 +41,4 @@ Thumbs.db
 *.pyc
 
 # Common CJ ignores
-*sublime*
+*sublime-workspace

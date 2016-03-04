@@ -13,10 +13,10 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "CJ-WorkBook-Pro"
-sudo scutil --set HostName "CJ-WorkBook-Pro"
-sudo scutil --set LocalHostName "CJ-WorkBook-Pro"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "CJ-WorkBook-Pro"
+sudo scutil --set ComputerName "das-workbook"
+sudo scutil --set HostName "das-workbook"
+sudo scutil --set LocalHostName "das-workbook"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "das-workbook"
 
 # Set standby delay to 24 hours (default is 1 hour)
 sudo pmset -a standbydelay 86400
@@ -235,8 +235,8 @@ launchctl unload -w /System/Library/LaunchAgents/com.apple.rcd.plist 2> /dev/nul
 defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 
-# Save screenshots to the desktop
-defaults write com.apple.screencapture location -string "$HOME/Desktop"
+# Save screenshots to the desktop. Or use Dropbox :)
+# defaults write com.apple.screencapture location -string "$HOME/Desktop"
 
 # Save screenshots in PNG format (other options: BMP, GIF, JPG, PDF, TIFF)
 defaults write com.apple.screencapture type -string "png"
@@ -693,8 +693,8 @@ defaults write com.google.Chrome ExtensionInstallSources -array "https://gist.gi
 defaults write com.google.Chrome.canary ExtensionInstallSources -array "https://gist.githubusercontent.com/" "http://userscripts.org/*"
 
 # Enable the all too sensitive backswipe
-defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
-defaults write com.google.Chrome.canary AppleEnableSwipeNavigateWithScrolls -bool true
+# defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool true
+# defaults write com.google.Chrome.canary AppleEnableSwipeNavigateWithScrolls -bool true
 
 # # Use the system-native print preview dialog
 # defaults write com.google.Chrome DisablePrintPreview -bool true
@@ -712,36 +712,39 @@ defaults write ~/Library/Preferences/org.gpgtools.gpgmail SignNewEmailsByDefault
 ###############################################################################
 
 # Install Sublime Text settings
-cp -r init/Preferences.sublime-settings ~/Library/Application\ Support/Sublime\ Text*/Packages/User/Preferences.sublime-settings 2> /dev/null
+cd ~/Library/Application\ Support/Sublime\ Text\ 3/Packages/
+rm -r User
+ln -s ~/personal/Dropbox/devEnv/Sublime/User
+cd -
 
 ###############################################################################
 # SizeUp.app                                                                  #
 ###############################################################################
 
 # Start SizeUp at login
-defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true
+# defaults write com.irradiatedsoftware.SizeUp StartAtLogin -bool true
 
 # Don’t show the preferences window on next start
-defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false
+# defaults write com.irradiatedsoftware.SizeUp ShowPrefsOnNextStart -bool false
 
 ###############################################################################
 # Transmission.app                                                            #
 ###############################################################################
 
 # Use `~/Documents/Torrents` to store incomplete downloads
-defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
-defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Documents/Torrents"
+# defaults write org.m0k.transmission UseIncompleteDownloadFolder -bool true
+# defaults write org.m0k.transmission IncompleteDownloadFolder -string "${HOME}/Documents/Torrents"
 
-# Don’t prompt for confirmation before downloading
-defaults write org.m0k.transmission DownloadAsk -bool false
+# # Don’t prompt for confirmation before downloading
+# defaults write org.m0k.transmission DownloadAsk -bool false
 
-# Trash original torrent files
-defaults write org.m0k.transmission DeleteOriginalTorrent -bool true
+# # Trash original torrent files
+# defaults write org.m0k.transmission DeleteOriginalTorrent -bool true
 
-# Hide the donate message
-defaults write org.m0k.transmission WarningDonate -bool false
-# Hide the legal disclaimer
-defaults write org.m0k.transmission WarningLegal -bool false
+# # Hide the donate message
+# defaults write org.m0k.transmission WarningDonate -bool false
+# # Hide the legal disclaimer
+# defaults write org.m0k.transmission WarningLegal -bool false
 
 ###############################################################################
 # Twitter.app                                                                 #
