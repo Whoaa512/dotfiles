@@ -22,6 +22,7 @@ emoji-random \
 iron-node \
 n_ \
 node-inspector \
+nodemon \
 normit \
 np \
 pipeable-js \
