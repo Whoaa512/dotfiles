@@ -3,9 +3,6 @@
 echo "Please ensure you have Sublime Text 3 installed. Adding symlink"
 ln -s "/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl" ~/bin/subl
 
-# oh-my-zsh
-sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
-
 # Node
 cd ~/code && git clone https://github.com/tj/n.git
 cd n && make install

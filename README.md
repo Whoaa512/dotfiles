@@ -86,6 +86,8 @@ In general I do the following on a new laptop:
 ```bash
 # Install brew
 ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+# Install oh-my-zsh
+sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 # Clone repo & bootstrap
 cd ~ && mkdir code && cd code; git clone https://github.com/whoaa512/dotfiles.git && cd dotfiles && bash bootstrap.sh
 # Run the brew formulae
