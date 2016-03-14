@@ -10,7 +10,7 @@ function doIt() {
 	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
 		--exclude "README.md" --exclude ".zshrc" --exclude "dotfiles.sublime-workspace" \
 		--exclude "LICENSE-MIT.txt" -avh --no-perms . ~;
-	ln -s localSource ~/.zshrc
+	ln -s $localSource ~/.zshrc
 	source ~/.bash_profile;
 }
 
