@@ -252,6 +252,8 @@ function tre() {
 # Open new Terminal tabs from the command line
 #
 # Author: Justin Hileman (http://justinhileman.com)
+# Original Source: https://gist.github.com/bobthecow/757788/15040f07883707b57e5e8f82968282912a8f2f77
+# Updated Source: https://gist.github.com/vitalybe/021d2aecee68178f3c52
 #
 # Installation:
 #     Add the following function to your `.bashrc` or `.bash_profile`,
@@ -281,10 +283,12 @@ function tab () {
 
     osascript &>/dev/null <<EOF
         tell application "iTerm"
-            tell current terminal
-                launch session "Default Session"
-                tell the last session
-                    write text "cd \"$cdto\"$cmd"
+            tell current window
+                set newTab to (create tab with default profile)
+                tell newTab
+                    tell current session
+                        write text "cd \"$cdto\"$cmd"
+                    end tell
                 end tell
             end tell
         end tell
