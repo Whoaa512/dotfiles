@@ -112,7 +112,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gi='git init'
   alias gir='git init; touch README.md;gaa;'
   alias gii='git init; touch .gitignore;gaa;'
-  alias giir='git init; touch .gitignore README.md; echo "node_modules/\ncoverage/" > .gitignore;gaa;'
+  alias giir='git init; touch .gitignore README.md; echo "node_modules/\ncoverage/" >> .gitignore;gaa;'
   alias inm='echo "node_modules/" >> .gitignore'
   alias gs='git status'
   alias gss='git status -s'
