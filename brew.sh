@@ -141,6 +141,12 @@ brew cask install vlc
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew cask install dash
 
+# Mac Store installs
+mas sigin whoaa512@gmail.com
+mas install 803453959 # Slack
+mas install 449589707 # Dash
+mas install 866773894 # Quiver
+
 # Quick look plugins https://github.com/sindresorhus/quick-look-plugins
 brew cask install qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql qlimagesize webpquicklook suspicious-package
 
