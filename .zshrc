@@ -64,7 +64,7 @@ source $ZSH/oh-my-zsh.sh
 source ~/dotfiles/zshrc.sh
 source ~/dotfiles/.aliases
 source ~/dotfiles/.functions
-source ~/dotfiles/.extra
+source ~/dotfiles/.extras
 # source ~/.fresh/build/shell.sh
 ###################################
 
