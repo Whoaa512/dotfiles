@@ -56,6 +56,7 @@ brew install woff2
 
 # Install some CTF tools; see https://github.com/ctfs/write-ups.
 brew install aircrack-ng
+brew install awscli
 brew install bfg
 brew install binutils
 brew install binwalk
@@ -63,6 +64,7 @@ brew install cifer
 brew install dex2jar
 brew install dns2tcp
 brew install fcrackzip
+brew install ffmpeg
 brew install foremost
 brew install hashpump
 brew install hydra
@@ -71,6 +73,7 @@ brew install knock
 brew install netpbm
 brew install nmap
 brew install pngcheck
+brew install prettyping
 brew install socat
 brew install sqlmap
 brew install tcpflow
@@ -90,19 +93,24 @@ brew install git
 brew install git-lfs
 brew install htop
 brew install hub
+brew install jq
 brew install imagemagick --with-webp
 brew install lua
 brew install lynx
+brew install mas
 brew install p7zip
 brew install pigz
 brew install pv
 brew install rename
 brew install rhino
+brew install s3cmd
+brew install spoof-mac
 brew install ssh-copy-id
 brew install tree
 brew install unrar
 brew install watch
 brew install webkit2png
+brew install youtube-dl
 brew install zopfli
 
 # Cask installs
