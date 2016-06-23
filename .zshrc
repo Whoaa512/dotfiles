@@ -137,6 +137,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gcl=clonecd
   alias gclr='git clone --recursive'
   alias gc='git commit'
+  alias gcv='git commit -v'
   alias gc!='git commit --amend'
   alias gcm='git commit -v -m'
   alias gcam='git commit -v --amend -m'
@@ -155,6 +156,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gplro='git pull --rebase origin'
   alias gplru='git pull --rebase upst'
   alias gplrom='git pull --rebase origin master'
+  alias gplron='git pull --rebase origin next'
   alias gplrogh='git pull --rebase origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
   alias gplrum='git pull --rebase upst master'
@@ -236,7 +238,6 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias d='cd ~/personal/Dropbox'
   alias p='cd ~/personal/Dropbox/devWork/code/node/projects'
-  alias dot='cd ~/personal/Dropbox/devEnv/dotfiles'
   alias lew="cd ~/personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
 
 # bin Shortcuts
