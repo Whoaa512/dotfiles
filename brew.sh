@@ -130,7 +130,10 @@ brew cask install font-source-code-pro
 brew cask install google-chrome
 brew cask install google-drive
 brew cask install iterm2
+brew cask install minecraft
+brew cask install ngrok
 brew cask install omnifocus
+brew cask install skype
 brew cask install sourcetree
 brew cask install spotify
 brew cask install stay
