@@ -12,21 +12,25 @@ n stable
 # Npm globals
 npm i -g \
 airplane-mode \
+ava \
 brightness-cli \
 bunyan \
 coffee-script \
 emoji-random \
 iron-node \
 n_ \
+ndu \
 node-inspector \
 nodemon \
 normit \
 np \
+ntl \
 pipeable-js \
 pm2 \
 speed-test \
 standard \
 tldr \
+trymodule \
 wallpaper \
 wifi-password \
 ;
