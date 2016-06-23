@@ -118,23 +118,23 @@ brew install zopfli
 brew tap caskroom/fonts
 brew tap caskroom/versions
 
-brew cask install disk-inventory-x
-brew cask install battle-net
+brew cask install alfred
 brew cask install atom
+brew cask install battle-net
 brew cask install bettertouchtool
-brew cask install omnifocus
+brew cask install disk-inventory-x
+brew cask install dropbox
 brew cask install firefox
 brew cask install flux
 brew cask install font-source-code-pro
-brew cask install vlc
-brew cask install dropbox
-brew cask install google-drive
 brew cask install google-chrome
-brew cask install alfred
+brew cask install google-drive
 brew cask install iterm2
+brew cask install omnifocus
 brew cask install sourcetree
 brew cask install spotify
 brew cask install stay
+brew cask install vlc
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew cask install dash
 
