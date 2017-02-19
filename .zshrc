@@ -247,6 +247,9 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
 # bin Shortcuts
   alias nw='/Applications/node-webkit.app/Contents/MacOS/node-webkit'
   alias py3='python3 '
+  alias yt='youtube-dl '
+  alias ytv='youtube-dl -f 22 '
+  alias yt3='youtube-dl -x --audio-format mp3 '
 
 # npm aliases
   alias ni='npm i'
