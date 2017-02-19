@@ -266,6 +266,18 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias nisde='npm i --save-dev --save-exact'
 
 
+# yarn aliases
+  alias y='yarn'
+  alias ya='yarn add'
+  alias yad='yarn add --dev'
+  alias yae='yarn add --exact'
+  alias yag='yarn global add'
+  alias yade='yarn add --dev --exact'
+  alias yr="yarn run"
+  alias yrm="yarn remove $@"
+  alias yrd="yarn remove $@ --dev"
+
+
 ########### appended aliases
   alias met='meteor'
   alias metls='meteor list'
