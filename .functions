@@ -398,3 +398,8 @@ replacefilename () {
 stashgrep() {
   for i in `git stash list |  awk -F ':' '{print $1}'`; git stash show -p $i | grep -H --label="$i" "$1";
 }
+
+function today() {
+	cal
+	date
+}
