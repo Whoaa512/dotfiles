@@ -88,6 +88,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias vi='vim'
 
 # Bash Aliases
+  alias k9='kill -9'
   alias wh='which'
   alias c='clear'
   alias k='clear'
@@ -115,7 +116,8 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias giir='git init; touch .gitignore README.md; echo "node_modules/\ncoverage/" >> .gitignore;gaa;'
   alias inm='echo "node_modules/" >> .gitignore'
   alias gs='git status'
-  alias gss='git status -s'
+  alias gss='git status -s -b'
+  alias gsgd='git status; git diff'
   alias ghis='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
   alias gst='git stash'
   alias gstl='git stash list'
@@ -123,7 +125,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gstp='git stash save --patch'
   alias ga='git add'
   alias gap='git add -p'
-  alias gaa='git add .;gss'
+  alias gaa='git add .;gs'
   alias gre='git reset'
   alias greh='git reset --h'
   alias gmff='git merge --ff'
@@ -139,6 +141,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gc='git commit'
   alias gcv='git commit -v'
   alias gc!='git commit --amend'
+  alias gcv!='git commit --amend -v'
   alias gcm='git commit -v -m'
   alias gcam='git commit -v --amend -m'
   alias gco='git checkout'
@@ -194,6 +197,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gsur='git submodule update --init --recursive --rebase'
   alias gba='git branch -a'
   alias del='git branch -d'
+  alias delD='git branch -D'
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
