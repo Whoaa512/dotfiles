@@ -408,6 +408,10 @@ function today() {
 	date
 }
 
+function biggitfiles() {
+	sh ~/dotfiles/bash-scripts/biggitfiles.sh
+}
+
 function lsscripts() {
 	cat package.json | jq .scripts
 }
