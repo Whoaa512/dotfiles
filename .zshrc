@@ -103,7 +103,8 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias sf='subl ~/dotfiles/.functions'
   alias sz='subl ~/.zshrc'
   alias szh='subl ~/.zsh_history'
-  alias srz='source ~/.zshrc'
+  # alias srz='source ~/.zshrc' # Breaks for some reason :/
+  alias srz='reload'
   alias st3='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias sbp='subl ~/.bash_profile'
   alias sj='subl "~/personal/Google Drive/journal.md"'
@@ -111,11 +112,12 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
 
 # Short Git aliases
   alias gi='git init'
-  alias gir='git init; touch README.md;gaa;'
+  alias gir='git init; touch readme.md;gaa;'
   alias gii='git init; touch .gitignore;gaa;'
-  alias giir='git init; touch .gitignore README.md; echo "node_modules/\ncoverage/" >> .gitignore;gaa;'
+  alias giir='git init; touch .gitignore readme.md; echo "node_modules/\ncoverage/" >> .gitignore;gaa;'
   alias inm='echo "node_modules/" >> .gitignore'
   alias gs='git status'
+  alias gsd='git status'
   alias gss='git status -s -b'
   alias gsgd='git status; git diff'
   alias ghis='git log --pretty=format:"%h %ad | %s%d [%an]" --graph --date=short'
@@ -125,6 +127,7 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gstp='git stash save --patch'
   alias ga='git add'
   alias gap='git add -p'
+  alias ggap='git add -p'
   alias gaa='git add .;gs'
   alias gre='git reset'
   alias greh='git reset --h'
@@ -135,6 +138,9 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias grmrf='git rm -rf'
   alias grmdel='git rm $(git ls-files --deleted)'
   alias gb='git branch'
+  alias gbm='git branch --move'
+  alias gbc='git rev-parse --abbrev-ref HEAD'
+  alias currentbranch='git rev-parse --abbrev-ref HEAD'
   alias gcfg='git config'
   alias gcl=clonecd
   alias gclr='git clone --recursive'
@@ -147,12 +153,13 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias gco='git checkout'
   alias gcob='git checkout -b'
   alias gcop='git checkout -p'
+  alias gcom='git checkout master'
   alias gclean='git clean '
   alias gd='git diff'
   alias gdc='git diff --cached'
   alias gdh='git diff head'
   alias gf='git fetch'
-  alias gl='git log --oneline'
+  alias gl='git log --format="%C(auto)%h%Creset %Cgreen[%an]%Creset %C(auto)%d%Creset %s"'
   alias gll='git log'
   alias gpl='git pull'
   alias gplr='git pull --rebase'
@@ -270,18 +277,22 @@ ext-ip () { curl http://ipecho.net/plain; echo; }
   alias y='yarn'
   alias ya='yarn add'
   alias yad='yarn add --dev'
+  alias yap='yarn add --peer'
   alias yae='yarn add --exact'
   alias yag='yarn global add'
   alias yade='yarn add --dev --exact'
   alias yr="yarn run"
   alias yrm="yarn remove $@"
   alias yrd="yarn remove $@ --dev"
+  alias yfoo="yarn add find-file-paths && yarn remove find-file-paths"
 
 
 ########### appended aliases
   alias met='meteor'
   alias metls='meteor list'
   alias metlu='meteor list --using'
+  alias ут='en'
+  alias кг='ru'
   # alias npm='npm substack'
   alias chr='open -a /Applications/Google\ Chrome\ Canary.app'
 
