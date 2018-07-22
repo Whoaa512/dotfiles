@@ -407,3 +407,7 @@ function today() {
 function lsscripts() {
 	cat package.json | jq .scripts
 }
+
+function gbranch() {
+	git branch | grep \* | cut -d ' ' -f2
+}
