@@ -371,11 +371,11 @@ function ruen {
 	ru $@ && en $@
 }
 
-clonecd () {
-  hub clone --recursive $1 && cd $(basename ${1%.git})
+function clonecd () {
+  git clone --recursive $1 && cd $(basename ${1%.git})
 }
 
-supertouch() {
+function supertouch() {
   if [ $# -lt 1 ]; then
     echo "Missing argument";
     return 1;
@@ -387,11 +387,11 @@ supertouch() {
   done
 }
 
-findit() {
+function findit() {
   grep -iHR $1 .
 }
 
-replacefilename () {
+function replacefilename () {
   original_name="$1"
   new_name="$2"
   # original line from StackOverflow
@@ -399,13 +399,20 @@ replacefilename () {
   find . -depth -name "*$original_name*" -execdir bash -c 'mv -i "$1" "${1//$original_name/$new_name}"' bash {} \;
 }
 
-stashgrep() {
-  for i in `git stash list |  awk -F ':' '{print $1}'`; git stash show -p $i | grep -H --label="$i" "$1";
+function stashgrep() {
+	list=`git stash list |  awk -F ':' '{print $1}'`
+  	for i in $list; do
+  		git stash show -p $i | grep -H --label="$i" "$1";
+  	done
 }
 
 function today() {
 	cal
 	date
+}
+
+function stagedeploydev() {
+	yarn stage:dev$1 --profile fictiv_dev && yarn deploy:dev$1 --profile fictiv_dev
 }
 
 function biggitfiles() {
