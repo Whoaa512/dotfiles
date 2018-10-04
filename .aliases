@@ -354,7 +354,7 @@ alias reload="exec $SHELL -l"
   alias yr="yarn run"
   alias yrm="yarn remove $@"
   alias yrd="yarn remove $@ --dev"
-  alias yfoo="yarn add find-file-paths && yarn remove find-file-paths"
+  alias yfoo="yarn add is-regexp && yarn remove is-regexp"
 
 
 ########### appended aliases
