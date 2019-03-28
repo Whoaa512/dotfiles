@@ -114,6 +114,7 @@ brew install watch
 brew install webkit2png
 brew install youtube-dl
 brew install zopfli
+brew install fzf
 
 # Cask installs
 # prerequisites:
