@@ -276,6 +276,7 @@ alias reload="exec $SHELL -l"
   alias gba='git branch -a'
   alias del='git branch -d'
   alias delD='git branch -D'
+  alias gco-='git checkout -'
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
