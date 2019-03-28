@@ -426,3 +426,11 @@ function lsscripts() {
 function gbranch() {
 	git branch | grep \* | cut -d ' ' -f2
 }
+
+function googdns() {
+	networksetup -setdnsservers Wi-Fi 8.8.8.8 8.8.4.4
+}
+
+function cleardns() {
+	networksetup -setdnsservers Wi-Fi
+}
