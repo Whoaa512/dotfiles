@@ -363,6 +363,37 @@ alias reload="exec $SHELL -l"
   alias yrd="yarn remove $@ --dev"
   alias yfoo="yarn add is-regexp && yarn remove is-regexp"
 
+# arcanist aliases
+  alias ad='arc diff'
+  alias al='arc land'
+  alias adv='arc diff --verbatim'
+  alias adr='arc diff -m rebase'
+  alias adm='arc diff -m '
+  alias adp='arc diff --plan-changes'
+  alias adpv='arc diff --plan-changes --verbatim'
+  # re-map apache benchmark tool to abb
+  alias abb="ab"
+  alias ab="arc branch"
+
+  # arc funcs
+  function ads() {
+    arc diff `gupstream`
+  }
+  function advs() {
+    arc diff --verbatim `gupstream`
+  }
+  function adrs() {
+    arc diff -m 'rebase' `gupstream`
+  }
+  function adms() {
+    arc diff `gupstream` -m "'$1'"
+  }
+  function adps() {
+    arc diff --plan-changes `gupstream`
+  }
+  function adpvs() {
+    arc diff --plan-changes --verbatim `gupstream`
+  }
 
 ########### appended aliases
   alias met='meteor'
