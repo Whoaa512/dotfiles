@@ -427,6 +427,11 @@ function gbranch() {
 	git branch --show-current
 }
 
+function gupstream() {
+	# git rev-parse --abbrev-ref `gbranch`@{upstream}
+	git rev-parse --abbrev-ref --symbolic-full-name @{u}
+}
+
 function googdns() {
 	networksetup -setdnsservers Wi-Fi 8.8.8.8 8.8.4.4
 }
