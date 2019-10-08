@@ -7,12 +7,21 @@ localSource="$(cd "$(dirname ".zshrc")"; pwd)/$(basename ".zshrc")"
 git pull origin master;
 
 function doIt() {
-	rsync --exclude ".git/" --exclude ".DS_Store" --exclude "bootstrap.sh" \
-		--exclude "README.md" --exclude ".zshrc" --exclude "dotfiles.sublime-workspace" \
-		--exclude "LICENSE-MIT.txt" -avh --no-perms . ~;
+	rsync --exclude ".git/" \
+		--exclude ".DS_Store" \
+		--exclude "bootstrap.sh" \
+		--exclude "README.md" \
+		--exclude ".zshrc" \
+		--exclude "zshrc.sh" \
+		--exclude ".functions" \
+		--exclude ".aliases" \
+		--exclude ".extras" \
+		--exclude "dotfiles.sublime-workspace" \
+		--exclude "LICENSE-MIT.txt" \
+		-avh --no-perms . ~;
 	ln -s $localSource ~/.zshrc
 	ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
-	source ~/.bash_profile;
+	source ~/.zshrc;
 }
 
 if [ "$1" == "--force" -o "$1" == "-f" ]; then
