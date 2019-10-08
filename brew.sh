@@ -86,6 +86,7 @@ brew install xpdf
 brew install xz
 
 # Install other useful binaries.
+brew install lsd
 brew install ack
 brew install dark-mode
 brew install bro
