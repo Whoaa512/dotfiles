@@ -350,6 +350,8 @@ alias reload="exec $SHELL -l"
 
 # yarn aliases
   alias y='yarn'
+  alias yy='yarn why'
+  alias yl='yarn list --pattern'
   alias ya='yarn add'
   alias yad='yarn add --dev'
   alias yap='yarn add --peer'
