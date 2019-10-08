@@ -42,5 +42,6 @@ Thumbs.db
 
 # Common CJ ignores
 *sublime-workspace
+*code-workspace
 *sublime-project
 junit.xml
