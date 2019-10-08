@@ -62,8 +62,8 @@ source $ZSH/oh-my-zsh.sh
   # sudo chown -R $USER /usr/local
 
 source ~/dotfiles/zshrc.sh
-source ~/dotfiles/.aliases
 source ~/dotfiles/.functions
+source ~/dotfiles/.aliases
 source ~/dotfiles/.extras
 # source ~/.fresh/build/shell.sh
 ###################################
