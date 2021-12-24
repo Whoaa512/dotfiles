@@ -41,6 +41,15 @@ alias awk15="awk '{print \$15}'"
 
 
 
+# docker
+  alias docker_clean_images='docker rmi $(docker images -a --filter=dangling=true -q)'
+  alias docker_clean_ps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
+  function docker_super_clean() {
+    docker kill $(docker ps -q)
+    docker_clean_ps
+    docker rmi $(docker images -a -q)
+  }
+
 # # Detect which `ls` flavor is in use
 # if ls --color > /dev/null 2>&1; then # GNU `ls`
 # 	colorflag="--color"
