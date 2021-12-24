@@ -20,6 +20,27 @@ alias o="open"
 alias oo="open ."
 alias pgrep="pgrep -fl "
 
+# helpful
+  alias awk1="awk '{print \$1}'"
+  alias awk2="awk '{print \$2}'"
+  alias awk3="awk '{print \$3}'"
+  alias awk4="awk '{print \$4}'"
+  alias awk5="awk '{print \$5}'"
+  alias awk6="awk '{print \$6}'"
+  alias awk7="awk '{print \$7}'"
+  alias awk8="awk '{print \$8}'"
+  alias awk9="awk '{print \$9}'"
+  alias awk10="awk '{print \$10}'"
+  alias awk11="awk '{print \$11}'"
+  alias awk12="awk '{print \$12}'"
+  alias awk13="awk '{print \$13}'"
+  alias awk14="awk '{print \$14}'"
+  alias awk15="awk '{print \$15}'"
+  alias awklast="rev | awk1 | rev"
+  alias rgi="rg -i "
+
+  alias trim="tr -d '[:space:]'"
+
 # docker
   alias docker_clean_images='docker rmi $(docker images -a --filter=dangling=true -q)'
   alias docker_clean_ps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
