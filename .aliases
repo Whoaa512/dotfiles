@@ -14,7 +14,7 @@ alias p="cd ~/projects"
 alias g="git"
 alias h="history"
 alias j="jobs"
-alias v="vim"
+# alias v="vim"
 alias s="subl ."
 alias o="open"
 alias oo="open ."
@@ -192,13 +192,12 @@ alias reload="exec $SHELL -l"
   alias k9='kill -9'
   alias wh='which'
   alias c='clear'
-  alias k='clear'
-  alias rmrf='rm -rf'
+  # alias k='clear'
+  alias rmrf='trash'
+  alias rmforce='rm -rf'
   alias tczf='tar czf'
   alias s='subl'
   alias s.='subl .'
-  alias l='ls -al'
-  alias ll='ls -l'
   alias t='tree'
   alias se='subl ~/dotfiles/.extras'
   alias se='subl ~/dotfiles/.extras'
@@ -250,9 +249,10 @@ alias reload="exec $SHELL -l"
   alias gc='git commit'
   alias gcv='git commit -v'
   alias gc!='git commit --amend'
+  alias gcn='git commit --amend --no-edit'
   alias gcv!='git commit --amend -v'
   alias gcm='git commit -v -m'
-  alias gcam='git commit -v --amend -m'
+  alias gcam='git commit -a -m'
   alias gco='git checkout'
   alias gcob='git checkout -b'
   alias gcop='git checkout -p'
@@ -269,6 +269,7 @@ alias reload="exec $SHELL -l"
   alias gplro='git pull --rebase origin'
   alias gplru='git pull --rebase upst'
   alias gplrom='git pull --rebase origin master'
+  alias gplrob='git pull --rebase origin `git branch --show-current`'
   alias gplron='git pull --rebase origin next'
   alias gplrogh='git pull --rebase origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
@@ -282,10 +283,11 @@ alias reload="exec $SHELL -l"
   alias gplum='git pull upst master'
   alias gplud='git pull upst develop'
   alias gp='git push'
+  alias gpf='git push --force-with-lease'
   alias gpo='git push origin'
   alias gpodel='git push origin --delete'
   alias gpu='git push upst'
-  alias gpfom='git push -f origin master'
+  alias gpfom='git push --force-with-lease origin master'
   alias gpom='git push origin master'
   alias gpod='git push origin develop'
   alias gpogh='git push origin gh-pages'
@@ -434,3 +436,15 @@ alias reload="exec $SHELL -l"
   # alias npm='npm substack'
   alias chr='open -a /Applications/Google\ Chrome\ Canary.app'
   alias ebook-convert='/Applications/calibre.app/Contents/console.app/Contents/MacOS/ebook-convert'
+
+
+
+if [[ $(command -v exa) ]]; then
+  alias l='exa -lahF'
+  alias ll='exa -lhF'
+  alias lt='exa -lahF -T'
+fi
+
+if [[ $(command -v fd) ]]; then
+  alias fdp='fd -p'
+fi

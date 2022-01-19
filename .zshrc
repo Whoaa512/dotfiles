@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block, everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 ulimit -n 9999
 # Customize to your needs...
 export GOPATH=~/go
@@ -14,7 +21,7 @@ ZSH=$HOME/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="cloud"
+ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # fpath=(~/.zsh/completion $fpath)
 
@@ -54,7 +61,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(git browse-commit heroku zsh-syntax-highlighting zsh-autosuggestions)
+plugins=(git browse-commit heroku zsh-syntax-highlighting zsh-autosuggestions asdf)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -64,6 +71,7 @@ source $ZSH/oh-my-zsh.sh
 source ~/dotfiles/zshrc.sh
 source ~/dotfiles/.functions
 source ~/dotfiles/.aliases
+source ~/dotfiles/.fzf_aliases
 source ~/dotfiles/.extras
 # source ~/.fresh/build/shell.sh
 ###################################
@@ -182,3 +190,39 @@ fi
 ###-end-pm2-completion-###
 
 export PATH="$HOME/.yarn/bin:$PATH"
+
+# fnm
+# installed in .extras
+
+
+# n and avn
+# installed in .extras
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+source /Users/cj_winslow/Library/Preferences/org.dystroy.broot/launcher/bash/br
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# begin pineapple block
+source /Users/cj_winslow/airlab/repos/pineapple/frontend/pineapple/scripts/shellhelper.sh
+# end pineapple block

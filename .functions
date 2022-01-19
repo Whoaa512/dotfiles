@@ -1,3 +1,10 @@
+alias gg='~/dotfiles/.global_grep'
+
+function saylater() {
+	sleep $1;
+	say "${@:2}"
+}
+
 # Source: http://stackoverflow.com/questions/8063228/how-do-i-check-if-a-variable-exists-in-a-list-in-bash#comment41986675_8063398
 contains () { [[ "$1" =~ (^|[[:space:]])"$2"($|[[:space:]]) ]]; }
 
@@ -75,7 +82,7 @@ function fs() {
 hash git &>/dev/null;
 if [ $? -eq 0 ]; then
 	function diff() {
-		git diff --no-index --color-words "$@";
+		git diff --no-index -p --color-words "$@";
 	}
 fi;
 
@@ -222,13 +229,13 @@ function a() {
 
 # `v` with no arguments opens the current directory in Vim, otherwise opens the
 # given location
-function v() {
-	if [ $# -eq 0 ]; then
-		vim .;
-	else
-		vim "$@";
-	fi;
-}
+# function v() {
+# 	if [ $# -eq 0 ]; then
+# 		vim .;
+# 	else
+# 		vim "$@";
+# 	fi;
+# }
 
 # `o` with no arguments opens the current directory, otherwise opens the given
 # location
@@ -335,6 +342,27 @@ function git-fame() {
 	git ls-tree -r -z --name-only HEAD -- "${@}"  | xargs -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|sort|uniq -c|sort -nr
 }
 
+# Push and open PR
+function gppr() {
+  git push
+  branch=$(gbranch)
+  remote=$(git remote -v \
+    | grep origin \
+    | head -n1 \
+    | awk2
+  )
+  host=$(echo "$remote" \
+    | grep -oE '@(.+):' \
+    | tr -d '@:'
+  )
+  slug=$(echo "$remote" \
+    | grep -oE ':(.+).git' \
+    | sed -E 's/(\:|\.git)//g'
+  )
+  open "https://$host/$slug/pull/new/$branch"
+}
+
+
 function add-brc-url() {
 	local URL="https://github.com/$1/$2/commit"
 	echo "Adding browse-commit.url to local git-config: $URL"
@@ -342,7 +370,16 @@ function add-brc-url() {
 }
 
 function del-merged () {
-	git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
+	git checkout master && git pull --rebase origin master && git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
+}
+
+function del-squashed () {
+	branch=${1:-master}
+	git checkout $branch && \
+		comm -12 \
+			<(git branch | sed "s/[ *]//g") \
+			<(git remote prune origin | sed "s/^.*origin\///g") \
+		| xargs -L1 -J % git branch -D %
 }
 
 function gh-deploy () {
@@ -440,9 +477,14 @@ function cleardns() {
 	networksetup -setdnsservers Wi-Fi
 }
 
+function omg() {
+	sleep_sec=${1:-0}
+	sleep $sleep_sec; say -r 350 omg omg omg;
+}
+
 # Docker helpers
 function dr() {
-  docker run -a stdout -a stderr -i $@
+  docker run -a stdout -a stderr -i "$@"
 }
 function drb() {
   docker run -a stdout -a stderr -i -v "$(pwd):/jorb/repo" "$@" /bin/bash &
@@ -454,6 +496,8 @@ function drb() {
 function dp() {
   docker pull "$@"
 }
+
+# shellcheck disable=SC2120
 function dps() {
   docker ps "$@"
 }

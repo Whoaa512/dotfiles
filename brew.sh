@@ -86,6 +86,7 @@ brew install xpdf
 brew install xz
 
 # Install other useful binaries.
+brew install exa
 brew install lsd
 brew install ack
 brew install dark-mode
@@ -116,6 +117,7 @@ brew install webkit2png
 brew install youtube-dl
 brew install zopfli
 brew install fzf
+brew install pygitup
 
 # Cask installs
 # prerequisites:
@@ -123,20 +125,21 @@ brew tap caskroom/fonts
 brew tap caskroom/versions
 
 brew cask install alfred
-brew cask install atom
-brew cask install battle-net
+# brew cask install atom
+# brew cask install battle-net
 brew cask install bettertouchtool
-brew cask install disk-inventory-x
+# brew cask install disk-inventory-x
 brew cask install dropbox
 brew cask install firefox
-brew cask install flux
+# brew cask install flux
 brew cask install font-source-code-pro
 brew cask install google-chrome
 brew cask install google-drive
 brew cask install iterm2
-brew cask install minecraft
+# brew cask install minecraft
+brew cask install monitorcontrol
 brew cask install ngrok
-brew cask install omnifocus
+# brew cask install omnifocus
 brew cask install skype
 brew cask install sourcetree
 brew cask install spotify
