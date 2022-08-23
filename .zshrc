@@ -24,6 +24,8 @@ ZSH=$HOME/.oh-my-zsh
 ZSH_THEME="powerlevel10k/powerlevel10k"
 
 # fpath=(~/.zsh/completion $fpath)
+# fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
