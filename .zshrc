@@ -71,6 +71,7 @@ source $ZSH/oh-my-zsh.sh
 source ~/dotfiles/zshrc.sh
 source ~/dotfiles/.functions
 source ~/dotfiles/.aliases
+source ~/dotfiles/.fzf_aliases
 source ~/dotfiles/.extras
 # source ~/.fresh/build/shell.sh
 ###################################
