@@ -371,6 +371,15 @@ function del-merged () {
   git checkout master && git pull --rebase origin master && git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
 }
 
+function del-squashed () {
+  branch=${1:-master}
+  git checkout $branch && \
+    comm -12 \
+      <(git branch | sed "s/[ *]//g") \
+      <(git remote prune origin | sed "s/^.*origin\///g") \
+    | xargs -L1 -J % git branch -D %
+}
+
 function gh-deploy () {
   if [ -z "$1" ]
   then
