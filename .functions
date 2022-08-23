@@ -380,6 +380,15 @@ function del-squashed () {
     | xargs -L1 -J % git branch -D %
 }
 
+# Git fetch origin Fresh
+function gfresh () {
+  branch="$1"
+  git branch -D $branch;
+  git fetch origin $branch;
+  git checkout $branch;
+}
+
+
 function gh-deploy () {
   if [ -z "$1" ]
   then
