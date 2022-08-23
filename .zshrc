@@ -195,7 +195,9 @@ fi
 export PATH="$HOME/.yarn/bin:$PATH"
 
 # fnm
-# installed in .extras
+export PATH=~/.fnm:$PATH
+[ -x "$(command -v fnm)" ] && eval "$(fnm env --use-on-cd)"
+
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
