@@ -203,4 +203,7 @@ export PATH="$HOME/.yarn/bin:$PATH"
 
 # asdf plugins
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
+
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
+
+alias tmux="TERM=xterm-256color tmux"
