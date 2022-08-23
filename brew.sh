@@ -111,13 +111,16 @@ brew install rename
 brew install s3cmd
 brew install spoof-mac
 brew install ssh-copy-id
+brew install svn
 brew install tree
-brew install unrar
+# brew install unrar # doesn't exist anymore
 brew install watch
 brew install webkit2png
 brew install youtube-dl
 brew install zopfli
 brew install fzf
+brew install ripgrep
+brew install fd
 brew install pygitup
 
 # Cask installs
@@ -133,8 +136,8 @@ brew install --cask bettertouchtool
 # brew install --cask dropbox
 brew install --cask firefox
 # brew install --cask flux
-brew install homebrew/cask-fonts/font-source-code-pro
-brew install homebrew/cask-fonts/font-source-code-pro-for-powerline
+brew install font-source-code-pro
+brew install font-source-code-pro-for-powerline
 # brew install --cask google-chrome
 # brew install --cask google-drive
 brew install --cask iterm2
@@ -142,10 +145,11 @@ brew install --cask iterm2
 brew install --cask monitorcontrol
 # brew install --cask ngrok
 # brew install --cask omnifocus
+brew install --cask rocket
 # brew install --cask skype
 brew install --cask sourcetree
 brew install --cask spotify
-# brew install --cask stay
+brew install --cask stay
 # brew install --cask vlc
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew install --cask dash

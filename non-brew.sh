@@ -11,6 +11,7 @@
 # fi
 
 echo "Please ensure you have Oh My Zsh installed"
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
 git clone https://github.com/adolfoabegg/browse-commit ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/browse-commit
 git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
@@ -18,6 +19,10 @@ git clone https://github.com/asdf-vm/asdf.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}
 
 # fnm
 curl -fsSL https://fnm.vercel.app/install | bash
+
+node_version="$(fnm list-remote | tail -n 1)"
+fnm install "$node_version"
+fnm default "$node_version"
 
 # yarn
 curl -o- -L https://yarnpkg.com/install.sh | bash
@@ -53,3 +58,5 @@ yarn global add trash-cli
 # wallpaper \
 # wifi-password \
 # ;
+
+echo "Don't forget to run run `p10k configure` to install the fonts"
