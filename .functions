@@ -483,6 +483,12 @@ function googdns() {
 function cleardns() {
   networksetup -setdnsservers Wi-Fi
 }
+
+function omg() {
+  sleep_sec=${1:-0}
+  sleep $sleep_sec; say -r 350 omg omg omg;
+}
+
 # Docker helpers
 function dr() {
   docker run -a stdout -a stderr -i "$@"
