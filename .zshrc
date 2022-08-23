@@ -198,6 +198,9 @@ export PATH="$HOME/.yarn/bin:$PATH"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # asdf plugins
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
