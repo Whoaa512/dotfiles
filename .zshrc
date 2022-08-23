@@ -71,6 +71,7 @@ source $ZSH/oh-my-zsh.sh
   # sudo chown -R $USER /usr/local
 
 source ~/dotfiles/zshrc.sh
+source ~/dotfiles/.exports
 source ~/dotfiles/.functions
 source ~/dotfiles/.aliases
 source ~/dotfiles/.fzf_aliases
