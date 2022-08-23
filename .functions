@@ -483,3 +483,30 @@ function googdns() {
 function cleardns() {
   networksetup -setdnsservers Wi-Fi
 }
+# Docker helpers
+function dr() {
+  docker run -a stdout -a stderr -i "$@"
+}
+function drb() {
+  docker run -a stdout -a stderr -i -v "$(pwd):/jorb/repo" "$@" /bin/bash &
+  sleep 1
+  dps | awk '{print $1}' | sed -n 2p
+}
+
+
+function dp() {
+  docker pull "$@"
+}
+
+# shellcheck disable=SC2120
+function dps() {
+  docker ps "$@"
+}
+
+function dk() {
+  docker kill "$@"
+}
+
+function de() {
+  docker exec -it "$@" /bin/bash
+}
