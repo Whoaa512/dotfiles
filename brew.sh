@@ -29,8 +29,8 @@ brew install gnu-sed #--with-default-names
 # Note: don’t forget to add `/usr/local/bin/bash` to `/etc/shells` before
 # running `chsh`.
 brew install bash
-brew tap homebrew/versions
-brew install bash-completion2
+# brew tap homebrew/versions
+brew install bash-completion@2
 brew install zsh-syntax-highlighting
 brew install zsh-autosuggestions
 
@@ -45,9 +45,9 @@ brew install wget #--with-iri
 
 # Install more recent versions of some OS X tools.
 brew install vim #--override-system-vi
-brew install homebrew/dupes/grep
-brew install homebrew/dupes/openssh
-brew install homebrew/dupes/screen
+# brew install homebrew/dupes/grep
+# brew install homebrew/dupes/openssh
+# brew install homebrew/dupes/screen
 # brew install homebrew/php/php55 --with-gmp
 
 # Install font tools.
@@ -90,7 +90,7 @@ brew install exa
 brew install lsd
 brew install ack
 brew install dark-mode
-brew install bro
+# brew install bro
 brew install ccat
 #brew install exiv2
 brew install git
