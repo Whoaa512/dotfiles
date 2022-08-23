@@ -193,6 +193,9 @@ fi
 
 export PATH="$HOME/.yarn/bin:$PATH"
 
+# fnm
+# installed in .extras
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 # asdf plugins
