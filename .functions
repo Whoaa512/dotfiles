@@ -368,7 +368,7 @@ function add-brc-url() {
 }
 
 function del-merged () {
-	git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
+  git checkout master && git pull --rebase origin master && git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
 }
 
 function gh-deploy () {
