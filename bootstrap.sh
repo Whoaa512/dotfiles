@@ -4,7 +4,7 @@ cd "$(dirname "${BASH_SOURCE}")";
 
 localSource="$(cd "$(dirname ".zshrc")"; pwd)/$(basename ".zshrc")"
 
-git pull origin master;
+# git pull origin master;
 
 function doIt() {
 	rsync --exclude ".git/" \
@@ -20,7 +20,7 @@ function doIt() {
 		--exclude "LICENSE-MIT.txt" \
 		-avh --no-perms . ~;
 	ln -s $localSource ~/.zshrc
-	ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
+	# ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
 	source ~/.zshrc;
 }
 
