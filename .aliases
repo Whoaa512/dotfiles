@@ -19,6 +19,25 @@ alias s="subl ."
 alias o="open"
 alias oo="open ."
 alias pgrep="pgrep -fl "
+alias rgi='rg -i'
+
+alias awk1="awk '{print \$1}'"
+alias awk2="awk '{print \$2}'"
+alias awk3="awk '{print \$3}'"
+alias awk4="awk '{print \$4}'"
+alias awk5="awk '{print \$5}'"
+alias awk6="awk '{print \$6}'"
+alias awk7="awk '{print \$7}'"
+alias awk8="awk '{print \$8}'"
+alias awk9="awk '{print \$9}'"
+alias awk10="awk '{print \$10}'"
+alias awk11="awk '{print \$11}'"
+alias awk12="awk '{print \$12}'"
+alias awk13="awk '{print \$13}'"
+alias awk14="awk '{print \$14}'"
+alias awk15="awk '{print \$15}'"
+
+
 
 # # Detect which `ls` flavor is in use
 # if ls --color > /dev/null 2>&1; then # GNU `ls`
@@ -162,26 +181,27 @@ alias reload="exec $SHELL -l"
   alias k9='kill -9'
   alias wh='which'
   alias c='clear'
-  alias k='clear'
-  alias rmrf='rm -rf'
+  # alias k='clear'
+  alias rmrf='trash'
+  alias rmforce='rm -rf'
   alias tczf='tar czf'
   alias s='subl'
   alias s.='subl .'
-  alias l='ls -al'
-  alias ll='ls -l'
   alias t='tree'
-  alias se='subl ~/dotfiles/.extras'
-  alias se='subl ~/dotfiles/.extras'
-  alias sal='subl ~/dotfiles/.aliases'
-  alias sf='subl ~/dotfiles/.functions'
-  alias sz='subl ~/.zshrc'
-  alias szh='subl ~/.zsh_history'
+  alias se='code ~/dotfiles/.extras'
+  alias se='code ~/dotfiles/.extras'
+  alias sal='code ~/dotfiles/.aliases'
+  alias sf='code ~/dotfiles/.functions'
+  alias sz='code ~/.zshrc'
+  alias szh='code ~/.zsh_history'
   # alias srz='source ~/.zshrc' # Breaks for some reason :/
   alias srz='reload'
   alias st3='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias sbp='subl ~/.bash_profile'
   alias sj='subl "~/personal/Google Drive/journal.md"'
   alias ssh_='sshrc'
+  # Prevent mosh from entering alternate screen mode (which is annoying, and disables mouse support)
+  alias mosh='mosh --no-init '
 
 # Short Git aliases
   alias gi='git init'
@@ -220,9 +240,10 @@ alias reload="exec $SHELL -l"
   alias gc='git commit'
   alias gcv='git commit -v'
   alias gc!='git commit --amend'
+  alias gcn='git commit --amend --no-edit'
   alias gcv!='git commit --amend -v'
   alias gcm='git commit -v -m'
-  alias gcam='git commit -v --amend -m'
+  alias gcam='git commit -a -m'
   alias gco='git checkout'
   alias gcob='git checkout -b'
   alias gcop='git checkout -p'
@@ -239,6 +260,7 @@ alias reload="exec $SHELL -l"
   alias gplro='git pull --rebase origin'
   alias gplru='git pull --rebase upst'
   alias gplrom='git pull --rebase origin master'
+  alias gplrob='git pull --rebase origin `git branch --show-current`'
   alias gplron='git pull --rebase origin next'
   alias gplrogh='git pull --rebase origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
@@ -252,10 +274,11 @@ alias reload="exec $SHELL -l"
   alias gplum='git pull upst master'
   alias gplud='git pull upst develop'
   alias gp='git push'
+  alias gpf='git push --force-with-lease'
   alias gpo='git push origin'
   alias gpodel='git push origin --delete'
   alias gpu='git push upst'
-  alias gpfom='git push -f origin master'
+  alias gpfom='git push --force-with-lease origin master'
   alias gpom='git push origin master'
   alias gpod='git push origin develop'
   alias gpogh='git push origin gh-pages'
@@ -279,6 +302,7 @@ alias reload="exec $SHELL -l"
   alias del='git branch -d'
   alias delD='git branch -D'
   alias gco-='git checkout -'
+  alias qgfo='git fetch origin'
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
@@ -404,3 +428,15 @@ alias reload="exec $SHELL -l"
   # alias npm='npm substack'
   alias chr='open -a /Applications/Google\ Chrome\ Canary.app'
   alias ebook-convert='/Applications/calibre.app/Contents/console.app/Contents/MacOS/ebook-convert'
+
+
+
+if [[ $(command -v exa) ]]; then
+  alias l='exa -lahF'
+  alias ll='exa -lhF'
+  alias lt='exa -lahF -T'
+fi
+
+if [[ $(command -v fd) ]]; then
+  alias fdp='fd -p'
+fi
