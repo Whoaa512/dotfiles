@@ -516,3 +516,18 @@ function dk() {
 function de() {
   docker exec -it "$@" /bin/bash
 }
+
+function find_secure_input_process() {
+  pids="$(ioreg -l -w 0 \
+    | grep SecureInput \
+    | grep -oE 'PID"=([0-9]+),' \
+    | grep -oE '[0-9]+' \
+    | uniq
+  )"
+  if [ -n "$pids" ]; then
+    echo "This processes are using secure input:"
+    set -x
+    ps -p "$pids"
+    set +x
+  fi
+}
