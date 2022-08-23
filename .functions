@@ -340,6 +340,27 @@ function git-fame() {
   git ls-tree -r -z --name-only HEAD -- "${@}"  | xargs -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|sort|uniq -c|sort -nr
 }
 
+# Push and open PR
+function gppr() {
+  git push
+  branch=$(gbranch)
+  remote=$(git remote -v \
+    | grep origin \
+    | head -n1 \
+    | awk2
+  )
+  host=$(echo "$remote" \
+    | grep -oE '@(.+):' \
+    | tr -d '@:'
+  )
+  slug=$(echo "$remote" \
+    | grep -oE ':(.+).git' \
+    | sed -E 's/(\:|\.git)//g'
+  )
+  open "https://$host/$slug/pull/new/$branch"
+}
+
+
 function add-brc-url() {
   local URL="https://github.com/$1/$2/commit"
   echo "Adding browse-commit.url to local git-config: $URL"
