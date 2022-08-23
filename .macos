@@ -17,10 +17,10 @@ while true; do sudo -n true; sleep 60; kill -0 "$$" || exit; done 2>/dev/null &
 ###############################################################################
 
 # Set computer name (as done via System Preferences → Sharing)
-sudo scutil --set ComputerName "das-workbook"
-sudo scutil --set HostName "das-workbook"
-sudo scutil --set LocalHostName "das-workbook"
-sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "das-workbook"
+sudo scutil --set ComputerName "airbook"
+sudo scutil --set HostName "airbook"
+sudo scutil --set LocalHostName "airbook"
+sudo defaults write /Library/Preferences/SystemConfiguration/com.apple.smb.server NetBIOSName -string "airbook"
 
 # # Disable the sound effects on boot
 # sudo nvram SystemAudioVolume=" "
