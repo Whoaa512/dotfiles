@@ -541,3 +541,12 @@ function find_secure_input_process() {
     set +x
   fi
 }
+
+function ytrip() {
+  id=$1
+  if [ -z "$id" ]; then
+    echo "Usage: ytrip <id>"
+    return 1
+  fi
+  youtube-dl --audio-format flac -x --audio-quality 9 "https://www.youtube.com/watch?v=$id" -o "%(title)s.%(ext)s" "$@"
+}
