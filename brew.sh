@@ -88,6 +88,7 @@ brew install xz
 # Install other useful binaries.
 brew install exa
 brew install lsd
+brew install asdf
 brew install ack
 brew install dark-mode
 # brew install bro
@@ -110,6 +111,7 @@ brew install rename
 # brew install rhino
 brew install s3cmd
 brew install spoof-mac
+brew install shellcheck
 brew install ssh-copy-id
 brew install svn
 brew install tree
@@ -121,6 +123,7 @@ brew install zopfli
 brew install fzf
 brew install ripgrep
 brew install fd
+brew install rustup
 brew install pygitup
 
 # Cask installs

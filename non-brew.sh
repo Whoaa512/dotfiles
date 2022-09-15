@@ -32,31 +32,29 @@ yarn global add alfred-npms
 yarn global add nodemon
 yarn global add trash-cli
 
-# n stable
-# Npm globals
-# npm i -g \
-# airplane-mode \
-# ava \
-# brightness-cli \
-# bunyan \
-# coffee-script \
-# emoji-random \
-# iron-node \
-# n_ \
-# ndu \
-# node-inspector \
-# nodemon \
-# normit \
-# np \
-# ntl \
-# pipeable-js \
-# pm2 \
-# speed-test \
-# standard \
-# tldr \
-# trymodule \
-# wallpaper \
-# wifi-password \
-# ;
+# Golang
+asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+asdf install golang latest
+asdf global golang latest
+
+go install github.com/fiatjaf/jiq/cmd/jiq@latest
+
+# Setup extras
+touch ~/dotfiles/.extras
+
+# append EOF to .extras
+cat << EOF >> ~/dotfiles/.extras
+GIT_AUTHOR_NAME=""
+GIT_COMMITTER_NAME="\$GIT_AUTHOR_NAME"
+git config --global user.name "\$GIT_AUTHOR_NAME"
+GIT_AUTHOR_EMAIL=""
+GIT_COMMITTER_EMAIL="\$GIT_AUTHOR_EMAIL"
+git config --global user.email "\$GIT_AUTHOR_EMAIL"
+EOF
+
+yt_dl_version="$(brew info --installed --json | jq -r '.[] | select(.name == "youtube-dl") | .versions.stable')"
+echo "source $(brew --cellar youtube-dl)/$yt_dl_version/etc/bash_completion.d/youtube-dl.bash-completion" >> ~/dotfiles/.extras
+
 
 echo "Don't forget to run run `p10k configure` to install the fonts"
+echo "And update your name & email in ~/dotfiles/.extras"

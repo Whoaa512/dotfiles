@@ -203,6 +203,8 @@ export PATH=~/.fnm:$PATH
 [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+# asdf
+[ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && source /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 # asdf plugins
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
@@ -210,3 +212,12 @@ export PATH=~/.fnm:$PATH
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
 alias tmux="TERM=xterm-256color tmux"
+
+# Brew completions
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+
+  autoload -Uz compinit
+  compinit
+fi
