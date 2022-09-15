@@ -107,7 +107,8 @@ jscbin="/System/Library/Frameworks/JavaScriptCore.framework/Versions/A/Resources
 unset jscbin;
 
 # Trim new lines and copy to clipboard
-alias c="tr -d '\n' | pbcopy"
+# alias c="tr -d '\n' | pbcopy"
+alias trim="tr -d '\n' | pbcopy"
 
 # Recursively delete `.DS_Store` files
 alias cleanup="find . -type f -name '*.DS_Store' -ls -delete"
@@ -180,7 +181,7 @@ alias reload="exec $SHELL -l"
 # Bash Aliases
   alias k9='kill -9'
   alias wh='which'
-  alias c='clear'
+  # alias c='clear'
   # alias k='clear'
   alias rmrf='trash'
   alias rmforce='rm -rf'
