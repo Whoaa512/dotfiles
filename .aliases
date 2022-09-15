@@ -441,3 +441,9 @@ fi
 if [[ $(command -v fd) ]]; then
   alias fdp='fd -p'
 fi
+
+if [[ $(command -v rg) ]]; then
+  alias rg='rg -i'
+  # rg raw
+  alias rgr='rg'
+fi
