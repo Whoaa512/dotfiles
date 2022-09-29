@@ -221,3 +221,5 @@ then
   autoload -Uz compinit
   compinit
 fi
+
+[ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
