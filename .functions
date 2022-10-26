@@ -550,3 +550,8 @@ function ytrip() {
   fi
   youtube-dl --audio-format flac -x --audio-quality 9 "https://www.youtube.com/watch?v=$id" -o "%(title)s.%(ext)s" "$@"
 }
+
+# Fuzzy search open from CLI
+function fzc() {
+  fzf | xargs code
+}
