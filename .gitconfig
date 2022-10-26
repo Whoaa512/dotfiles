@@ -207,3 +207,5 @@
 	enabled = yes
 [init]
 	defaultBranch = main
+[pager]
+	branch = false
