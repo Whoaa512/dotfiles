@@ -157,6 +157,7 @@ brew install --cask stay
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew install --cask dash
 brew install --cask apppolice
+brew install --cask plistedit-pro
 
 # Mac Store installs
 # mas sigin whoaa512@gmail.com
