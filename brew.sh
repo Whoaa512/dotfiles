@@ -156,6 +156,7 @@ brew install --cask stay
 # brew install --cask vlc
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew install --cask dash
+brew install --cask apppolice
 
 # Mac Store installs
 # mas sigin whoaa512@gmail.com
