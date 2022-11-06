@@ -29,6 +29,7 @@ curl -o- -L https://yarnpkg.com/install.sh | bash
 
 # alfred search workflow
 yarn global add alfred-npms
+yarn global add alfred-emoj
 yarn global add nodemon
 yarn global add trash-cli
 
