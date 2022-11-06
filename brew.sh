@@ -125,6 +125,7 @@ brew install ripgrep
 brew install fd
 brew install rustup
 brew install pygitup
+brew install miniforge
 
 # Cask installs
 # prerequisites:
