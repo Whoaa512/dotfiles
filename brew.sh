@@ -126,6 +126,7 @@ brew install fd
 brew install rustup
 brew install pygitup
 brew install miniforge
+brew install ncdu
 
 # Cask installs
 # prerequisites:
