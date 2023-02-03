@@ -558,5 +558,5 @@ function ytrip() {
 # Fuzzy search open from CLI
 function fzc() {
   # Use fd to filter our ignored files
-  fd | fzf | xargs code
+  fd "$@" | fzf | xargs code
 }
