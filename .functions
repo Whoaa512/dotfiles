@@ -353,6 +353,10 @@ function git-fame() {
 # Push and open PR
 function gppr() {
   git push
+  if [ $? -ne 0 ]; then
+    return
+  fi
+
   branch=$(gbranch)
   remote=$(git remote -v \
     | grep origin \
