@@ -256,7 +256,7 @@ alias reload="exec $SHELL -l"
   alias gdc='git diff --cached'
   alias gdh='git diff head'
   alias gf='git fetch'
-  alias gl='git log --format="%C(auto)%h%Creset %Cgreen[%an]%Creset %C(auto)%d%Creset %s"'
+  alias gl='git log --format="%C(auto)%h%Creset %Cgreen[%an]%Creset %C(auto)(%ah)%Creset %C(auto)%d%Creset %s"'
   alias gll='git log'
   alias gpl='git pull'
   alias gplr='git pull --rebase'
