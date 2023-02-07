@@ -21,6 +21,7 @@ alias oo="open ."
 alias pgrep="pgrep -fl "
 alias rgi='rg -i'
 alias fcz='fzc' # fuzzy code open
+alias reset="clear && printf '\e[3J'" # clear terminal properly
 
 alias awk1="awk '{print \$1}'"
 alias awk2="awk '{print \$2}'"
