@@ -99,6 +99,7 @@ brew install git-lfs
 brew install htop
 brew install hub
 brew install jq
+brew install fx
 brew install imagemagick #--with-webp
 brew install lua
 brew install lynx
