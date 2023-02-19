@@ -560,3 +560,11 @@ function fzc() {
   # Use fd to filter our ignored files
   fd "$@" | fzf | xargs code
 }
+
+# like rm -rf but moves to /tmp and prints location
+function rmt() {
+  local tmpdir="/tmp/rmt-$(date +%s)"
+  mkdir -p "$tmpdir"
+  mv "$@" "$tmpdir"
+  echo "Moved to $tmpdir"
+}
