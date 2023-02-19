@@ -1,3 +1,4 @@
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix'
 # # fbr - checkout git branch
 # fbr() {
 #   local branches branch
