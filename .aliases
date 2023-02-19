@@ -194,6 +194,8 @@ alias reload="exec $SHELL -l"
   alias se='code ~/dotfiles/.extras'
   alias se='code ~/dotfiles/.extras'
   alias sal='code ~/dotfiles/.aliases'
+  # Shellcheck ignore
+  alias sd="code $(realpath ~/dotfiles)"
   alias sf='code ~/dotfiles/.functions'
   alias sz='code ~/.zshrc'
   alias szh='code ~/.zsh_history'
