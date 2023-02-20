@@ -252,7 +252,6 @@ alias reload="exec $SHELL -l"
   alias gco='git checkout'
   alias gcob='git checkout -b'
   alias gcop='git checkout -p'
-  alias gcom='git checkout master'
   alias gclean='git clean '
   alias gd='git diff'
   alias gdc='git diff --cached'
@@ -264,30 +263,23 @@ alias reload="exec $SHELL -l"
   alias gplr='git pull --rebase'
   alias gplro='git pull --rebase origin'
   alias gplru='git pull --rebase upst'
-  alias gplrom='git pull --rebase origin master'
   alias gplrob='git pull --rebase origin `git branch --show-current`'
   alias gplron='git pull --rebase origin next'
   alias gplrogh='git pull --rebase origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
-  alias gplrum='git pull --rebase upst master'
   alias gplrugh='git pull --rebase upst gh-pages'
   alias gplrud='git pull --rebase upst develop'
   alias gplo='git pull origin'
-  alias gplom='git pull origin master'
   alias gplod='git pull origin develop'
   alias gplu='git pull upst'
-  alias gplum='git pull upst master'
   alias gplud='git pull upst develop'
   alias gp='git push'
   alias gpf='git push --force-with-lease'
   alias gpo='git push origin'
   alias gpodel='git push origin --delete'
   alias gpu='git push upst'
-  alias gpfom='git push --force-with-lease origin master'
-  alias gpom='git push origin master'
   alias gpod='git push origin develop'
   alias gpogh='git push origin gh-pages'
-  alias gpum='git push upst master'
   alias gpud='git push upst develop'
   alias gpugh='git push upst gh-pages'
   alias grb='git rebase'
@@ -451,3 +443,45 @@ if [[ $(command -v rg) ]]; then
   # rg raw
   alias rgr='rg'
 fi
+
+
+alias git_default_branch="git rev-parse --abbrev-ref origin/HEAD 2>/dev/null | sed 's/origin\///'"
+
+function gplrom() {
+  git pull --rebase origin "$(git_default_branch)"
+}
+
+function gplom() {
+  git pull origin "$(git_default_branch)"
+}
+
+function gcom() {
+  git checkout "$(git_default_branch)"
+}
+
+function gplrum() {
+  git pull --rebase upst "$(git_default_branch)"
+}
+
+function gplum() {
+  git pull upst "$(git_default_branch)"
+}
+
+function gpfom() {
+  local def_branch
+  def_branch="$(git_default_branch)"
+  read -p "Are you sure you want to force push to origin/$def_branch? " -n 1 -r
+  echo
+  if [[ $REPLY =~ ^[Yy]$ ]]
+  then
+    git push --force-with-lease origin "$def_branch"
+  fi
+}
+
+function gpom() {
+  git push origin "$(git_default_branch)"
+}
+
+function gpum() {
+  git push upst "$(git_default_branch)"
+}
