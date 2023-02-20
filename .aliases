@@ -485,3 +485,6 @@ function gpom() {
 function gpum() {
   git push upst "$(git_default_branch)"
 }
+
+# allow colors in watch
+alias watch='watch -c'
