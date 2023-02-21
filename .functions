@@ -382,12 +382,16 @@ function add-brc-url() {
 }
 
 function del-merged () {
-  git checkout master && git pull --rebase origin master && git branch --merged | grep -v "\*" | grep -v "master|develop|next|stage|demo" | xargs -n 1 git branch -d
+  default_branch="$(git_default_branch)"
+  branch=${1:-$default_branch}
+
+  git checkout $branch && git pull --rebase origin $branch && git branch --merged | grep -v "\*" | rg -v "($branch|develop|next|stage|demo)" | xargs -n 1 git branch -d
 }
 
 function del-squashed () {
-  branch=${1:-master}
-  git checkout $branch && \
+  default_branch="$(git_default_branch)"
+  branch=${1:-$default_branch}
+  git checkout "$branch" && \
     comm -12 \
       <(git branch | sed "s/[ *]//g") \
       <(git remote prune origin | sed "s/^.*origin\///g") \
