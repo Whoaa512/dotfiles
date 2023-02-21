@@ -261,14 +261,23 @@ alias reload="exec $SHELL -l"
   alias gll='git log'
   alias gpl='git pull'
   alias gplr='git pull --rebase'
+  alias gplri='git pull --rebase=i'
   alias gplro='git pull --rebase origin'
+  alias gplroi='git pull --rebase=i origin'
   alias gplru='git pull --rebase upst'
+  alias gplrui='git pull --rebase=i upst'
   alias gplrob='git pull --rebase origin `git branch --show-current`'
+  alias gplrobi='git pull --rebase=i origin `git branch --show-current`'
   alias gplron='git pull --rebase origin next'
+  alias gplroni='git pull --rebase=i origin next'
   alias gplrogh='git pull --rebase origin gh-pages'
+  alias gplroghi='git pull --rebase=i origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
+  alias gplrodi='git pull --rebase=i origin develop; gsu'
   alias gplrugh='git pull --rebase upst gh-pages'
+  alias gplrughi='git pull --rebase=i upst gh-pages'
   alias gplrud='git pull --rebase upst develop'
+  alias gplrudi='git pull --rebase=i upst develop'
   alias gplo='git pull origin'
   alias gplod='git pull origin develop'
   alias gplu='git pull upst'
@@ -451,9 +460,14 @@ function gplrom() {
   git pull --rebase origin "$(git_default_branch)"
 }
 
+function gplromi() {
+  git pull --rebase=interactive origin "$(git_default_branch)"
+}
+
 function gplom() {
   git pull origin "$(git_default_branch)"
 }
+
 
 function gcom() {
   git checkout "$(git_default_branch)"
