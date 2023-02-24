@@ -352,7 +352,14 @@ function git-fame() {
 
 # Push and open PR
 function gppr() {
-  git push
+  # check for -f in args
+  force=""
+  for arg in "$@"; do
+    if [ "$arg" = "-f" ]; then
+      force="--force-with-lease"
+    fi
+  done
+  git push $force
   if [ $? -ne 0 ]; then
     return
   fi
