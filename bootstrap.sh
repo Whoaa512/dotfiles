@@ -1,6 +1,6 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
-cd "$(dirname "${BASH_SOURCE}")";
+cd "$(dirname "${0:A}")"
 
 localSource="$(cd "$(dirname ".zshrc")"; pwd)/$(basename ".zshrc")"
 
@@ -18,19 +18,20 @@ function doIt() {
 		--exclude ".extras" \
 		--exclude "dotfiles.sublime-workspace" \
 		--exclude "LICENSE-MIT.txt" \
-		-avh --no-perms . ~;
+		-avh --no-perms . ~
 	ln -s $localSource ~/.zshrc
 	# ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
-	source ~/.zshrc;
+	source ~/.zshrc
 }
 
-if [ "$1" == "--force" -o "$1" == "-f" ]; then
-	doIt;
+if [[ "$1" = "--force" ]] || [[ "$1" = "-f" ]]; then
+	doIt
 else
-	read -p "This may overwrite existing files in your home directory. Are you sure? (y/n) " -n 1;
-	echo "";
+	read -q "REPLY?This may overwrite existing files in your home directory. Are you sure? (y/n) "
+	echo ""
 	if [[ $REPLY =~ ^[Yy]$ ]]; then
-		doIt;
-	fi;
-fi;
-unset doIt;
+		doIt
+	fi
+fi
+
+unset doIt
