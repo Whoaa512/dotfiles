@@ -17,9 +17,6 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
 git clone https://github.com/asdf-vm/asdf.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/asdf
 
-# fnm
-curl -fsSL https://fnm.vercel.app/install | bash
-
 node_version="$(fnm list-remote | tail -n 1)"
 fnm install "$node_version"
 fnm default "$node_version"

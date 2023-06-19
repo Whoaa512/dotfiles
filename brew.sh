@@ -128,6 +128,8 @@ brew install rustup
 brew install pygitup
 brew install miniforge
 brew install ncdu
+# node.js version manager
+brew install fnm
 
 # Cask installs
 # prerequisites:
