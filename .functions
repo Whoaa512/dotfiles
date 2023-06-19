@@ -354,12 +354,16 @@ function git-fame() {
 function gppr() {
   # check for -f in args
   force=""
+  no_verify=""
   for arg in "$@"; do
     if [ "$arg" = "-f" ]; then
       force="--force-with-lease"
     fi
+    if [ "$arg" = "-n" ]; then
+      no_verify="--no-verify"
+    fi
   done
-  git push $force
+  git push $force $no_verify
   if [ $? -ne 0 ]; then
     return
   fi
@@ -380,6 +384,9 @@ function gppr() {
   )
   open "https://$host/$slug/pull/new/$branch"
 }
+alias gpprf='gppr -f'
+alias gpprn='gppr -n'
+alias gpprfn='gppr -f -n'
 
 
 function add-brc-url() {
@@ -404,6 +411,7 @@ function del-squashed () {
       <(git remote prune origin | sed "s/^.*origin\///g") \
     | xargs -L1 -J % git branch -D %
 }
+
 
 # Git fetch origin Fresh
 function gfresh () {
