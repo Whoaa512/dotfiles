@@ -133,8 +133,8 @@ brew install fnm
 
 # Cask installs
 # prerequisites:
-brew tap caskroom/fonts
-brew tap caskroom/versions
+brew tap homebrew/cask-fonts
+brew tap homebrew/cask-versions
 
 brew install --cask alfred
 # brew install --cask atom
