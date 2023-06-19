@@ -66,6 +66,7 @@ COMPLETION_WAITING_DOTS="true"
 plugins=(git browse-commit heroku zsh-syntax-highlighting zsh-autosuggestions asdf)
 
 source $ZSH/oh-my-zsh.sh
+[[ -f /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # No sudo on npm -- run once
   # sudo chown -R $USER /usr/local
