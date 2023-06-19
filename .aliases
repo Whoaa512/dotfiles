@@ -436,7 +436,7 @@ alias reload="exec $SHELL -l"
   alias ebook-convert='/Applications/calibre.app/Contents/console.app/Contents/MacOS/ebook-convert'
 
 
-
+alias lt='echo "please install exa"'
 if [[ $(command -v exa) ]]; then
   alias l='exa -lahF'
   alias ll='exa -lhF'
