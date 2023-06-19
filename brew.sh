@@ -163,6 +163,7 @@ brew install --cask stay
 # brew install --cask dash
 brew install --cask apppolice
 brew install --cask plistedit-pro
+brew install --cask 1password
 
 # Mac Store installs
 # mas sigin whoaa512@gmail.com
