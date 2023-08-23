@@ -244,6 +244,7 @@ alias reload="exec $SHELL -l"
   alias gclr='git clone --recursive'
   alias gc='git commit'
   alias gcv='git commit -v'
+  alias gcvn='git commit -v --no-verify'
   alias gc!='git commit --amend'
   alias gcn='git commit --amend --no-edit'
   alias gcv!='git commit --amend -v'
@@ -438,11 +439,15 @@ alias reload="exec $SHELL -l"
   alias ebook-convert='/Applications/calibre.app/Contents/console.app/Contents/MacOS/ebook-convert'
 
 
-alias lt='echo "please install exa"'
+alias lt='echo "please install exa or tree"'
 if [[ $(command -v exa) ]]; then
   alias l='exa -lahF'
   alias ll='exa -lhF'
   alias lt='exa -lahF -T'
+else
+  if [[ $(command -v tree) ]]; then
+    alias lt='tree'
+  fi
 fi
 
 if [[ $(command -v fd) ]]; then
