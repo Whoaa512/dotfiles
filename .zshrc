@@ -215,7 +215,8 @@ export PATH=~/.fnm:$PATH
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # asdf
-[ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && source /opt/homebrew/opt/asdf/libexec/asdf.sh
+# already handled by oh-my-zsh
+# [ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && source /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 # asdf plugins
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
