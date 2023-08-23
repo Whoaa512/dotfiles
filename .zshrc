@@ -10,7 +10,17 @@ ulimit -n 9999
 export GOPATH=~/go
 ELM_PLAT_PATH=~/code/Elm-Platform/0.15.1/.cabal-sandbox/bin
 
-export PATH=$GOPATH:$GOPATH/bin:$ELM_PLAT_PATH:$HOME/bin:/usr/local/sbin:/usr/local/bin:~/bin:/usr/local/share/npm/bin:$HOME/Library/Haskell/bin:$PATH
+export PATH=$GOPATH\
+:$GOPATH/bin\
+:$ELM_PLAT_PATH\
+:$HOME/bin\
+:/usr/local/sbin\
+:/usr/local/bin\
+:~/.local/bin\
+:~/bin\
+:/usr/local/share/npm/bin\
+:$HOME/Library/Haskell/bin\
+:$PATH
 
 export NODE_REPL_HISTORY_SIZE=10000
 
