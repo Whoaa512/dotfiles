@@ -409,7 +409,7 @@ function del-squashed () {
     comm -12 \
       <(git branch | sed "s/[ *]//g") \
       <(git remote prune origin | sed "s/^.*origin\///g") \
-    | xargs -L1 -J % git branch -D %
+    | xargs -L1 -I % git branch -D %
 }
 
 
