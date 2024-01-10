@@ -587,3 +587,8 @@ function rmt() {
   mv "$@" "$tmpdir"
   echo "Moved to $tmpdir"
 }
+
+# fix ssh-agent forwarding
+fixssh() {
+  eval $(tmux show-env -s |grep '^SSH_')
+}
