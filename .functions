@@ -382,7 +382,12 @@ function gppr() {
     | grep -oE ':(.+).git' \
     | sed -E 's/(\:|\.git)//g'
   )
-  open "https://$host/$slug/pull/new/$branch"
+  url_slug="https://$host/$slug/pull/new/$branch"
+  if [[ $(command -v open) ]]; then
+    open "$url_slug"
+  else
+    echo "Open a new PR here: $url_slug"
+  fi
 }
 alias gpprf='gppr -f'
 alias gpprn='gppr -n'
