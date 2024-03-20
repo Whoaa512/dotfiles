@@ -209,3 +209,6 @@
 	defaultBranch = main
 [pager]
 	branch = false
+
+[rebase]
+	updateRefs = true
