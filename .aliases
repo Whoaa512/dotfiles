@@ -10,7 +10,7 @@ alias -- -="cd -"
 alias d="cd ~/Documents/Dropbox"
 alias dl="cd ~/Downloads"
 alias dt="cd ~/Desktop"
-alias p="cd ~/projects"
+# alias p="cd ~/projects"
 alias g="git"
 alias h="history"
 alias j="jobs"
@@ -355,7 +355,7 @@ alias reload="exec $SHELL -l"
   alias cww='cd ~/work/code_work/wookie'
   alias csub='cd ~/Library/Application\ Support/Sublime\ Text\ 3/'
   alias d='cd ~/personal/Dropbox'
-  alias p='cd ~/personal/Dropbox/devWork/code/node/projects'
+  # alias p='cd ~/personal/Dropbox/devWork/code/node/projects'
   alias lew="cd ~/personal/Dropbox/devWork/code/node/projects/htmlLemmings/projects/lemmings"
   alias nn="cd ~/personal/neural-news"
 
