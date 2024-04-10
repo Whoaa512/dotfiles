@@ -509,3 +509,7 @@ function gpum() {
 
 # allow colors in watch
 alias watch='watch -c'
+
+
+alias json2yaml="python -c 'import sys, yaml, json; yaml.dump(json.load(sys.stdin), sys.stdout)'"
+alias yaml2json="python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin), sys.stdout, indent=4)'"
