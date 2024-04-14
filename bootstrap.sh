@@ -23,7 +23,6 @@ function doIt() {
 		mv ~/.zshrc ~/.zshrc.old
 	fi
 	ln -s $localSource ~/.zshrc
-	# ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
 	source ~/.zshrc
 }
 
