@@ -19,6 +19,9 @@ function doIt() {
 		--exclude "dotfiles.sublime-workspace" \
 		--exclude "LICENSE-MIT.txt" \
 		-avh --no-perms . ~
+	if [ -f ~/.zshrc ] && [[ "$(realpath ~/.zshrc)" != "$localSource" ]]; then
+		mv ~/.zshrc ~/.zshrc.old
+	fi
 	ln -s $localSource ~/.zshrc
 	# ln -s "$(cd "$(dirname "bin/git-dropbox.sh")"; pwd)/$(basename "bin/git-dropbox.sh")" ~/.zshrc
 	source ~/.zshrc
