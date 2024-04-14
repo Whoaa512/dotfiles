@@ -31,6 +31,18 @@ bash non-brew.sh
 ~/code/dotfiles/.macos
 ```
 
+### Things of note
+
+My dotfiles is a fork of the awesome [@mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles) and then I have incrementally added/edited things for my personal use over the years.
+
+At a high level, this includes:
+- [Oh-my-zsh](https://ohmyz.sh/) as the general framework for plugins
+- [powerlevel10k](https://github.com/romkatv/powerlevel10k) for the theme and some good git speed boosts. Also provides the awesome font with icons
+- [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions) plugin to offer recently used commands
+- [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting) plugin to do some basic shell syntax highlighting
+- [MacOS sensible defaults](./.macos) from [@mathiasbynens/dotfiles](https://github.com/mathiasbynens/dotfiles) (though I don't update super frequently from upstream, and have made slight modifications)
+- History search on the up/down arrow keys provided by [.inputrc](./.inputrc)
+- and a general install point for the various tools I use/need
 
 
 ### Specify the `$PATH`
