@@ -22,6 +22,7 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.
 # Clone repo & bootstrap
 mkdir -p ~/code
 git clone https://github.com/whoaa512/dotfiles.git ~/code/dotfiles
+ln -s ~/code/dotfiles ~/dotfiles
 cd ~/code/dotfiles && zsh bootstrap.sh
 # [Optional] Run the brew formulae
 bash brew.sh
