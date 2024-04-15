@@ -35,6 +35,8 @@ asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 asdf install golang latest
 asdf global golang latest
 
+go install github.com/segmentio/golines@latest
+
 go install github.com/fiatjaf/jiq/cmd/jiq@latest
 
 # Setup extras
