@@ -119,7 +119,8 @@ brew install tree
 # brew install unrar # doesn't exist anymore
 brew install watch
 brew install webkit2png
-brew install youtube-dl
+# brew install youtube-dl # deprecated
+brew install yt-dlp
 brew install zopfli
 brew install fzf
 brew install ripgrep

@@ -52,8 +52,8 @@ GIT_COMMITTER_EMAIL="\$GIT_AUTHOR_EMAIL"
 git config --global user.email "\$GIT_AUTHOR_EMAIL"
 EOF
 
-yt_dl_version="$(brew info --installed --json | jq -r '.[] | select(.name == "youtube-dl") | .versions.stable')"
-echo "source $(brew --cellar youtube-dl)/$yt_dl_version/etc/bash_completion.d/youtube-dl.bash-completion" >> ~/dotfiles/.extras
+# yt_dl_version="$(brew info --installed --json | jq -r '.[] | select(.name == "youtube-dl") | .versions.stable')"
+# echo "source $(brew --cellar youtube-dl)/$yt_dl_version/etc/bash_completion.d/youtube-dl.bash-completion" >> ~/dotfiles/.extras
 
 
 echo "Don't forget to run run `p10k configure` to install the fonts"
