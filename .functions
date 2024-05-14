@@ -412,8 +412,8 @@ function del-squashed () {
   branch=${1:-$default_branch}
   git checkout "$branch" && \
     comm -12 \
-      <(git branch | sed "s/[ *]//g") \
-      <(git remote prune origin | sed "s/^.*origin\///g") \
+      <(git branch | sed "s/[ *]//g" | sort) \
+      <(git remote prune origin | sed "s/^.*origin\///g" | sort) \
     | xargs -L1 -I % git branch -D %
 }
 
