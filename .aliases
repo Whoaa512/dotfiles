@@ -243,6 +243,7 @@ alias reload="exec $SHELL -l"
   alias gcl=clonecd
   alias gclr='git clone --recursive'
   alias gc='git commit'
+  alias gcf='git commit --fixup'
   alias gcv='git commit -v'
   alias gcvn='git commit -v --no-verify'
   alias gc!='git commit --amend'
