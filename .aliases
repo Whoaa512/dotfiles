@@ -226,6 +226,7 @@ alias reload="exec $SHELL -l"
   alias ga='git add'
   alias gap='git add -p'
   alias ggap='git add -p'
+  alias gau='git add -u'
   alias gaa='git add .;gs'
   alias gre='git reset'
   alias greh='git reset --h'
@@ -312,7 +313,8 @@ alias reload="exec $SHELL -l"
   alias del='git branch -d'
   alias delD='git branch -D'
   alias gco-='git checkout -'
-  alias qgfo='git fetch origin'
+  alias gfo='git fetch origin'
+  alias gcp='git cherry-pick'
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
