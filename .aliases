@@ -317,6 +317,7 @@ alias reload="exec $SHELL -l"
   alias gcp='git cherry-pick'
   alias grb="git rebase"
   alias grbi="git rebase --interactive"
+  alias grba="git rebase --abort"
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
