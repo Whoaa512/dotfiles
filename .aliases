@@ -319,6 +319,7 @@ alias reload="exec $SHELL -l"
   alias grb="git rebase"
   alias grbi="git rebase --interactive"
   alias grba="git rebase --abort"
+  alias undo_head="git reset HEAD~"
 
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
