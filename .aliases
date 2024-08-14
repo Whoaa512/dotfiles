@@ -466,6 +466,8 @@ if [[ $(command -v rg) ]]; then
   alias rg='rg -i'
   # rg raw
   alias rgr='rg'
+  # rg case-sensitive
+  alias rgI='rg'
 fi
 
 
