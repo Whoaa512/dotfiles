@@ -347,7 +347,7 @@ function git-aliases() {
 }
 
 function git-fame() {
-  git ls-tree -r -z --name-only HEAD -- "${@}"  | xargs -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|sort|uniq -c|sort -nr
+  git ls-tree -r -z --name-only HEAD -- "${@}"  | xargs -P"$(nproc)" -0 -n1 git blame --line-porcelain HEAD |grep  "^author "|sort|uniq -c|sort -nr
 }
 
 # Push and open PR
