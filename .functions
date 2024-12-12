@@ -609,3 +609,17 @@ function things_on_ports() {
       done \
     | sort -n
 }
+
+join_strings() {
+  local delim=${1:-,}  # Default delimiter is comma
+  local first=1
+  while IFS= read -r line; do
+      if ((first)); then
+          printf "%s" "$line"
+          first=0
+      else
+          printf "%s%s" "$delim" "$line"
+      fi
+  done
+  printf "\n"
+}
