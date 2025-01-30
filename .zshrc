@@ -1,3 +1,7 @@
+# make history huge, really huge.
+SAVEHIST=100000000
+HISTSIZE=100000000
+
 # Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
 # Initialization code that may require console input (password prompts, [y/n]
 # confirmations, etc.) must gco above this block, everything else may go below.
