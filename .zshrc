@@ -239,3 +239,9 @@ then
 fi
 
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
+
+# bun completions
+[ -s "/Users/cjw/.bun/_bun" ] && source "/Users/cjw/.bun/_bun"
+
+# Added by Windsurf
+export PATH="$HOME/.codeium/windsurf/bin:$PATH"
