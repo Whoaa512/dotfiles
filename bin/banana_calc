@@ -1,0 +1,29 @@
+#!/usr/bin/env python3
+
+def calculate_flour(banana_weight):
+    original_banana = 325
+    original_flour = 220
+    flour_to_banana_ratio = original_flour / original_banana
+
+    flour_needed = banana_weight * flour_to_banana_ratio
+    return round(flour_needed, 2)
+
+if __name__ == "__main__":
+    print("Banana Bread Flour Calculator")
+    print("------------------------------")
+
+    while True:
+        banana_input = input("Enter the weight of bananas in grams (or 'q' to quit): ")
+
+        if banana_input.lower() == 'q':
+            print("Goodbye!")
+            break
+
+        try:
+            banana_weight = float(banana_input)
+            flour_needed = calculate_flour(banana_weight)
+            print(f"For {banana_weight}g of bananas, you need {flour_needed}g of flour.")
+            print()
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+            print()
