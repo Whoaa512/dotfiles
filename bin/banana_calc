@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import sys
 
 def calculate_flour(banana_weight):
     original_banana = 325
@@ -9,21 +10,14 @@ def calculate_flour(banana_weight):
     return round(flour_needed, 2)
 
 if __name__ == "__main__":
-    print("Banana Bread Flour Calculator")
-    print("------------------------------")
+    if len(sys.argv) != 2:
+        print("Usage: banana_calc <banana_weight_in_grams>")
+        sys.exit(1)
 
-    while True:
-        banana_input = input("Enter the weight of bananas in grams (or 'q' to quit): ")
-
-        if banana_input.lower() == 'q':
-            print("Goodbye!")
-            break
-
-        try:
-            banana_weight = float(banana_input)
-            flour_needed = calculate_flour(banana_weight)
-            print(f"For {banana_weight}g of bananas, you need {flour_needed}g of flour.")
-            print()
-        except ValueError:
-            print("Invalid input. Please enter a number.")
-            print()
+    try:
+        banana_weight = float(sys.argv[1])
+        flour_needed = calculate_flour(banana_weight)
+        print(f"For {banana_weight}g of bananas, you need {flour_needed}g of flour.")
+    except ValueError:
+        print("Error: Please provide a valid number for banana weight")
+        sys.exit(1)
