@@ -9,6 +9,22 @@ def calculate_flour(banana_weight):
     flour_needed = banana_weight * flour_to_banana_ratio
     return round(flour_needed, 2)
 
+def calculate_yogurt(banana_weight):
+    original_banana = 325
+    original_yogurt = 125
+    yogurt_to_banana_ratio = original_yogurt / original_banana
+
+    yogurt_needed = banana_weight * yogurt_to_banana_ratio
+    return round(yogurt_needed, 2)
+
+def calculate_butter(banana_weight):
+    original_banana = 325
+    original_butter = 114
+    butter_to_banana_ratio = original_butter / original_banana
+
+    butter_needed = banana_weight * butter_to_banana_ratio
+    return round(butter_needed, 2)
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: banana_calc <banana_weight_in_grams>")
@@ -17,7 +33,12 @@ if __name__ == "__main__":
     try:
         banana_weight = float(sys.argv[1])
         flour_needed = calculate_flour(banana_weight)
-        print(f"For {banana_weight}g of bananas, you need {flour_needed}g of flour.")
+        yogurt_needed = calculate_yogurt(banana_weight)
+        butter_needed = calculate_butter(banana_weight)
+        print(f"For {banana_weight}g of bananas, you need:")
+        print(f"  {flour_needed}g of flour")
+        print(f"  {yogurt_needed}g of yogurt")
+        print(f"  {butter_needed}g of butter")
     except ValueError:
         print("Error: Please provide a valid number for banana weight")
         sys.exit(1)
