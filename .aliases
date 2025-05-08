@@ -447,11 +447,11 @@ alias reload="exec $SHELL -l"
   alias ebook-convert='/Applications/calibre.app/Contents/console.app/Contents/MacOS/ebook-convert'
 
 
-alias lt='echo "please install exa or tree"'
-if [[ $(command -v exa) ]]; then
-  alias l='exa -lahF'
-  alias ll='exa -lhF'
-  alias lt='exa -lahF -T'
+alias lt='echo "please install eza or tree"'
+if [[ $(command -v eza) ]]; then
+  alias l='eza -lahF'
+  alias ll='eza -lhF'
+  alias lt='eza -lahF -T'
 else
   if [[ $(command -v tree) ]]; then
     alias lt='tree'

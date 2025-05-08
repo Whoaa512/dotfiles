@@ -86,7 +86,7 @@ brew install xpdf
 brew install xz
 
 # Install other useful binaries.
-brew install exa
+brew install eza
 brew install lsd
 brew install asdf
 brew install ack
