@@ -142,14 +142,16 @@ brew install --cask alfred
 # brew install --cask battle-net
 brew install --cask bettertouchtool
 # brew install --cask disk-inventory-x
-# brew install --cask dropbox
+brew install --cask dropbox
 brew install --cask firefox
 # brew install --cask flux
 brew install font-source-code-pro
 brew install font-source-code-pro-for-powerline
+brew install font-meslo-for-powerlevel10k
 # brew install --cask google-chrome
 # brew install --cask google-drive
 brew install --cask iterm2
+brew install --cask visual-studio-code
 # brew install --cask minecraft
 brew install --cask monitorcontrol
 # brew install --cask ngrok
@@ -162,7 +164,6 @@ brew install --cask stay
 # brew install --cask vlc
 # Dash should be installed via AppStore, since I purchased v3 from there
 # brew install --cask dash
-brew install --cask apppolice
 brew install --cask plistedit-pro
 brew install --cask 1password
 
