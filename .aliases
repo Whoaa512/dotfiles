@@ -452,6 +452,7 @@ if [[ $(command -v eza) ]]; then
   alias l='eza -lahF'
   alias ll='eza -lhF'
   alias lt='eza -lahF -T'
+  alias exa='eza' # muscle memory is hard to break
 else
   if [[ $(command -v tree) ]]; then
     alias lt='tree'
