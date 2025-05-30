@@ -90,6 +90,7 @@ brew install eza
 brew install lsd
 brew install asdf
 brew install ack
+brew install btop
 brew install dark-mode
 # brew install bro
 brew install ccat
