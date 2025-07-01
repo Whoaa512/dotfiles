@@ -217,10 +217,11 @@ export PATH=~/.fnm:$PATH
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # asdf
 # already handled by oh-my-zsh
 # [ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && source /opt/homebrew/opt/asdf/libexec/asdf.sh
+# Load fzf
+[ -x "$(command -v fzf)" ] && source <(fzf --zsh)
 
 # asdf plugins
 [ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
