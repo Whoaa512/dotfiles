@@ -87,8 +87,9 @@ brew install xz
 
 # Install other useful binaries.
 brew install eza
+brew install mise
 brew install lsd
-brew install asdf
+# brew install asdf
 brew install ack
 brew install btop
 brew install dark-mode

@@ -15,11 +15,11 @@ git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$
 git clone https://github.com/adolfoabegg/browse-commit ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/browse-commit
 git clone https://github.com/zsh-users/zsh-syntax-highlighting ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
 git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
-git clone https://github.com/asdf-vm/asdf.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/asdf
 
-node_version="$(fnm list-remote | tail -n 1)"
-fnm install "$node_version"
-fnm default "$node_version"
+mise use --global node@lts
+mise use --global go@latest
+mise use --global python@latest
+
 
 # yarn
 curl -o- -L https://yarnpkg.com/install.sh | bash
@@ -30,10 +30,6 @@ yarn global add alfred-emoj
 yarn global add nodemon
 yarn global add trash-cli
 
-# Golang
-asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
-asdf install golang latest
-asdf global golang latest
 
 go install github.com/segmentio/golines@latest
 

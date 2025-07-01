@@ -77,7 +77,7 @@ COMPLETION_WAITING_DOTS="true"
 # Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
-plugins=(zsh-syntax-highlighting zsh-autosuggestions asdf)
+plugins=(zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 [[ -f /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -217,14 +217,12 @@ export PATH=~/.fnm:$PATH
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
 
-# asdf
-# already handled by oh-my-zsh
-# [ -f /opt/homebrew/opt/asdf/libexec/asdf.sh ] && source /opt/homebrew/opt/asdf/libexec/asdf.sh
 # Load fzf
 [ -x "$(command -v fzf)" ] && source <(fzf --zsh)
 
-# asdf plugins
-[ -f ~/.asdf/plugins/java/set-java-home.zsh ] && . ~/.asdf/plugins/java/set-java-home.zsh
+# Mise
+[ -x "$(command -v mise)" ] && eval "$(mise activate zsh)"
+
 
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
