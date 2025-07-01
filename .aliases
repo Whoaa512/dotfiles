@@ -449,9 +449,9 @@ alias reload="exec $SHELL -l"
 
 alias lt='echo "please install eza or tree"'
 if [[ $(command -v eza) ]]; then
-  alias l='eza -lahF'
-  alias ll='eza -lhF'
-  alias lt='eza -lahF -T'
+  alias l='eza -lahF auto'
+  alias ll='eza -lhF auto'
+  alias lt='eza -lahF auto -T'
   alias exa='eza' # muscle memory is hard to break
 else
   if [[ $(command -v tree) ]]; then
