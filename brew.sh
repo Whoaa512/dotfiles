@@ -70,6 +70,7 @@ brew install ffmpeg
 brew install foremost
 brew install hashpump
 brew install hydra
+brew install gpg
 brew install john
 brew install knock
 brew install netpbm
@@ -92,6 +93,7 @@ brew install lsd
 # brew install asdf
 brew install ack
 brew install btop
+brew install bat
 brew install dark-mode
 # brew install bro
 brew install ccat
@@ -118,6 +120,7 @@ brew install shellcheck
 brew install ssh-copy-id
 brew install svn
 brew install tree
+brew install tmux
 # brew install unrar # doesn't exist anymore
 brew install watch
 brew install webkit2png
