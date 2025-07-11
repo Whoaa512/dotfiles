@@ -238,6 +238,7 @@ then
 fi
 
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
+[ -x "$(command -v fx)" ] && source <(fx --comp zsh)
 
 # bun completions
 [ -s "/Users/cjw/.bun/_bun" ] && source "/Users/cjw/.bun/_bun"
