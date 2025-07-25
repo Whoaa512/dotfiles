@@ -524,3 +524,7 @@ alias watch='watch -c'
 
 alias json2yaml="python -c 'import sys, yaml, json; yaml.dump(json.load(sys.stdin), sys.stdout)'"
 alias yaml2json="python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdin, Loader=yaml.Loader), sys.stdout, indent=4)'"
+
+alias bb='bazel build'
+alias bq='bazel query'
+alias bt='bazel test'
