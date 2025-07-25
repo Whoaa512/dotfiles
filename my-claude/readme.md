@@ -10,9 +10,10 @@ I currently do hard links of the files in this repo to my `$HOME/.claude` folder
 
 Simple setup
 ```sh
-ln $HOME/dotfiles/settings.global.json ~/.claude/settings.json
-ln $HOME/dotfiles/CLAUDE.global.md ~/.claude/CLAUDE.md
-for cmd_file in $HOME/dotfiles/commands/*.md; do
-    ln $cmd_file ~/.claude/commands/$(basename $cmd_file)
+mkdir -p $HOME/.claude/commands
+ln $HOME/dotfiles/my-claude/settings.global.json ~/.claude/settings.json
+ln $HOME/dotfiles/my-claude/CLAUDE.global.md ~/.claude/CLAUDE.md
+for cmd_file in $HOME/dotfiles/my-claude/commands/*.md; do
+    ln $cmd_file $HOME/.claude/commands/$(basename $cmd_file)
 done
 ```
