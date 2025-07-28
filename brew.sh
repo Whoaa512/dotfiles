@@ -107,7 +107,6 @@ brew install fx
 brew install imagemagick #--with-webp
 brew install lua
 brew install lynx
-# brew install mas
 brew install mosh
 brew install p7zip
 brew install pigz
@@ -172,11 +171,6 @@ brew install --cask stay
 brew install --cask plistedit-pro
 brew install --cask 1password
 
-# Mac Store installs
-# mas sigin whoaa512@gmail.com
-# mas install 803453959 # Slack
-# mas install 449589707 # Dash
-# mas install 866773894 # Quiver
 
 # Quick look plugins https://github.com/sindresorhus/quick-look-plugins
 # brew install --cask qlcolorcode qlstephen qlmarkdown quicklook-json qlprettypatch quicklook-csv betterzipql qlimagesize webpquicklook suspicious-package
