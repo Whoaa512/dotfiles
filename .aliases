@@ -208,6 +208,7 @@ alias reload="exec $SHELL -l"
   alias ssh_='sshrc'
   # Prevent mosh from entering alternate screen mode (which is annoying, and disables mouse support)
   alias mosh='mosh --no-init '
+  alias cdd='cd $HOME/dotfiles'
 
 # Short Git aliases
   alias gi='git init'
