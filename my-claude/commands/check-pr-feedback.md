@@ -1,64 +1,86 @@
-Fetch and address PR feedback comments for the current branch
-# ==================================================================================================
-Goal
------
-Fetch PR comments from the current branch, summarize the feedback, prioritize issues, and (optionally) implement fixes in collaboration with me.
+<task>
+Fetch and address PR feedback comments for the current branch.
+Argument: $ARGUMENTS (optional - specific feedback ID or filter)
+</task>
 
-Context
---------
-• The repository may contain uncommitted changes.
-• Uses `gh` CLI to fetch PR comments and details.
-• The current branch should have an associated PR.
+<context>
+This command fetches PR comments and reviews from the current branch, summarizes feedback, prioritizes issues, and optionally implements fixes through collaborative triage.
 
-Workflow (follow strictly in order)
----------------------------------------
+Key assumptions:
+• The repository may contain uncommitted changes
+• Current branch has an associated PR
+• Using GitHub CLI (gh) for API access, and `gh auth login` has been run prior
+• `jq` is available locally
+• Comments may be line-specific or general review comments
+</context>
 
-Stage 1: Pre-flight
-	a.	Check for outstanding changes (git status).
-	b.	If there are staged or unstaged changes, inform the user that we're going to commit them to leave a clean state prior to making fixes, and do so.
-	c.	Verify current branch has an associated PR using `gh pr status`.
+<workflow>
+Follow these stages strictly in order:
 
-Stage 2: Fetch PR Feedback
-	a.	Tell me: "Fetching PR comments and feedback…"
-	b.	Execute `gh api repos/:owner/:repo/pulls/$(gh pr view --json number -q .number)/comments` to get all line-specific comments.
-	c.	Execute `gh pr view --json reviews` to get all review comments.
-	d.	Parse the comments into a structured array of feedback items (author, type, content, file:line if applicable).
-	e.	Filter out resolved comments and focus on actionable feedback.
+**Stage 1: Pre-flight Checks**
+1. Use Bash tool: `git status` to check for outstanding changes
+2. If there are staged or unstaged changes, inform user and commit them for clean state
+3. Use Bash tool: `gh pr status` to verify current branch has an associated PR
 
-Stage 3: Create a TODO list
-	a.	Re-order the feedback by YOUR OWN initial assessment of severity/impact (highest first).
-	b.	Use your TODO list tool to add TODOs for each in that order, each tagged with severity/impact.
-	c.	Group similar feedback items together where applicable.
+**Stage 2: Fetch PR Feedback**
+1. Display: "Fetching PR comments and feedback…"
+2. Use Bash tool: `gh api repos/:owner/:repo/pulls/$(gh pr view --json number -q .number)/comments` for line-specific comments
+3. Use Bash tool: `gh pr view --json reviews` for review comments
+4. Parse comments into structured feedback items (author, type, content, file:line if applicable)
+5. Filter out resolved comments, automated bot accounts (deployboard, svc-*), and focus on actionable human feedback
 
-Stage 4: Interactive Triage (loop per issue)
+**Stage 3: Create TODO List**
+1. Re-order feedback by severity/impact assessment (highest first)
+2. Use TodoWrite tool to add TODOs for each item with severity/impact tags
+3. Group similar feedback items together where applicable
 
-For each TODO item, do:
+**Stage 4: Interactive Triage**
+For each TODO item:
+1. Show full feedback comment with context
+2. Validate in context (read code, search relevant files) to confirm validity and significance
+3. For invalid/already addressed feedback: explain why and continue
+4. For valid feedback: describe issue detail, impact assessment, code snippets, and propose fix plan
 
-a. Show the full feedback comment with context.
-b. Validate it in context (open the code, search all relevant code, etc.) to confirm the feedback is valid, how significant it is, and to prepare info that will help me decide whether to address it.
-c. For any feedback that is clearly not valid or already addressed, explain why and continue to the next item.
-d. For any that ARE valid feedback, describe the issue in detail, why it might or might not be worth addressing, with code snippets if applicable, and generate a proposed fix plan. Then ask me how to proceed:
-
+Then ask:
+```
 Implement fix for **<feedback short summary>** as described above?
 Options: (y)es / (s)kip / describe alternative approach / ask further questions
+```
 
-e. Wait for my reply before proceeding.
-f. If I answer yes:
-	•	Detail the concrete change plan (files touched, logic, tests).
-	•	Implement the change.
-	•	Commit it with a clear message.
+5. Wait for user reply before proceeding
+6. If user answers yes:
+   - Detail concrete change plan (files, logic, tests)
+   - Implement the change
+   - Commit with clear message
+7. Continue to next TODO item
 
-g. Then continue to the next TODO item.
+**Stage 5: Wrap-up**
+1. Print summary table:
+   ```
+   Feedback | Author | Decision | Commit SHA | Notes
+   ```
+2. End with: "PR feedback review complete. Let me know if anything else is needed or you have any questions about what was addressed."
+</workflow>
 
-Stage 5: Wrap-up
-	a.	After the loop, print a summary table:
+<argument_handling>
+If $ARGUMENTS is provided, use it to:
+- Filter to specific feedback ID or author
+- Focus on particular file or area
+- Search for specific feedback pattern
+If empty, process all available feedback
+</argument_handling>
 
-Feedback	Author	Decision	Commit SHA	Notes
-…	…	…	…	…
+<error_handling>
+If no PR found, unclear feedback, or conflicting instructions:
+- Ask for clarification before proceeding
+- Suggest alternative approaches
+- Provide guidance on resolution
+</error_handling>
 
-	b.	End with:
-
-"PR feedback review complete. Let me know if anything else is needed or you have any questions about what was addressed."
-
----------------------------------------------
-Note: If you need additional information (e.g., no PR found, unclear feedback, conflicting instructions), ask before acting.
+<human_review_needed>
+Flag these aspects for verification:
+- [ ] Completeness of feedback identification
+- [ ] Accuracy of severity assessment
+- [ ] Appropriateness of proposed fixes
+- [ ] Impact of changes on existing functionality
+</human_review_needed>
