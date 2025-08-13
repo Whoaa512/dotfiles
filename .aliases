@@ -519,6 +519,11 @@ function gpum() {
   git push upst "$(git_default_branch)"
 }
 
+function gcount() {
+  def_branch="$(git_default_branch)"
+  git log --oneline "$(git merge-base "$def_branch" HEAD )"..HEAD | wc -l
+}
+
 # allow colors in watch
 alias watch='watch -c'
 
