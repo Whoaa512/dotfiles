@@ -524,7 +524,7 @@ function cleardns() {
 
 function omg() {
   sleep_sec=${1:-0}
-  sleep $sleep_sec; say -r 350 omg omg omg;
+  sleep $sleep_sec; say -r 250 omg omg omg;
 }
 
 # Docker helpers
