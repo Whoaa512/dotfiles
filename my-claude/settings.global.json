@@ -34,7 +34,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Funk.aiff; say \"claude is waiting\"; echo -e \"\\033]0;Claude Waiting...\\007\""
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
           }
         ]
       }
@@ -45,7 +45,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Funk.aiff; say \"claude is waiting\"; echo -e \"\\033]0;Claude Waiting...\\007\""
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
           }
         ]
       }
