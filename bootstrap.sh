@@ -16,6 +16,7 @@ function doIt() {
 		--exclude ".functions" \
 		--exclude ".aliases" \
 		--exclude ".extras" \
+		--exclude "my-claude" \
 		--exclude "dotfiles.sublime-workspace" \
 		--exclude "LICENSE-MIT.txt" \
 		-avh --no-perms . ~
