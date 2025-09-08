@@ -329,6 +329,7 @@ alias reload="exec $SHELL -l"
   alias gtsub='gt submit'
   alias gtupdate='gt submit --stack --update-only'
   alias gtsy='gt sync'
+  alias gtre='gt restack'
   alias gtls='gt log short'
   alias gtll='gt log long'
   alias gtt='gt top'
