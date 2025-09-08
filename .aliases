@@ -322,6 +322,21 @@ alias reload="exec $SHELL -l"
   alias grba="git rebase --abort"
   alias undo_head="git reset HEAD~"
 
+# graphite (gt) aliases
+  alias gtl='gt log short --stack --no-interactive'
+  alias gtc='gt create'
+  alias gtm='gt modify'
+  alias gtsub='gt submit'
+  alias gtupdate='gt submit --stack --update-only'
+  alias gtsy='gt sync'
+  alias gtls='gt log short'
+  alias gtll='gt log long'
+  alias gtt='gt top'
+  alias gtb='gt bottom'
+  alias gtd='gt down'
+  alias gtu='gt up'
+
+
 # Work aliases
   alias glint='grunt parallelize:coffeelint:app'
   alias tb='coffee ./run-tests.coffee "*" -l smoke --to 80000'
