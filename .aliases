@@ -362,10 +362,14 @@ alias reload="exec $SHELL -l"
   alias gtre='gt restack'
   alias gtls='gt log short'
   alias gtll='gt log long'
-  alias gtt='gt top'
-  alias gtb='gt bottom'
-  alias gtd='gt down'
-  alias gtu='gt up'
+  alias gtt='gt top; gtl'
+  alias gtb='gt bottom; gtl'
+  gtd() {
+    gt down "$@"; gtl
+  }
+  gtu() {
+    gt up "$@"; gtl
+  }
 
 
 # Work aliases
