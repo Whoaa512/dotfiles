@@ -356,6 +356,7 @@ alias reload="exec $SHELL -l"
   alias gtl='gt log short --stack --no-interactive'
   alias gtc='gt create'
   alias gtm='gt modify'
+  alias gta='gt absorb'
   alias gtsub='gt submit'
   alias gtupdate='gt submit --stack --update-only'
   alias gtsy='gt sync'
