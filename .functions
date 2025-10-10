@@ -421,6 +421,15 @@ function del-squashed () {
 # Git fetch origin Fresh
 function gfresh () {
   branch="$1"
+  curr_branch=$(git branch --show-current)
+  if [ -z "$branch" ]; then
+    branch=$curr_branch
+  fi
+  if [ "$branch" = "$curr_branch" ]; then
+    echo "Already on branch $branch, pulling latest changes"
+    git pull --rebase origin $branch
+    return
+  fi
   git branch -D $branch;
   git fetch origin $branch;
   git checkout $branch;
