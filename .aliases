@@ -14,6 +14,7 @@ alias dt="cd ~/Desktop"
 alias g="git"
 alias h="history"
 alias j="jobs"
+alias x="xargs"
 # alias v="vim"
 alias s="subl ."
 alias o="open"
@@ -226,7 +227,7 @@ alias reload="exec $SHELL -l"
   alias se='$EDITOR ~/dotfiles/.extras'
   alias sal='$EDITOR ~/dotfiles/.aliases'
   # Shellcheck ignore
-  alias sd="\$EDITOR $MY_DOTFILES"
+  alias sd='$EDITOR ~/dotfiles'
   alias sf='$EDITOR ~/dotfiles/.functions'
   alias sz='$EDITOR ~/.zshrc'
   alias szh='$EDITOR ~/.zsh_history'
@@ -239,6 +240,7 @@ alias reload="exec $SHELL -l"
   # Prevent mosh from entering alternate screen mode (which is annoying, and disables mouse support)
   alias mosh='mosh --no-init '
   alias cdd='cd $HOME/dotfiles'
+  alias sc='$EDITOR $HOME/.claude/CLAUDE.md'
 
 # Short Git aliases
   alias gi='git init'
@@ -356,7 +358,10 @@ alias reload="exec $SHELL -l"
   alias gtl='gt log short --stack --no-interactive'
   alias gtc='gt create'
   alias gtm='gt modify'
+  alias gtmc='gt modify -c'
   alias gta='gt absorb'
+  alias gtg='gt get'
+  alias gtco='gt checkout'
   alias gtsub='gt submit'
   alias gtupdate='gt submit --stack --update-only'
   alias gtsy='gt sync'
@@ -572,7 +577,7 @@ function gpum() {
 
 function gcount() {
   def_branch="$(git_default_branch)"
-  git log --oneline "$(git merge-base "$def_branch" HEAD )"..HEAD | wc -l
+  git log --oneline "$(git merge-base "$def_branch" HEAD )"..HEAD | wc -l | tr -d ' '
 }
 
 # allow colors in watch
@@ -586,3 +591,4 @@ alias bb='bazel build'
 alias bq='bazel query'
 alias bt='bazel test'
 alias a='claude'
+alias xrg='xargs rg '
