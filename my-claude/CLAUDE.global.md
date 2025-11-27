@@ -27,6 +27,13 @@
   - treat this as a personal mind map of our knowledge together
 
 
+## tmux for Dev Servers
+- Always start background dev servers in named tmux sessions: `tmux new-session -d -s <name> '<command>'`
+- Before starting a server, check if it's already running: `tmux has-session -t <name> 2>/dev/null`
+- View running sessions: `tmux list-sessions`
+- Attach to check logs: `tmux attach -t <name>`
+- Kill when done: `tmux kill-session -t <name>`
+
 ## Available CLI Tools
 - Use `fd` instead of `find` for file discovery:
   - `fd -e java -e kt MockTrip projects/dora` (find files by name and extension)
