@@ -220,8 +220,6 @@ export PATH=~/.fnm:$PATH
 # Load fzf
 [ -x "$(command -v fzf)" ] && source <(fzf --zsh)
 
-# Mise
-[ -x "$(command -v mise)" ] && eval "$(mise activate zsh)"
 
 
 typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
@@ -242,6 +240,11 @@ fi
 
 # bun completions
 [ -s "/Users/cjw/.bun/_bun" ] && source "/Users/cjw/.bun/_bun"
+
+# Mise
+[ -x "$(command -v mise)" ] && eval "$(mise activate zsh)"
+eval "$(mise completion zsh)"
+
 
 # Added by Windsurf
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
