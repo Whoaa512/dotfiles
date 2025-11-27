@@ -1,10 +1,34 @@
 
 ## Always important
-- When working on code or features, please be sure to commit at each step with useful messages, and validate changes with tests, and write new tests if needed. Make commits small & focused to allow for easier review. Avoid commenting on obvious code. You're a star so I expect the best mate! <3 Don't forget to run the linter before committing too
+- Be extremely concise. Sacrifice grammar for the sake of concision.  Never forget this
+- Never include `Co-Authored-By: Claude <noreply@anthropic.com>` or `Generated with [Claude Code](https://claude.ai/code)` in any commit message
+- Ponder possible solutions and always for the simplest approach.
+- Avoid over-engineering as much as possible. We strive to be very grug brained at this establishment
+- When working on code or features, please be sure to commit at each step with useful messages, and validate changes with tests, and write new tests if needed.
+- Make commits small & focused to allow for easier review.
+- Never leave obvious code comments
+- Don't forget to run the linter before committing too
+- When writing commit messages, Focus on why. if you don't know why, ask the user
+- You don't need `-C` on git commands for operating in the current directory
+
+### Language specifics
+* Python
+  * When creating ad-hoc python scripts that rely on dependencies, use PEP 723 inline script metadata
+  * for fastest iteration use single file scripts
+    * add dep: `uv add --script <script_path> <dep_names...>`
+    * run: `uv run <script_path>`
+* Nodejs/Typescript
+  * for fastest iteration use `bun`
+
+## Personal Notes
+
+- When asked to "take a note of this" or create personal documentation, store these files in the @/Users/cjw/code/cj/notes directory.
+  - Keep good organization in this dir
+  - treat this as a personal mind map of our knowledge together
 
 
-## Search Tools
-- Use `fd` instead of find for file discovery:
+## Available CLI Tools
+- Use `fd` instead of `find` for file discovery:
   - `fd -e java -e kt MockTrip projects/dora` (find files by name and extension)
   - `fd -t f pattern path` (files only)
 - Use `rg` (ripgrep) for content search:
@@ -13,6 +37,22 @@
   - `rg "^package.*pattern"` (anchor to line start)
   - `rg "class.*pattern|interface.*pattern"` (multiple patterns with OR)
 - Use `tree` for directory structure viewing
+- `gh` for querying Github
+- `src search` for querying Sourcegraph
+- `uv` for python things (see `uv --help`)
+- `xan` CSV magician - successor to `BurntSushi/xsv`
+- `bk` buildkite CLI tool - **prefer `bk api` over Buildkite MCP tools** to reduce context token usage
+  - pipe to `jq` to filter/extract only what's needed
+  - e.g. `bk api /organizations/airbnb/pipelines/{pipeline}/builds/{num}/annotations | jq '.[] | select(.context | startswith("abc123")) | .body_html'`
+- `gt` The Graphite CLI. Useful for creating/managing stacked PRs. Do not use unless the repo specifically calls for this. Quick reference:
+  - Atomic change: `git commit` == `gt create`
+  - Include changes in an existing atomic change `git commit --amend` == `gt modify`
+  - Distinct addition to an existing atomic change == `gt modify --commit -m "..."`
+    - DON'T FORGET the `--commit`
+  - View stack `gt log short --stack --no-interactive`
+  - Absorb changes into existing stack: `gt absorb`
+  - Fold a branch's changes into its parent: `gt fold`
+  - Insert new stack node (aka branch) between the current branch and its child: `gt create --insert`
 
 
 ## Line of Sight Code Style Guidelines
@@ -52,5 +92,10 @@ return nil
 4. Complex Conditionals
 
 Extract switch/case bodies into separate functions rather than inline logic.
-
 Keep successful execution paths at the left margin. Handle errors with early returns. Avoid else blocks and deep nesting. Structure functions so main logic flows top-to-bottom without indentation.
+
+<edit_guidelines>
+- always use `fd` over `find`
+- always use `rg` for search over `grep`
+  - `grep` can be allowed for simple filtering in a chain of pipelined commands
+</edit_guidelines>
