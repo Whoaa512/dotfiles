@@ -7,6 +7,28 @@
 import json
 import re
 import sys
+from pathlib import Path
+
+STATE_FILE = Path.home() / ".cache" / "claude-tool-review-disabled"
+
+
+def is_enabled() -> bool:
+    return not STATE_FILE.exists()
+
+
+def cmd_enable():
+    STATE_FILE.unlink(missing_ok=True)
+    print("claude-tool-review enabled")
+
+
+def cmd_disable():
+    STATE_FILE.parent.mkdir(parents=True, exist_ok=True)
+    STATE_FILE.touch()
+    print("claude-tool-review disabled")
+
+
+def cmd_status():
+    print("enabled" if is_enabled() else "disabled")
 
 
 def check_bash_find(command: str) -> str | None:
@@ -35,7 +57,11 @@ TOOL_VALIDATORS = {
 }
 
 
-def main():
+def run_hook():
+    if not is_enabled():
+        print(json.dumps({"continue": True}))
+        return
+
     data = json.load(sys.stdin)
     tool_name = data.get("tool_name", "")
 
@@ -45,6 +71,25 @@ def main():
             return
 
     print(json.dumps({"continue": True}))
+
+
+COMMANDS = {
+    "enable": cmd_enable,
+    "disable": cmd_disable,
+    "status": cmd_status,
+}
+
+
+def main():
+    if len(sys.argv) > 1:
+        cmd = sys.argv[1]
+        if cmd in COMMANDS:
+            COMMANDS[cmd]()
+        else:
+            print(f"usage: {sys.argv[0]} [enable|disable|status]", file=sys.stderr)
+            sys.exit(1)
+    else:
+        run_hook()
 
 
 if __name__ == "__main__":
