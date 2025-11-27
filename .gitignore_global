@@ -45,3 +45,4 @@ Thumbs.db
 *code-workspace
 *sublime-project
 junit.xml
+*.local.*
