@@ -1,0 +1,51 @@
+#!/usr/bin/env python3
+# /// script
+# requires-python = ">=3.10"
+# ///
+"""Claude Code PreToolUse hook for validating tool calls."""
+
+import json
+import re
+import sys
+
+
+def check_bash_find(command: str) -> str | None:
+    """Reject find commands, suggest fd."""
+    if re.match(r"^\s*find\s", command):
+        return "Use `fd` instead of `find`. fd uses regex by default and is faster."
+    return None
+
+
+BASH_CHECKS = [
+    check_bash_find,
+]
+
+
+def validate_bash(tool_input: dict) -> dict | None:
+    """Validate Bash tool calls."""
+    command = tool_input.get("command", "")
+    for check in BASH_CHECKS:
+        if reason := check(command):
+            return {"continue": False, "stopReason": reason}
+    return None
+
+
+TOOL_VALIDATORS = {
+    "Bash": validate_bash,
+}
+
+
+def main():
+    data = json.load(sys.stdin)
+    tool_name = data.get("tool_name", "")
+
+    if validator := TOOL_VALIDATORS.get(tool_name):
+        if result := validator(data.get("tool_input", {})):
+            print(json.dumps(result))
+            return
+
+    print(json.dumps({"continue": True}))
+
+
+if __name__ == "__main__":
+    main()
