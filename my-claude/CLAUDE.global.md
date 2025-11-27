@@ -61,6 +61,30 @@
   - Fold a branch's changes into its parent: `gt fold`
   - Insert new stack node (aka branch) between the current branch and its child: `gt create --insert`
 
+### Beads (Issue Tracker)
+> If the repo states it uses Beads, or has the .beads dir
+
+Git-backed issue tracker for AI agents. Issues live in `.beads/issues.jsonl`.
+
+```bash
+# Core workflow
+bd create "Issue title"       # Create issue (returns hash ID like bd-a1b2)
+bd list                       # Show all issues
+bd ready                      # Show unblocked work
+bd show <id>                  # View issue details
+bd update <id> --status in-progress
+bd close <id>                 # Mark done
+bd sync                       # Push/pull with git
+# Dependencies
+bd dep add <id> --blocks <other-id>
+bd blocked                    # Show blocked issues
+# Other useful
+bd search "query"             # Text search
+bd comment <id> "note"        # Add comment
+bd prime                      # AI context dump
+```
+
+
 
 ## Line of Sight Code Style Guidelines
 Align the happy path to the left edge - Normal execution flow at left margin, errors/edge cases indented.
