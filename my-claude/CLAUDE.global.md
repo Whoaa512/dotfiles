@@ -59,6 +59,10 @@
   - `yt-dlp -F <url>` - list available formats
   - `yt-dlp -o '%(title)s.%(ext)s' <url>` - custom output template
   - `yt-dlp --write-subs --embed-subs <url>` - include subtitles
+- `bear-go` Query Bear notes from SQLite:
+  - `bear-go list` - list all note titles (most recent first)
+  - `bear-go search <term>` - search titles and content
+  - `bear-go get <title>` - get note by exact title (outputs markdown)
 - `devtools` Chrome DevTools CLI (lighter than MCP on context):
   - `devtools pages` - list open pages
   - `devtools go <url>` - navigate
