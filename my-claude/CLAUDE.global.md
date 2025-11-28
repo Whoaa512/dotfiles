@@ -52,6 +52,22 @@
 - `bk` buildkite CLI tool - **prefer `bk api` over Buildkite MCP tools** to reduce context token usage
   - pipe to `jq` to filter/extract only what's needed
   - e.g. `bk api /organizations/airbnb/pipelines/{pipeline}/builds/{num}/annotations | jq '.[] | select(.context | startswith("abc123")) | .body_html'`
+- `yt-dlp` YouTube/video downloader:
+  - `yt-dlp <url>` - download video
+  - `yt-dlp -x <url>` - extract audio only
+  - `yt-dlp -f 'bestaudio' <url>` - specific format
+  - `yt-dlp -F <url>` - list available formats
+  - `yt-dlp -o '%(title)s.%(ext)s' <url>` - custom output template
+  - `yt-dlp --write-subs --embed-subs <url>` - include subtitles
+- `devtools` Chrome DevTools CLI (lighter than MCP on context):
+  - `devtools pages` - list open pages
+  - `devtools go <url>` - navigate
+  - `devtools snap` - accessibility snapshot
+  - `devtools screenshot [path]` - capture
+  - `devtools click/hover/fill <uid>` - interact with elements
+  - `devtools eval <script>` - run JS
+  - `devtools console/network [idx]` - inspect logs/requests
+  - Use `--json` for structured output, `-s <id>` to target specific session
 - `gt` The Graphite CLI. Useful for creating/managing stacked PRs. Do not use unless the repo specifically calls for this. Quick reference:
   - Atomic change: `git commit` == `gt create`
   - Include changes in an existing atomic change `git commit --amend` == `gt modify`
