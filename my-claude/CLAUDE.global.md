@@ -11,7 +11,6 @@
 - Never leave obvious code comments
 - Don't forget to run the linter before committing too
 - When writing commit messages, Focus on why. if you don't know why, ask the user
-- You don't need `-C` on git commands for operating in the current directory
 
 ### Language specifics
 * Python

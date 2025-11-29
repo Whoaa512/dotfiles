@@ -5,6 +5,7 @@
 """Claude Code PreToolUse hook for validating tool calls."""
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -38,8 +39,21 @@ def check_bash_find(command: str) -> str | None:
     return None
 
 
+def check_git_redundant_c(command: str) -> str | None:
+    """Reject git -C when pointing to current directory."""
+    match = re.match(r"^\s*git\s+-C\s+([^\s]+)", command)
+    if match:
+        target = match.group(1)
+        cwd = os.getcwd()
+        target_resolved = os.path.realpath(os.path.expanduser(target))
+        if target_resolved == os.path.realpath(cwd):
+            return "Don't use `-C` for git commands in the current directory."
+    return None
+
+
 BASH_CHECKS = [
     check_bash_find,
+    check_git_redundant_c,
 ]
 
 
