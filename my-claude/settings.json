@@ -16,6 +16,8 @@
       "Bash(go test:*)",
       "Bash(tmux has-session:*)",
       "Bash(tmux new-session:*)",
+      "Bash(tmux list-sessions:*)",
+      "Bash(tmux kill-session:*)",
       "Bash(tmux capture-pane:*)",
       "Bash(tmux send-keys:*)",
       "Bash(ssh pihole:*)",
