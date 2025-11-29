@@ -594,3 +594,5 @@ alias a='claude'
 alias xrg='xargs rg '
 alias x='xargs '
 alias mr='mise run '
+
+alias relo=reload
