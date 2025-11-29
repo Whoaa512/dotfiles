@@ -46,3 +46,6 @@ Thumbs.db
 *sublime-project
 junit.xml
 *.local.*
+
+# Git worktrees
+.worktrees/

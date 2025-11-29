@@ -36,6 +36,14 @@ For partial file changes: make one logical change, commit, then make the next ch
   - treat this as a personal mind map of our knowledge together
 
 
+## Git Worktrees
+Work on multiple branches simultaneously without switching.
+```bash
+git worktree add .worktrees/feature-x feature-branch  # create
+git worktree list                                      # show all
+git worktree remove .worktrees/feature-x              # cleanup
+```
+
 ## tmux for Dev Servers
 - Always start background dev servers in named tmux sessions: `tmux new-session -d -s <name> '<command>'`
 - Before starting a server, check if it's already running: `tmux has-session -t <name> 2>/dev/null`
