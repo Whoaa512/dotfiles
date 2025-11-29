@@ -117,10 +117,8 @@ md = mistune.create_markdown(plugins=['strikethrough', 'table', 'task_lists', 'u
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
-        if self.path.endswith(".md") or (self.path.endswith("/") and os.path.isfile(self.translate_path(self.path) + "README.md")):
+        if self.path.endswith(".md"):
             path = self.translate_path(self.path)
-            if self.path.endswith("/"):
-                path += "README.md"
             if os.path.isfile(path):
                 with open(path, "r") as f:
                     content = md(f.read())
