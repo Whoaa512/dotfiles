@@ -3,6 +3,7 @@
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
+      "Read(/private/tmp/**)",
       "Read(/tmp/**)",
       "Read(/Users/cjw/code/cj/**)",
       "Bash(rg:*)",
