@@ -103,15 +103,17 @@ function gitio() {
 }
 
 # Start an HTTP server from a directory, optionally specifying the port
-# Renders .md files as HTML
+# Renders .md files as HTML (GitHub Flavored Markdown)
 function server() {
   local port="${1:-8000}";
   sleep 1 && open "http://localhost:${port}/" &
   uv run --quiet - "$port" << 'PYEOF'
 # /// script
-# dependencies = ["markdown"]
+# dependencies = ["mistune"]
 # ///
-import http.server, sys, os, markdown
+import http.server, sys, os, mistune
+
+md = mistune.create_markdown(plugins=['strikethrough', 'table', 'task_lists', 'url'])
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
@@ -121,7 +123,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 path += "README.md"
             if os.path.isfile(path):
                 with open(path, "r") as f:
-                    content = markdown.markdown(f.read(), extensions=["fenced_code", "tables"])
+                    content = md(f.read())
                 html = f'<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{{max-width:800px;margin:40px auto;padding:0 20px;font-family:sans-serif;line-height:1.6}}pre{{background:#f4f4f4;padding:1em;overflow-x:auto}}code{{background:#f4f4f4;padding:2px 5px}}</style></head><body>{content}</body></html>'
                 self.send_response(200)
                 self.send_header("Content-type", "text/html; charset=utf-8")
