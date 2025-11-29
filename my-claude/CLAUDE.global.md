@@ -21,6 +21,14 @@
 * Nodejs/Typescript
   * for fastest iteration use `bun`
 
+### Atomic Commits
+Stage specific files to keep commits focused:
+```bash
+git add file1.go file2.go
+git commit -m "msg"
+```
+For partial file changes: make one logical change, commit, then make the next change. Can't use `git add -p` (interactive).
+
 ## Personal Notes
 
 - When asked to "take a note of this" or create personal documentation, store these files in the @/Users/cjw/code/cj/notes directory.
