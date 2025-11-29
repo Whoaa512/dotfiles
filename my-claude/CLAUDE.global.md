@@ -63,6 +63,11 @@
   - `bear-go list` - list all note titles (most recent first)
   - `bear-go search <term>` - search titles and content
   - `bear-go get <title>` - get note by exact title (outputs markdown)
+- `gchurn` Analyze file change frequency in git:
+  - `gchurn` - top 5 files in last 10 commits (defaults)
+  - `gchurn 50` - analyze last 50 commits
+  - `gchurn -n 20 -k 10` - last 20 commits, top 10 files
+  - Shows: commits per file, lines +/-, current line count
 - `devtools` Chrome DevTools CLI (lighter than MCP on context):
   - `devtools pages` - list open pages
   - `devtools go <url>` - navigate
