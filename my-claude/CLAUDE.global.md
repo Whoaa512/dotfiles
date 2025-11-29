@@ -79,6 +79,11 @@ git worktree remove .worktrees/feature-x              # cleanup
   - `bear-go list` - list all note titles (most recent first)
   - `bear-go search <term>` - search titles and content
   - `bear-go get <title>` - get note by exact title (outputs markdown)
+- `orimg` Generate images via OpenRouter API:
+  - `orimg "a cute robot"` - generate image, save to Dropbox
+  - `orimg -m google/gemini-2.5-flash-image "prompt"` - use different model
+  - `orimg -o /tmp/out.png "prompt"` - custom output path
+  - Default model: gemini-3-pro-image-preview, requires OPENROUTER_API_KEY
 - `gchurn` Analyze file change frequency in git:
   - `gchurn` - top 5 files in last 10 commits (defaults)
   - `gchurn 50` - analyze last 50 commits
