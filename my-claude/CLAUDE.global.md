@@ -43,6 +43,7 @@ git worktree add .worktrees/feature-x feature-branch  # create
 git worktree list                                      # show all
 git worktree remove .worktrees/feature-x              # cleanup
 ```
+**Always rebase when integrating changes from worktrees** - never merge commits. Use `git rebase` to keep history linear.
 
 ## tmux for Dev Servers
 - Always start background dev servers in named tmux sessions: `tmux new-session -d -s <name> '<command>'`
