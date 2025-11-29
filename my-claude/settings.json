@@ -45,6 +45,7 @@
       "Bash(bd show:*)",
       "Bash(bd update:*)",
       "Bash(bd close:*)",
+      "Bash(bd search:*)",
       "Bash(bd dep:*)",
       "Bash(bd blocked:*)",
       "Bash(bd stats:*)",
@@ -80,7 +81,17 @@
       "mcp__devtools__performance_stop_trace",
       "mcp__devtools__performance_analyze_insight",
       "WebFetch(domain:github.com)",
-      "Bash(/Users/cjw/code/dotfiles/bin/claude-tool-review)"
+      "Bash(/Users/cjw/code/dotfiles/bin/claude-tool-review)",
+      "Bash(devtools pages:*)",
+      "Bash(devtools go:*)",
+      "Bash(devtools snap:*)",
+      "Bash(devtools screenshot:*)",
+      "Bash(devtools click:*)",
+      "Bash(devtools hover:*)",
+      "Bash(devtools fill:*)",
+      "Bash(devtools eval:*)",
+      "Bash(devtools console:*)",
+      "Bash(devtools network:*)"
     ],
     "deny": []
   },
