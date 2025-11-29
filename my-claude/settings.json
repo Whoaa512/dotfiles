@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "allow": [
+      "Read(/tmp/**)",
+      "Read(/Users/cjw/code/cj/**)",
+      "Bash(rg:*)",
+      "Bash(fd:*)",
+      "Bash(cat:*)",
+      "Bash(ls:*)",
+      "Bash(mkdir:*)",
+      "Bash(git add:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(go build:*)",
+      "Bash(go test:*)",
+      "Bash(tmux has-session:*)",
+      "Bash(tmux new-session:*)",
+      "Bash(tmux capture-pane:*)",
+      "Bash(tmux send-keys:*)",
+      "Bash(ssh pihole:*)",
+      "Bash(bazel build:*)",
+      "Bash(bazel test:*)",
+      "Bash(git commit:*)",
+      "Bash(grep:*)",
+      "Bash(cp:*)",
+      "Bash(tree:*)",
+      "WebFetch(domain:pkg.go.dev)",
+      "Bash(jq:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh api repos/:owner/:repo/pulls/`gh pr view --json number -q .number`/comments)",
+      "Bash(bazel info:*)",
+      "Bash(echo \"Exit code: $?\")",
+      "Bash(uuidgen)",
+      "Bash(chmod:*)",
+      "Bash(bd init:*)",
+      "Bash(bd create:*)",
+      "Bash(bd comment:*)",
+      "Bash(bd list:*)",
+      "Bash(bd ready:*)",
+      "Bash(bd show:*)",
+      "Bash(bd update:*)",
+      "Bash(bd close:*)",
+      "Bash(bd dep:*)",
+      "Bash(bd blocked:*)",
+      "Bash(bd stats:*)",
+      "Bash(bd reopen:*)",
+      "Bash(npm install)",
+      "SlashCommand(/cdt-see)",
+      "SlashCommand(/cdt-see-ask)",
+      "SlashCommand(/cdt-console)",
+      "mcp__devtools__list_pages",
+      "mcp__devtools__select_page",
+      "mcp__devtools__close_page",
+      "mcp__devtools__new_page",
+      "mcp__devtools__navigate_page",
+      "mcp__devtools__resize_page",
+      "mcp__devtools__handle_dialog",
+      "mcp__devtools__take_screenshot",
+      "mcp__devtools__take_snapshot",
+      "mcp__devtools__wait_for",
+      "mcp__devtools__click",
+      "mcp__devtools__hover",
+      "mcp__devtools__fill",
+      "mcp__devtools__drag",
+      "mcp__devtools__fill_form",
+      "mcp__devtools__upload_file",
+      "mcp__devtools__press_key",
+      "mcp__devtools__emulate",
+      "mcp__devtools__evaluate_script",
+      "mcp__devtools__list_console_messages",
+      "mcp__devtools__get_console_message",
+      "mcp__devtools__list_network_requests",
+      "mcp__devtools__get_network_request",
+      "mcp__devtools__performance_start_trace",
+      "mcp__devtools__performance_stop_trace",
+      "mcp__devtools__performance_analyze_insight",
+      "WebFetch(domain:github.com)",
+      "Bash(/Users/cjw/code/dotfiles/bin/claude-tool-review)"
+    ],
+    "deny": []
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "claude-tool-review"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Funk.aiff"
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/cjw/.claude/statusline.sh",
+    "padding": 0
+  },
+  "alwaysThinkingEnabled": true
+}
