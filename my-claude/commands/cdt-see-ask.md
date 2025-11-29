@@ -6,8 +6,8 @@ $ARGUMENTS - Your question about the visual (e.g., "is the attack animation play
 ## Instructions
 
 1. Take screenshot:
-   ```
-   mcp__devtools__take_screenshot with filePath: "/tmp/digidice-screenshot.png"
+   ```bash
+   devtools screenshot /tmp/digidice-screenshot.png
    ```
 
 2. Spawn Task subagent with `subagent_type: "general-purpose"` and `model: "haiku"`:

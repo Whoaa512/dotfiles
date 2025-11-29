@@ -2,9 +2,9 @@ Take a screenshot of the current game state and analyze it using a subagent to a
 
 ## Instructions
 
-1. First, take a screenshot using the devtools MCP and save it to a temp file:
-   ```
-   mcp__devtools__take_screenshot with filePath: "/tmp/digidice-screenshot.png"
+1. First, take a screenshot using the devtools CLI:
+   ```bash
+   devtools screenshot /tmp/digidice-screenshot.png
    ```
 
 2. Then spawn a Task subagent with `subagent_type: "general-purpose"` and `model: "haiku"` to analyze the image:
