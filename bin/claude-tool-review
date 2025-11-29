@@ -51,9 +51,17 @@ def check_git_redundant_c(command: str) -> str | None:
     return None
 
 
+def check_git_add_all(command: str) -> str | None:
+    """Reject git add -A or git add . - prefer explicit file staging."""
+    if re.match(r"^\s*git\s+add\s+(-A|\.)\s*$", command):
+        return "Stage specific files instead of using `git add -A` or `git add .` for atomic commits."
+    return None
+
+
 BASH_CHECKS = [
     check_bash_find,
     check_git_redundant_c,
+    check_git_add_all,
 ]
 
 
