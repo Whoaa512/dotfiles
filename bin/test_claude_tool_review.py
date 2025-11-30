@@ -25,41 +25,59 @@ spec.loader.exec_module(ctr)
 
 
 class TestAllowList:
-    def test_bash_allowed_prefixes(self):
-        assert ctr.is_bash_allowed("rg pattern") is True
-        assert ctr.is_bash_allowed("fd -e py") is True
-        assert ctr.is_bash_allowed("git commit -m 'msg'") is True
-        assert ctr.is_bash_allowed("gh pr view 123") is True
+    @pytest.fixture
+    def parsed(self):
+        return ctr.parse_allow_patterns([
+            "Bash(rg:*)", "Bash(fd:*)", "Bash(git commit:*)", "Bash(gh pr view:*)",
+            'Bash(echo "Exit code: $?")',
+            "Read(/tmp/**)", "Read(/private/tmp/**)", "Read(/Users/cjw/code/cj/**)",
+            "WebFetch(domain:pkg.go.dev)", "WebFetch(domain:github.com)",
+        ])
 
-    def test_bash_not_allowed(self):
-        assert ctr.is_bash_allowed("rm -rf /") is False
-        assert ctr.is_bash_allowed("curl http://evil.com") is False
+    def test_parse_patterns(self):
+        parsed = ctr.parse_allow_patterns([
+            "Bash(rg:*)", "Bash(exact)", "Read(/tmp/**)", "WebFetch(domain:x.com)",
+        ])
+        assert "rg" in parsed["bash_prefixes"]
+        assert "exact" in parsed["bash_exact"]
+        assert "/tmp/**" in parsed["read_globs"]
+        assert "x.com" in parsed["webfetch_domains"]
 
-    def test_bash_exact_match(self):
-        assert ctr.is_bash_allowed('echo "Exit code: $?"') is True
-        assert ctr.is_bash_allowed('echo "something else"') is False
+    def test_bash_allowed_prefixes(self, parsed):
+        assert ctr.is_bash_allowed("rg pattern", parsed) is True
+        assert ctr.is_bash_allowed("fd -e py", parsed) is True
+        assert ctr.is_bash_allowed("git commit -m 'msg'", parsed) is True
+        assert ctr.is_bash_allowed("gh pr view 123", parsed) is True
 
-    def test_read_allowed_globs(self):
-        assert ctr.is_read_allowed("/tmp/foo.txt") is True
-        assert ctr.is_read_allowed("/private/tmp/bar") is True
-        assert ctr.is_read_allowed("/Users/cjw/code/cj/test.py") is True
+    def test_bash_not_allowed(self, parsed):
+        assert ctr.is_bash_allowed("rm -rf /", parsed) is False
+        assert ctr.is_bash_allowed("curl http://evil.com", parsed) is False
 
-    def test_read_not_allowed(self):
-        assert ctr.is_read_allowed("/etc/passwd") is False
-        assert ctr.is_read_allowed("/Users/other/file") is False
+    def test_bash_exact_match(self, parsed):
+        assert ctr.is_bash_allowed('echo "Exit code: $?"', parsed) is True
+        assert ctr.is_bash_allowed('echo "something else"', parsed) is False
 
-    def test_webfetch_allowed_domains(self):
-        assert ctr.is_webfetch_allowed("https://pkg.go.dev/fmt") is True
-        assert ctr.is_webfetch_allowed("https://github.com/foo/bar") is True
+    def test_read_allowed_globs(self, parsed):
+        assert ctr.is_read_allowed("/tmp/foo.txt", parsed) is True
+        assert ctr.is_read_allowed("/private/tmp/bar", parsed) is True
+        assert ctr.is_read_allowed("/Users/cjw/code/cj/test.py", parsed) is True
 
-    def test_webfetch_not_allowed(self):
-        assert ctr.is_webfetch_allowed("https://evil.com") is False
+    def test_read_not_allowed(self, parsed):
+        assert ctr.is_read_allowed("/etc/passwd", parsed) is False
+        assert ctr.is_read_allowed("/Users/other/file", parsed) is False
 
-    def test_check_allow_list(self):
-        assert ctr.check_allow_list("Bash", {"command": "rg foo"}) is True
-        assert ctr.check_allow_list("Read", {"file_path": "/tmp/x"}) is True
-        assert ctr.check_allow_list("WebFetch", {"url": "https://github.com"}) is True
-        assert ctr.check_allow_list("Unknown", {}) is False
+    def test_webfetch_allowed_domains(self, parsed):
+        assert ctr.is_webfetch_allowed("https://pkg.go.dev/fmt", parsed) is True
+        assert ctr.is_webfetch_allowed("https://github.com/foo/bar", parsed) is True
+
+    def test_webfetch_not_allowed(self, parsed):
+        assert ctr.is_webfetch_allowed("https://evil.com", parsed) is False
+
+    def test_check_allow_list(self, parsed):
+        assert ctr.check_allow_list("Bash", {"command": "rg foo"}, parsed) is True
+        assert ctr.check_allow_list("Read", {"file_path": "/tmp/x"}, parsed) is True
+        assert ctr.check_allow_list("WebFetch", {"url": "https://github.com"}, parsed) is True
+        assert ctr.check_allow_list("Unknown", {}, parsed) is False
 
 
 class TestCheckBashFind:

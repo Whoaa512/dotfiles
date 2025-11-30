@@ -13,67 +13,69 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 STATE_FILE = Path.home() / ".cache" / "claude-tool-review-disabled"
-
-# Allow patterns from settings.json - auto-approve these
-BASH_ALLOW_PREFIXES = [
-    "rg", "fd", "cat", "ls", "mkdir", "git add", "git check-ignore",
-    "go build", "go test", "tmux has-session", "tmux new-session",
-    "tmux list-sessions", "tmux kill-session", "tmux capture-pane",
-    "tmux send-keys", "ssh pihole", "bazel build", "bazel test",
-    "git commit", "grep", "cp", "tree", "jq",
-    "gh pr checks", "gh pr status", "gh pr diff", "gh pr list", "gh pr view",
-    "gh issue list", "gh issue view", "gh issue status",
-    "gh run list", "gh run view", "gh workflow list", "gh workflow view",
-    "gh release list", "gh release view", "gh repo list", "gh repo view",
-    "gh search repos", "gh search issues", "gh search prs",
-    "gh search commits", "gh search code", "gh status", "gh auth status",
-    "gh gist list", "gh gist view", "bazel info", "uuidgen", "chmod",
-    "bd init", "bd sync", "bd --no-daemon sync", "bd create", "bd comment",
-    "bd list", "bd ready", "bd show", "bd update", "bd close", "bd search",
-    "bd dep", "bd blocked", "bd stats", "bd reopen", "npm install",
-    "devtools pages", "devtools go", "devtools snap", "devtools screenshot",
-    "devtools click", "devtools hover", "devtools fill", "devtools eval",
-    "devtools console", "devtools network", "ln", "claude-tool-review status",
-    "claude-tool-review disable", "claude-tool-review enable", "uv run",
-]
-BASH_ALLOW_EXACT = [
-    'echo "Exit code: $?"',
-]
-READ_ALLOW_GLOBS = [
-    "/private/tmp/**",
-    "/tmp/**",
-    "/Users/cjw/code/cj/**",
-]
-WEBFETCH_ALLOW_DOMAINS = [
-    "pkg.go.dev",
-    "github.com",
-]
+SETTINGS_FILE = Path.home() / ".claude" / "settings.json"
 
 
-def is_bash_allowed(command: str) -> bool:
+def load_allow_patterns() -> list[str]:
+    """Load allow patterns from settings.json."""
+    try:
+        data = json.loads(SETTINGS_FILE.read_text())
+        return data.get("permissions", {}).get("allow", [])
+    except Exception:
+        return []
+
+
+def parse_allow_patterns(patterns: list[str]) -> dict:
+    """Parse patterns into tool-specific lists."""
+    bash_prefixes = []
+    bash_exact = []
+    read_globs = []
+    webfetch_domains = []
+
+    for p in patterns:
+        if p.startswith("Bash(") and p.endswith(")"):
+            inner = p[5:-1]
+            if inner.endswith(":*"):
+                bash_prefixes.append(inner[:-2])
+            else:
+                bash_exact.append(inner)
+        elif p.startswith("Read(") and p.endswith(")"):
+            read_globs.append(p[5:-1])
+        elif p.startswith("WebFetch(domain:") and p.endswith(")"):
+            webfetch_domains.append(p[16:-1])
+
+    return {
+        "bash_prefixes": bash_prefixes,
+        "bash_exact": bash_exact,
+        "read_globs": read_globs,
+        "webfetch_domains": webfetch_domains,
+    }
+
+
+def is_bash_allowed(command: str, parsed: dict) -> bool:
     """Check if bash command matches allow list."""
     cmd = command.strip()
-    if cmd in BASH_ALLOW_EXACT:
+    if cmd in parsed["bash_exact"]:
         return True
-    for prefix in BASH_ALLOW_PREFIXES:
+    for prefix in parsed["bash_prefixes"]:
         if cmd.startswith(prefix):
             return True
     return False
 
 
-def is_read_allowed(file_path: str) -> bool:
+def is_read_allowed(file_path: str, parsed: dict) -> bool:
     """Check if read path matches allow globs."""
-    for pattern in READ_ALLOW_GLOBS:
+    for pattern in parsed["read_globs"]:
         if fnmatch.fnmatch(file_path, pattern):
             return True
     return False
 
 
-def is_webfetch_allowed(url: str) -> bool:
+def is_webfetch_allowed(url: str, parsed: dict) -> bool:
     """Check if url domain is allowed."""
     try:
         domain = urlparse(url).netloc
-        for allowed in WEBFETCH_ALLOW_DOMAINS:
+        for allowed in parsed["webfetch_domains"]:
             if domain == allowed or domain.endswith("." + allowed):
                 return True
     except Exception:
@@ -81,14 +83,14 @@ def is_webfetch_allowed(url: str) -> bool:
     return False
 
 
-def check_allow_list(tool_name: str, tool_input: dict) -> bool:
+def check_allow_list(tool_name: str, tool_input: dict, parsed: dict) -> bool:
     """Return True if tool call should be auto-approved."""
     if tool_name == "Bash":
-        return is_bash_allowed(tool_input.get("command", ""))
+        return is_bash_allowed(tool_input.get("command", ""), parsed)
     if tool_name == "Read":
-        return is_read_allowed(tool_input.get("file_path", ""))
+        return is_read_allowed(tool_input.get("file_path", ""), parsed)
     if tool_name == "WebFetch":
-        return is_webfetch_allowed(tool_input.get("url", ""))
+        return is_webfetch_allowed(tool_input.get("url", ""), parsed)
     return False
 
 
@@ -173,7 +175,8 @@ def run_hook():
     cwd = data.get("cwd")
 
     # Auto-approve if in allow list
-    if check_allow_list(tool_name, tool_input):
+    parsed = parse_allow_patterns(load_allow_patterns())
+    if check_allow_list(tool_name, tool_input, parsed):
         print(json.dumps({"continue": True}))
         return
 
