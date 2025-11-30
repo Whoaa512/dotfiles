@@ -63,10 +63,14 @@ def is_bash_allowed(command: str, parsed: dict) -> bool:
     return False
 
 
+def is_temp_path(file_path: str) -> bool:
+    """Check if path is in a temp directory."""
+    return file_path.startswith(("/tmp/", "/private/tmp/"))
+
+
 def is_read_allowed(file_path: str, parsed: dict) -> bool:
     """Check if read path matches allow globs."""
-    # Always allow temp directories
-    if file_path.startswith(("/tmp/", "/private/tmp/")):
+    if is_temp_path(file_path):
         return True
     for pattern in parsed["read_globs"]:
         if fnmatch.fnmatch(file_path, pattern):
@@ -92,6 +96,8 @@ def check_allow_list(tool_name: str, tool_input: dict, parsed: dict) -> bool:
         return is_bash_allowed(tool_input.get("command", ""), parsed)
     if tool_name == "Read":
         return is_read_allowed(tool_input.get("file_path", ""), parsed)
+    if tool_name in ("Write", "Edit"):
+        return is_temp_path(tool_input.get("file_path", ""))
     if tool_name == "WebFetch":
         return is_webfetch_allowed(tool_input.get("url", ""), parsed)
     return False
