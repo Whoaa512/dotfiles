@@ -65,6 +65,9 @@ def is_bash_allowed(command: str, parsed: dict) -> bool:
 
 def is_read_allowed(file_path: str, parsed: dict) -> bool:
     """Check if read path matches allow globs."""
+    # Always allow temp directories
+    if file_path.startswith(("/tmp/", "/private/tmp/")):
+        return True
     for pattern in parsed["read_globs"]:
         if fnmatch.fnmatch(file_path, pattern):
             return True

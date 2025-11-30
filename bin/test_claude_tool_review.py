@@ -66,6 +66,12 @@ class TestAllowList:
         assert ctr.is_read_allowed("/etc/passwd", parsed) is False
         assert ctr.is_read_allowed("/Users/other/file", parsed) is False
 
+    def test_read_temp_always_allowed(self):
+        empty = {"read_globs": [], "bash_prefixes": [], "bash_exact": [], "webfetch_domains": []}
+        assert ctr.is_read_allowed("/tmp/foo.txt", empty) is True
+        assert ctr.is_read_allowed("/private/tmp/bar", empty) is True
+        assert ctr.is_read_allowed("/tmp/nested/deep/file", empty) is True
+
     def test_webfetch_allowed_domains(self, parsed):
         assert ctr.is_webfetch_allowed("https://pkg.go.dev/fmt", parsed) is True
         assert ctr.is_webfetch_allowed("https://github.com/foo/bar", parsed) is True
