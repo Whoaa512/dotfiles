@@ -24,6 +24,44 @@ ctr = module_from_spec(spec)
 spec.loader.exec_module(ctr)
 
 
+class TestAllowList:
+    def test_bash_allowed_prefixes(self):
+        assert ctr.is_bash_allowed("rg pattern") is True
+        assert ctr.is_bash_allowed("fd -e py") is True
+        assert ctr.is_bash_allowed("git commit -m 'msg'") is True
+        assert ctr.is_bash_allowed("gh pr view 123") is True
+
+    def test_bash_not_allowed(self):
+        assert ctr.is_bash_allowed("rm -rf /") is False
+        assert ctr.is_bash_allowed("curl http://evil.com") is False
+
+    def test_bash_exact_match(self):
+        assert ctr.is_bash_allowed('echo "Exit code: $?"') is True
+        assert ctr.is_bash_allowed('echo "something else"') is False
+
+    def test_read_allowed_globs(self):
+        assert ctr.is_read_allowed("/tmp/foo.txt") is True
+        assert ctr.is_read_allowed("/private/tmp/bar") is True
+        assert ctr.is_read_allowed("/Users/cjw/code/cj/test.py") is True
+
+    def test_read_not_allowed(self):
+        assert ctr.is_read_allowed("/etc/passwd") is False
+        assert ctr.is_read_allowed("/Users/other/file") is False
+
+    def test_webfetch_allowed_domains(self):
+        assert ctr.is_webfetch_allowed("https://pkg.go.dev/fmt") is True
+        assert ctr.is_webfetch_allowed("https://github.com/foo/bar") is True
+
+    def test_webfetch_not_allowed(self):
+        assert ctr.is_webfetch_allowed("https://evil.com") is False
+
+    def test_check_allow_list(self):
+        assert ctr.check_allow_list("Bash", {"command": "rg foo"}) is True
+        assert ctr.check_allow_list("Read", {"file_path": "/tmp/x"}) is True
+        assert ctr.check_allow_list("WebFetch", {"url": "https://github.com"}) is True
+        assert ctr.check_allow_list("Unknown", {}) is False
+
+
 class TestCheckBashFind:
     def test_rejects_find(self):
         assert ctr.check_bash_find("find .") is not None
