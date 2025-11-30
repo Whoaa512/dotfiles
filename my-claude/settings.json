@@ -61,6 +61,8 @@
       "Bash(uuidgen)",
       "Bash(chmod:*)",
       "Bash(bd init:*)",
+      "Bash(bd sync:*)",
+      "Bash(bd --no-daemon sync:*)",
       "Bash(bd create:*)",
       "Bash(bd comment:*)",
       "Bash(bd list:*)",
@@ -112,6 +114,7 @@
       "Bash(devtools click:*)",
       "Bash(devtools hover:*)",
       "Bash(devtools fill:*)",
+      "Bash(devtools press:*)",
       "Bash(devtools eval:*)",
       "Bash(devtools console:*)",
       "Bash(devtools network:*)"
