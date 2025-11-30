@@ -130,11 +130,12 @@ class TestCheckGitAddAll:
 
 
 class TestValidateBash:
-    def test_returns_stop_on_invalid(self):
+    def test_returns_deny_on_invalid(self):
         result = ctr.validate_bash({"command": "find ."})
         assert result is not None
-        assert result["continue"] is False
-        assert "stopReason" in result
+        out = result["hookSpecificOutput"]
+        assert out["permissionDecision"] == "deny"
+        assert "permissionDecisionReason" in out
 
     def test_returns_none_on_valid(self):
         result = ctr.validate_bash({"command": "ls -la"})
@@ -154,9 +155,10 @@ class TestRunHook:
         monkeypatch.setattr(ctr, "is_enabled", lambda: True)
         input_data = json.dumps({"tool_name": "Bash", "tool_input": {"command": "find ."}})
         monkeypatch.setattr("sys.stdin", __import__("io").StringIO(input_data))
-        ctr.run_hook()
-        output = json.loads(capsys.readouterr().out)
-        assert output["continue"] is False
+        with pytest.raises(SystemExit) as exc:
+            ctr.run_hook()
+        assert exc.value.code == 2
+        assert "fd" in capsys.readouterr().err
 
     def test_hook_passes_when_disabled(self, monkeypatch, capsys):
         monkeypatch.setattr(ctr, "is_enabled", lambda: False)
@@ -180,10 +182,10 @@ class TestRunHook:
             "cwd": "/tmp"
         })
         monkeypatch.setattr("sys.stdin", __import__("io").StringIO(input_data))
-        ctr.run_hook()
-        output = json.loads(capsys.readouterr().out)
-        assert output["continue"] is False
-        assert "stopReason" in output
+        with pytest.raises(SystemExit) as exc:
+            ctr.run_hook()
+        assert exc.value.code == 2
+        assert "-C" in capsys.readouterr().err
 
 
 class TestEnableDisable:

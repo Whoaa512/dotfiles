@@ -149,6 +149,17 @@ BASH_CHECKS = [
 ]
 
 
+def deny(reason: str) -> dict:
+    """Return a deny response for PreToolUse hooks."""
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }
+
+
 def validate_bash(tool_input: dict, cwd: str | None = None) -> dict | None:
     """Validate Bash tool calls."""
     command = tool_input.get("command", "")
@@ -158,13 +169,22 @@ def validate_bash(tool_input: dict, cwd: str | None = None) -> dict | None:
         else:
             reason = check(command)
         if reason:
-            return {"continue": False, "stopReason": reason}
+            return deny(reason)
     return None
 
 
 TOOL_VALIDATORS = {
     "Bash": validate_bash,
 }
+
+
+DEBUG_LOG = Path("/tmp/claude-tool-review-debug.log")
+
+
+def debug_log(msg: str):
+    if DEBUG_LOG.exists():
+        with DEBUG_LOG.open("a") as f:
+            f.write(f"{msg}\n")
 
 
 def run_hook():
@@ -177,19 +197,25 @@ def run_hook():
     tool_input = data.get("tool_input", {})
     cwd = data.get("cwd")
 
+    debug_log(f"tool={tool_name} input={tool_input} cwd={cwd}")
+
     # Auto-approve if in allow list
     parsed = parse_allow_patterns(load_allow_patterns())
     if check_allow_list(tool_name, tool_input, parsed):
+        debug_log("allow_list=True")
         print(json.dumps({"continue": True}))
         return
 
     # Run validators for potential blocks
     if validator := TOOL_VALIDATORS.get(tool_name):
         if result := validator(tool_input, cwd):
-            print(json.dumps(result))
-            return
+            reason = result["hookSpecificOutput"]["permissionDecisionReason"]
+            debug_log(f"deny: {reason}")
+            print(reason, file=sys.stderr, flush=True)
+            sys.exit(2)
 
-    print(json.dumps({"continue": True}))
+    debug_log("passthrough")
+    print(json.dumps({"continue": True}), flush=True)
 
 
 COMMANDS = {
