@@ -1,3 +1,6 @@
+## Claude Code Config Locations
+- **Instructions**: `my-claude/CLAUDE.global.md` (this file)
+- **Settings/Permissions**: `my-claude/settings.json` (auto-approved commands, hooks, etc.)
 
 ## Always important
 - Be extremely concise. Sacrifice grammar for the sake of concision.  Never forget this
@@ -116,21 +119,29 @@ Git-backed issue tracker for AI agents. Issues live in `.beads/issues.jsonl`.
 
 ```bash
 # Core workflow
-bd create "Issue title"       # Create issue (returns hash ID like bd-a1b2)
-bd list                       # Show all issues
-bd ready                      # Show unblocked work
-bd show <id>                  # View issue details
+bd create "Issue title"                    # Create issue (returns ID like proj-a1b2)
+bd create "Title" --description "Details"  # With description
+bd create "Subtask" --parent proj-xxx      # Create subtask under epic
+bd create "Epic" --type epic --priority P0 # Specify type/priority
+bd list                                    # Show all issues
+bd ready                                   # Show unblocked work (start here!)
+bd show <id>                               # View issue details + deps
 bd update <id> --status in-progress
-bd close <id>                 # Mark done
-bd sync                       # Push/pull with git
-# Dependencies
-bd dep add <id> --blocks <other-id>
-bd blocked                    # Show blocked issues
+bd close <id>                              # Mark done
+bd sync                                    # Push/pull with git
+
+# Dependencies (positional args, not flags!)
+bd dep add <issue> <depends-on> -t blocks  # issue is blocked by depends-on
+bd dep add proj-xxx.3 proj-xxx.1           # Example: .3 blocked by .1
+bd blocked                                 # Show blocked issues
+
 # Other useful
 bd search "query"             # Text search
 bd comment <id> "note"        # Add comment
-bd prime                      # AI context dump
+bd prime                      # AI context dump for planning
 ```
+
+**Subtask IDs**: Children get `.N` suffix (e.g., `proj-4a1.1`, `proj-4a1.2`).
 
 
 
@@ -178,3 +189,4 @@ Keep successful execution paths at the left margin. Handle errors with early ret
 - always use `rg` for search over `grep`
   - `grep` can be allowed for simple filtering in a chain of pipelined commands
 </edit_guidelines>
+- commit after beads get updated

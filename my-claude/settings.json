@@ -119,7 +119,15 @@
       "Bash(devtools press:*)",
       "Bash(devtools eval:*)",
       "Bash(devtools console:*)",
-      "Bash(devtools network:*)"
+      "Bash(devtools network:*)",
+      "Bash(zig build:*)",
+      "Bash(zig test:*)",
+      "Bash(zig run:*)",
+      "Bash(zig fmt:*)",
+      "Bash(zig init:*)",
+      "Bash(zig fetch:*)",
+      "Bash(zig cc:*)",
+      "Bash(zig c++:*)"
     ],
     "deny": []
   },
