@@ -245,6 +245,8 @@ fi
 [ -x "$(command -v mise)" ] && eval "$(mise activate zsh)"
 eval "$(mise completion zsh)"
 
+# bd
+[ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
 
 # Added by Windsurf
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"

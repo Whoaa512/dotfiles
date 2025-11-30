@@ -67,6 +67,7 @@
       "Bash(bd comment:*)",
       "Bash(bd list:*)",
       "Bash(bd ready:*)",
+      "Bash(bd prime:*)",
       "Bash(bd show:*)",
       "Bash(bd update:*)",
       "Bash(bd close:*)",
