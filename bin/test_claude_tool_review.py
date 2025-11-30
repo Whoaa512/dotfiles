@@ -39,11 +39,15 @@ class TestCheckBashFind:
 class TestCheckGitRedundantC:
     def test_rejects_redundant_c(self):
         cwd = os.getcwd()
-        assert ctr.check_git_redundant_c(f"git -C {cwd} status") is not None
-        assert ctr.check_git_redundant_c("git -C . status") is not None
+        assert ctr.check_git_redundant_c(f"git -C {cwd} status", cwd) is not None
+        assert ctr.check_git_redundant_c("git -C . status", cwd) is not None
+
+    def test_rejects_with_explicit_cwd(self):
+        assert ctr.check_git_redundant_c("git -C /tmp status", "/tmp") is not None
+        assert ctr.check_git_redundant_c("git -C /home/user status", "/home/user") is not None
 
     def test_allows_different_dir(self):
-        assert ctr.check_git_redundant_c("git -C /tmp status") is None
+        assert ctr.check_git_redundant_c("git -C /tmp status", "/home") is None
         assert ctr.check_git_redundant_c("git -C ../other status") is None
 
     def test_allows_no_c_flag(self):
@@ -105,6 +109,19 @@ class TestRunHook:
         ctr.run_hook()
         output = json.loads(capsys.readouterr().out)
         assert output["continue"] is True
+
+    def test_hook_uses_cwd_from_input(self, monkeypatch, capsys):
+        monkeypatch.setattr(ctr, "is_enabled", lambda: True)
+        input_data = json.dumps({
+            "tool_name": "Bash",
+            "tool_input": {"command": "git -C /tmp status"},
+            "cwd": "/tmp"
+        })
+        monkeypatch.setattr("sys.stdin", __import__("io").StringIO(input_data))
+        ctr.run_hook()
+        output = json.loads(capsys.readouterr().out)
+        assert output["continue"] is False
+        assert "stopReason" in output
 
 
 class TestEnableDisable:

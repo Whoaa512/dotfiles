@@ -39,12 +39,12 @@ def check_bash_find(command: str) -> str | None:
     return None
 
 
-def check_git_redundant_c(command: str) -> str | None:
+def check_git_redundant_c(command: str, cwd: str | None = None) -> str | None:
     """Reject git -C when pointing to current directory."""
     match = re.match(r"^\s*git\s+-C\s+([^\s]+)", command)
     if match:
         target = match.group(1)
-        cwd = os.getcwd()
+        cwd = cwd or os.getcwd()
         target_resolved = os.path.realpath(os.path.expanduser(target))
         if target_resolved == os.path.realpath(cwd):
             return "Don't use `-C` for git commands in the current directory."
@@ -65,11 +65,15 @@ BASH_CHECKS = [
 ]
 
 
-def validate_bash(tool_input: dict) -> dict | None:
+def validate_bash(tool_input: dict, cwd: str | None = None) -> dict | None:
     """Validate Bash tool calls."""
     command = tool_input.get("command", "")
     for check in BASH_CHECKS:
-        if reason := check(command):
+        if check == check_git_redundant_c:
+            reason = check(command, cwd)
+        else:
+            reason = check(command)
+        if reason:
             return {"continue": False, "stopReason": reason}
     return None
 
@@ -86,9 +90,10 @@ def run_hook():
 
     data = json.load(sys.stdin)
     tool_name = data.get("tool_name", "")
+    cwd = data.get("cwd")
 
     if validator := TOOL_VALIDATORS.get(tool_name):
-        if result := validator(data.get("tool_input", {})):
+        if result := validator(data.get("tool_input", {}), cwd):
             print(json.dumps(result))
             return
 
