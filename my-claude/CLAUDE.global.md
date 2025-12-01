@@ -102,6 +102,14 @@ git worktree remove .worktrees/feature-x              # cleanup
   - `devtools eval <script>` - run JS
   - `devtools console/network [idx]` - inspect logs/requests
   - Use `--json` for structured output, `-s <id>` to target specific session
+- `sg` (ast-grep) Structural code search/lint/rewrite using ASTs:
+  - `sg run -p 'console.log($$$)' -l typescript` - find pattern
+  - `sg run -p 'var $X = $Y' -r 'const $X = $Y' -l js` - rewrite
+  - `sg scan --rule rules/` - run YAML rules
+  - `sg scan --json=compact` - JSON output for parsing
+  - Meta vars: `$VAR` (single node), `$$$ARGS` (zero+), `$_` (non-capturing)
+  - Supports: Go, Python, TS, Rust, Java, 20+ langs
+  - Use for: migrations, refactoring, custom linting, security scanning
 - `gt` The Graphite CLI. Useful for creating/managing stacked PRs. Do not use unless the repo specifically calls for this. Quick reference:
   - Atomic change: `git commit` == `gt create`
   - Include changes in an existing atomic change `git commit --amend` == `gt modify`

@@ -127,7 +127,10 @@
       "Bash(zig init:*)",
       "Bash(zig fetch:*)",
       "Bash(zig cc:*)",
-      "Bash(zig c++:*)"
+      "Bash(zig c++:*)",
+      "Bash(sg run:*)",
+      "Bash(sg scan:*)",
+      "Bash(sg test:*)"
     ],
     "deny": []
   },
@@ -171,5 +174,5 @@
     "command": "/Users/cjw/.claude/statusline.sh",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true
+  "alwaysThinkingEnabled": false
 }
