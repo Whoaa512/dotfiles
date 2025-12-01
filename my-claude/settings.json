@@ -174,5 +174,5 @@
     "command": "/Users/cjw/.claude/statusline.sh",
     "padding": 0
   },
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": true
 }
