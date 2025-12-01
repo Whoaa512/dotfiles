@@ -1,7 +1,3 @@
-## Claude Code Config Locations
-- **Instructions**: `my-claude/CLAUDE.global.md` (this file)
-- **Settings/Permissions**: `my-claude/settings.json` (auto-approved commands, hooks, etc.)
-
 ## Always important
 - Be extremely concise. Sacrifice grammar for the sake of concision.  Never forget this
 - be as token efficient as possible
