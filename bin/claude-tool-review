@@ -134,6 +134,9 @@ def check_git_redundant_c(command: str, cwd: str | None = None) -> str | None:
     match = re.match(r"^\s*git\s+-C\s+([^\s]+)", command)
     if match:
         target = match.group(1)
+        # Allow -C for worktree paths
+        if "/.worktrees/" in target:
+            return None
         cwd = cwd or os.getcwd()
         target_resolved = os.path.realpath(os.path.expanduser(target))
         if target_resolved == os.path.realpath(cwd):
