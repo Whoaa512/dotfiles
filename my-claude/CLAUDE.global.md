@@ -11,6 +11,9 @@
 - Don't forget to run the linter before committing too
 - When writing commit messages, Focus on why. if you don't know why, ask the user
 
+### shorthand
+- yz|yzp => yes/yes please
+
 ### Language specifics
 * Python
   * When creating ad-hoc python scripts that rely on dependencies, use PEP 723 inline script metadata
@@ -132,7 +135,7 @@ bd ready                                   # Show unblocked work (start here!)
 bd show <id>                               # View issue details + deps
 bd update <id> --status in-progress
 bd close <id>                              # Mark done
-bd sync                                    # Push/pull with git
+bd sync                                    # Push/pull with git, fix conflicts
 
 # Dependencies (positional args, not flags!)
 bd dep add <issue> <depends-on> -t blocks  # issue is blocked by depends-on
