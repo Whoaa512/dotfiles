@@ -144,6 +144,7 @@ bd search "query"             # Text search
 bd comment <id> "note"        # Add comment
 bd prime                      # AI context dump for planning
 ```
+Always commit .beads/ when updating work. For merge conflicts in `.beads/`, use `bd sync` to resolve - don't manually fix JSONL.
 
 **Subtask IDs**: Children get `.N` suffix (e.g., `proj-4a1.1`, `proj-4a1.2`).
 
