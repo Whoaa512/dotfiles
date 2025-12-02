@@ -158,6 +158,16 @@ BASH_CHECKS = [
 ]
 
 
+def allow() -> dict:
+    """Return an allow response for PreToolUse hooks."""
+    return {
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "allow",
+        }
+    }
+
+
 def deny(reason: str) -> dict:
     """Return a deny response for PreToolUse hooks."""
     return {
@@ -211,9 +221,18 @@ def run_hook():
     # Auto-approve if in allow list
     parsed = parse_allow_patterns(load_allow_patterns())
     if check_allow_list(tool_name, tool_input, parsed):
-        debug_log("allow_list=True")
-        print(json.dumps({"continue": True}))
+        debug_log("allow_list=True -> auto-approve")
+        print(json.dumps(allow()))
         return
+
+    # Auto-approve git -C for worktree paths
+    if tool_name == "Bash":
+        cmd = tool_input.get("command", "")
+        match = re.match(r"^\s*git\s+-C\s+([^\s]+)", cmd)
+        if match and "/.worktrees/" in match.group(1):
+            debug_log("worktree path -> auto-approve")
+            print(json.dumps(allow()))
+            return
 
     # Run validators for potential blocks
     if validator := TOOL_VALIDATORS.get(tool_name):
