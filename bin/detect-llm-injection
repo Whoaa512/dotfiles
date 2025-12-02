@@ -1,0 +1,46 @@
+#!/bin/bash
+# PostToolUse hook: detect potential prompt injection in web content
+# Reads JSON from stdin, blocks if suspicious patterns found
+
+input=$(cat)
+
+content=$(echo "$input" | jq -r '
+  .tool_response.content //
+  .tool_response.text //
+  .tool_response.summary //
+  (.tool_response | tostring)
+' 2>/dev/null | head -c 100000)
+
+[[ -z "$content" ]] && exit 0
+
+patterns=(
+  "ignore (all )?(previous|prior|above) instructions"
+  "you are now"
+  "new instructions:"
+  "SYSTEM:"
+  "\\[INST\\]"
+  "<\\|im_start\\|>"
+  "disregard (everything|all)"
+  "forget (everything|all|your).*(you|instructions)"
+  "pretend you are"
+  "act as if"
+  "your (new|real) (purpose|goal|task)"
+  "override.*instructions"
+  "from now on"
+  "do not follow"
+)
+
+for pattern in "${patterns[@]}"; do
+  if echo "$content" | grep -qiE "$pattern"; then
+    matched=$(echo "$content" | grep -oiE ".{0,40}$pattern.{0,40}" | head -1)
+    jq -n --arg match "$matched" --arg pattern "$pattern" '{
+      decision: "block",
+      reason: "Potential prompt injection detected",
+      hookSpecificOutput: {
+        hookEventName: "PostToolUse",
+        additionalContext: "⚠️ INJECTION ALERT\nPattern: \($pattern)\nMatched: \($match)\n\nReview content before proceeding."
+      }
+    }'
+    exit 0
+  fi
+done
