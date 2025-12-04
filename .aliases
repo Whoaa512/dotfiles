@@ -600,3 +600,6 @@ alias x='xargs '
 alias mr='mise run '
 
 alias relo=reload
+
+alias bdl='bd list'
+alias bdlo='bd list | rg "open"'

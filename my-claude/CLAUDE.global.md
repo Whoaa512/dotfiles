@@ -154,7 +154,7 @@ Always commit .beads/ when updating work. For merge conflicts in `.beads/`, use 
 **Worktrees**: Daemon broken w/ worktrees (shared `.beads` DB, wrong branch commits). Use:
 ```bash
 export BEADS_NO_DAEMON=1  # or --no-daemon per cmd
-bd sync                   # manual sync required (no auto-commit/push)
+bd sync                   # manual sync & commit required (no auto-commit/push)
 ```
 
 
