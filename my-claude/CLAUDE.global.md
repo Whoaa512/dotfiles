@@ -151,6 +151,12 @@ Always commit .beads/ when updating work. For merge conflicts in `.beads/`, use 
 
 **Subtask IDs**: Children get `.N` suffix (e.g., `proj-4a1.1`, `proj-4a1.2`).
 
+**Worktrees**: Daemon broken w/ worktrees (shared `.beads` DB, wrong branch commits). Use:
+```bash
+export BEADS_NO_DAEMON=1  # or --no-daemon per cmd
+bd sync                   # manual sync required (no auto-commit/push)
+```
+
 
 
 ## Line of Sight Code Style Guidelines
