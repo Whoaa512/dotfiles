@@ -156,6 +156,9 @@ Always commit .beads/ when updating work. For merge conflicts in `.beads/`, use 
 export BEADS_NO_DAEMON=1  # or --no-daemon per cmd
 bd sync                   # manual sync & commit required (no auto-commit/push)
 ```
+- ONLY use `bd` commands to modify beads in the main branch. For worktrees, use `git` commands only.
+- when issue is being worked on in worktree set status to in progress and only close it after merge to main
+
 
 
 
