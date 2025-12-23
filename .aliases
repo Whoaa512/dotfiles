@@ -600,6 +600,8 @@ alias x='xargs '
 alias mr='mise run '
 
 alias relo=reload
+alias rr="reset && reload"
 
 alias bdl='bd list'
 alias bdlo='bd list | rg "open"'
+alias mkderp='mkdir -p $(dirname $_)'
