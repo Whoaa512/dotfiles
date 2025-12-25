@@ -28,3 +28,5 @@ Rules:
 5. Set status to in-progress when work starts, close only after merge to main
 
 Be terse. Execute beads op with --no-daemon, commit .beads/, report result.
+
+If started as the main session, please treat messages as user requests to document or update issues, or answer questions about issue state.
