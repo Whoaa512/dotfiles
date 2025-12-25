@@ -101,6 +101,23 @@ git worktree remove .worktrees/feature-x              # cleanup
   - `devtools eval <script>` - run JS
   - `devtools console/network [idx]` - inspect logs/requests
   - Use `--json` for structured output, `-s <id>` to target specific session
+  - **Sessions for concurrent testing** (CRITICAL for parallel worktree testing):
+    ```bash
+    # Create isolated session (each worktree/port needs its own)
+    devtools session new --name wt-5181 --json  # returns {"id":"abc123",...}
+
+    # Use session for ALL commands (-s flag)
+    devtools -s abc123 pages new --url http://localhost:5181
+    devtools -s abc123 snap
+    devtools -s abc123 click 1_6
+
+    # Cleanup when done
+    devtools session destroy --id abc123
+
+    # List active sessions
+    devtools session list
+    ```
+  - **NEVER kill the daemon** (`pgrep devtools | xargs kill`) - destroys all sessions
 - `sg` (ast-grep) Structural code search/lint/rewrite using ASTs:
   - `sg run -p 'console.log($$$)' -l typescript` - find pattern
   - `sg run -p 'var $X = $Y' -r 'const $X = $Y' -l js` - rewrite
