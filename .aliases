@@ -593,6 +593,7 @@ alias yaml2json="python -c 'import sys, yaml, json; json.dump(yaml.load(sys.stdi
 alias bb='bazel build'
 alias bq='bazel query'
 alias bt='bazel test'
+alias p='pnpm'
 alias a='claude'
 alias ar='claude -r'
 alias xrg='xargs rg '
