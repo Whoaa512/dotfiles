@@ -11,6 +11,7 @@
       "Bash(cat:*)",
       "Bash(ls:*)",
       "Bash(mkdir:*)",
+      "Bash(ffmpeg:*)",
       "Bash(git add:*)",
       "Bash(git check-ignore:*)",
       "Bash(go build:*)",
