@@ -606,3 +606,4 @@ alias rr="reset && reload"
 alias bdl='bd list'
 alias bdlo='bd list | rg "open"'
 alias mkderp='mkdir -p $(dirname $_)'
+alias cdc='cd $HOME/code/cj'
