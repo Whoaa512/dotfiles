@@ -13,6 +13,8 @@
       "Bash(mkdir:*)",
       "Bash(ffmpeg:*)",
       "Bash(git add:*)",
+      "Bash(golangci-lint run:*)",
+      "Bash(swiftlint:*)",
       "Bash(git check-ignore:*)",
       "Bash(go build:*)",
       "Bash(go test:*)",
