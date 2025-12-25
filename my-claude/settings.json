@@ -47,6 +47,24 @@
       "Bash(grep:*)",
       "Bash(cp:*)",
       "Bash(tree:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(file:*)",
+      "Bash(stat:*)",
+      "Bash(diff:*)",
+      "Bash(strings:*)",
+      "Bash(ps:*)",
+      "Bash(which:*)",
+      "Bash(whoami)",
+      "Bash(pwd)",
+      "Bash(uname:*)",
+      "Bash(dig:*)",
+      "Bash(sort:*)",
+      "Bash(uniq:*)",
+      "Bash(du:*)",
+      "Bash(df:*)",
+      "Bash(cut:*)",
       "WebFetch(domain:pkg.go.dev)",
       "Bash(jq:*)",
       "Bash(gh pr checks:*)",
@@ -206,5 +224,9 @@
     "command": "/Users/cjw/.claude/statusline.sh",
     "padding": 0
   },
-  "alwaysThinkingEnabled": true
+  "enabledPlugins": {
+    "swift-lsp@claude-plugins-official": true
+  },
+  "alwaysThinkingEnabled": true,
+  "model": "haiku"
 }
