@@ -49,3 +49,18 @@ junit.xml
 
 # Git worktrees
 .worktrees/
+
+# Xcode user-specific
+xcuserdata/
+*.xcuserstate
+
+# Build products
+build/
+DerivedData/
+
+# CocoaPods/SPM
+Pods/
+.build/
+
+# macOS
+.DS_Store
