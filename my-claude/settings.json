@@ -6,6 +6,7 @@
       "Read(/private/tmp/**)",
       "Read(/tmp/**)",
       "Read(/Users/cjw/code/cj/**)",
+      "Read(/Users/cjw/Dropbox/Screenshots/gen-ai-images/**)",
       "Bash(rg:*)",
       "Bash(fd:*)",
       "Bash(cat:*)",
