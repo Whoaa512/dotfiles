@@ -211,7 +211,8 @@ alias reload="exec $SHELL -l"
 
 # Alias vi => vim
   alias vi='vim'
-
+MY_DOTFILES="$(realpath "$HOME/dotfiles")"
+export MY_DOTFILES
 # Bash Aliases
   alias k9='kill -9'
   alias wh='which'
@@ -223,12 +224,12 @@ alias reload="exec $SHELL -l"
   alias s='subl'
   alias s.='subl .'
   alias t='tree'
-  alias se='$EDITOR ~/dotfiles/.extras'
-  alias se='$EDITOR ~/dotfiles/.extras'
-  alias sal='$EDITOR ~/dotfiles/.aliases'
+  alias se='$EDITOR $MY_DOTFILES/.extras'
+  alias se='$EDITOR $MY_DOTFILES/.extras'
+  alias sal='$EDITOR $MY_DOTFILES/.aliases'
   # Shellcheck ignore
-  alias sd='$EDITOR ~/dotfiles'
-  alias sf='$EDITOR ~/dotfiles/.functions'
+  alias sd='$EDITOR $MY_DOTFILES'
+  alias sf='$EDITOR $MY_DOTFILES/.functions'
   alias sz='$EDITOR ~/.zshrc'
   alias szh='$EDITOR ~/.zsh_history'
   # alias srz='source ~/.zshrc' # Breaks for some reason :/
@@ -594,10 +595,18 @@ alias bb='bazel build'
 alias bq='bazel query'
 alias bt='bazel test'
 alias p='pnpm'
-alias a='claude'
-alias ah='claude --model haiku'
-alias abd='claude --model haiku --agent beads-tracker'
-alias ar='claude -r'
+function a (){
+  claude "$@"
+}
+function ah (){
+  claude --model haiku "$@"
+}
+function abd (){
+  claude --model haiku --agent beads-tracker "$@"
+}
+function ar (){
+  claude -r "$@"
+}
 alias xrg='xargs rg '
 alias x='xargs '
 alias mr='mise run '
