@@ -1,0 +1,3 @@
+[tasks.claude-sync]
+description = "Sync Claude commands/agents to ~/.claude"
+run = "bash my-claude/scripts/sync-claude.sh"
