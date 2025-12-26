@@ -150,7 +150,7 @@
       "mcp__devtools__performance_stop_trace",
       "mcp__devtools__performance_analyze_insight",
       "WebFetch(domain:github.com)",
-      "Bash(/Users/cjw/code/dotfiles/bin/claude-tool-review)",
+      "Bash(/Users/cjw/dotfiles/bin/claude-tool-review)",
       "Bash(devtools session:*)",
       "Bash(devtools daemon:*)",
       "Bash(devtools -s:*)",

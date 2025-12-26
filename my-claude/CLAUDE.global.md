@@ -224,3 +224,12 @@ Keep successful execution paths at the left margin. Handle errors with early ret
   - `grep` can be allowed for simple filtering in a chain of pipelined commands
 </edit_guidelines>
 - commit after beads get updated
+
+## Background Agents (Task tool with run_in_background)
+
+When spawning background agents:
+- **NEVER call `TaskOutput(block=true)`** after launching - it returns full agent transcripts that fill context
+- Let agents run autonomously; they'll complete and notify when done
+- If you must check status, use `TaskOutput(block=false)` sparingly
+- Read output files directly (`/tmp/claude/.../tasks/<id>.output`) if needed
+- Trust the agents - don't babysit them
