@@ -1,28 +1,33 @@
 #!/bin/bash
 set -e
 
-DOTFILES="$HOME/dotfiles/my-claude"
+DOTFILES="$HOME/code/cj/dotfiles/my-claude"
 CLAUDE_DIR="$HOME/.claude"
 
 echo "Syncing Claude config..."
 
-# Sync commands (individual symlinks)
-mkdir -p "$CLAUDE_DIR/commands"
-for f in "$DOTFILES/commands"/*.md; do
-  [ -f "$f" ] || continue
-  name=$(basename "$f")
-  target="$CLAUDE_DIR/commands/$name"
-  rm -f "$target"
-  ln -s "$f" "$target"
-  echo "  commands/$name"
+# Directory symlinks (agents, commands, hooks, skills, rules)
+for dir in agents commands hooks skills rules; do
+  if [ -d "$DOTFILES/$dir" ]; then
+    if [ ! -L "$CLAUDE_DIR/$dir" ]; then
+      rm -rf "$CLAUDE_DIR/$dir"
+      ln -s "$DOTFILES/$dir" "$CLAUDE_DIR/$dir"
+      echo "  $dir/ (dir)"
+    fi
+  fi
 done
 
-# Agents dir symlink
-if [ ! -L "$CLAUDE_DIR/agents" ]; then
-  rm -rf "$CLAUDE_DIR/agents"
-  ln -s "$DOTFILES/agents" "$CLAUDE_DIR/agents"
-  echo "  agents/ (dir)"
-fi
+# Scripts (individual symlinks)
+mkdir -p "$CLAUDE_DIR/scripts"
+for f in "$DOTFILES/scripts"/*.sh; do
+  [ -f "$f" ] || continue
+  name=$(basename "$f")
+  [ "$name" = "sync-claude.sh" ] && continue  # skip self
+  target="$CLAUDE_DIR/scripts/$name"
+  rm -f "$target"
+  ln -s "$f" "$target"
+  echo "  scripts/$name"
+done
 
 # Core files
 for f in CLAUDE.global.md settings.json statusline.sh; do
