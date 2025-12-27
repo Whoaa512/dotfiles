@@ -1,0 +1,12 @@
+#!/bin/bash
+# Graph hourly commit distribution for a time period
+# Usage: git-hourly 2d1h14m
+#        git-hourly 7d
+#        git-hourly 4h30m
+
+set -e
+
+duration="${1:-1d}"
+since=$(echo "$duration" | sed 's/d/ days /g;s/h/ hours /g;s/m/ minutes ago/')
+
+git log --since="$since" --format='%ad' --date=format:'%H' | (echo "hour"; cat) | xan frequency -s hour | xan sort -s value | xan plot -L value count
