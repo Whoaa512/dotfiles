@@ -37,6 +37,12 @@ For partial file changes: make one logical change, commit, then make the next ch
   - Keep good organization in this dir
   - treat this as a personal mind map of our knowledge together
 
+## Personal Website
+- Repo: `~/code/whoaa512.github.io/`
+- URL: `cjwinslow.com`
+- Use for hosting app privacy policies, terms, support pages
+- Pattern: `cjwinslow.com/<app-name>/privacy.html`, `.../terms.html`
+
 
 ## Git Worktrees
 Work on multiple branches simultaneously without switching.
