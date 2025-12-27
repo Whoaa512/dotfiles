@@ -7,6 +7,7 @@
 - Avoid over-engineering as much as possible. We strive to be very grug brained at this establishment
 - When working on code or features, please be sure to commit at each step with useful messages, and validate changes with tests, and write new tests if needed.
 - Make commits small & focused to allow for easier review.
+- Delegate tasks to background agents when possible
 - Never leave obvious code comments
 - Don't forget to run the linter before committing too
 - When writing commit messages, Focus on why. if you don't know why, ask the user
