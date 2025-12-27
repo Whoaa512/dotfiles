@@ -71,7 +71,7 @@ For each TODO item:
 <analysis_criteria>
 Look for these over-engineering patterns:
 - Deep nesting instead of early returns
-- Complex abstractions for simple operations  
+- Complex abstractions for simple operations
 - Premature optimization
 - Excessive configuration options
 - Generic solutions for specific problems
@@ -109,7 +109,7 @@ For each simplification made:
 
 <grug_brain_principles>
 - Simple is better than clever
-- Explicit is better than implicit  
+- Explicit is better than implicit
 - Readable trumps concise
 - Solve the problem at hand, not future problems
 - Happy path should be obvious
