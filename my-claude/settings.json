@@ -184,7 +184,10 @@
       "Bash(sg scan:*)",
       "Bash(sg test:*)"
     ],
-    "deny": []
+    "deny": [
+      "Read(*.env)",
+      "Read(/Users/cjw/.ssh/**)"
+    ]
   },
   "model": "opus",
   "hooks": {
