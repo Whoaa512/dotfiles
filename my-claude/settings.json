@@ -5,8 +5,8 @@
     "allow": [
       "Read(/private/tmp/**)",
       "Read(/tmp/**)",
-      "Read(/Users/cjw/code/cj/**)",
-      "Read(/Users/cjw/Dropbox/Screenshots/gen-ai-images/**)",
+      "Read(~/code/cj/**)",
+      "Read(~/Dropbox/Screenshots/gen-ai-images/**)",
       "Bash(rg:*)",
       "Bash(fd:*)",
       "Bash(cat:*)",
@@ -157,7 +157,7 @@
       "mcp__devtools__performance_stop_trace",
       "mcp__devtools__performance_analyze_insight",
       "WebFetch(domain:github.com)",
-      "Bash(/Users/cjw/dotfiles/bin/claude-tool-review)",
+      "Bash(~/dotfiles/bin/claude-tool-review)",
       "Bash(devtools session:*)",
       "Bash(devtools daemon:*)",
       "Bash(devtools -s:*)",
@@ -309,7 +309,7 @@
   },
   "statusLine": {
     "type": "command",
-    "command": "/Users/cjw/.claude/statusline.sh",
+    "command": "~/.claude/statusline.sh",
     "padding": 0
   },
   "enabledPlugins": {
