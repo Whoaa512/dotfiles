@@ -253,5 +253,10 @@ eval "$(mise completion zsh)"
 # bd
 [ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
 
+# SSH agent with 8hr key cache (Linux only - macOS uses keychain)
+if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then
+  eval "$(ssh-agent -s -t 28800)" >/dev/null
+fi
+
 # Added by Windsurf
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
