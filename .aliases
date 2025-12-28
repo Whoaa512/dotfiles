@@ -518,7 +518,15 @@ else
   fi
 fi
 
-if [[ $(command -v fd) ]]; then
+# Handle Linux package naming quirks
+if [[ $(command -v fdfind) ]] && ! [[ $(command -v fd) ]]; then
+  alias fd='fdfind'
+fi
+if [[ $(command -v batcat) ]] && ! [[ $(command -v bat) ]]; then
+  alias bat='batcat'
+fi
+
+if [[ $(command -v fd) ]] || [[ $(command -v fdfind) ]]; then
   alias fdp='fd -p'
 fi
 
