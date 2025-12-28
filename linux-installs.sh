@@ -49,14 +49,6 @@ if ! command -v eza &>/dev/null; then
     rm /tmp/eza.tar.gz
 fi
 
-# xan (CSV tool - install via cargo or direct binary)
-echo "==> Installing xan..."
-if ! command -v xan &>/dev/null; then
-    XAN_VERSION=$(curl -s https://api.github.com/repos/medialab/xan/releases/latest | jq -r '.tag_name' | tr -d 'v')
-    curl -Lo /tmp/xan.zip "https://github.com/medialab/xan/releases/download/v${XAN_VERSION}/xan-v${XAN_VERSION}-x86_64-unknown-linux-gnu.zip"
-    sudo unzip -o /tmp/xan.zip -d /usr/local/bin
-    rm /tmp/xan.zip
-fi
 
 # mise (runtime version manager)
 echo "==> Installing mise..."
