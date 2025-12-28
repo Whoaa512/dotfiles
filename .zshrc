@@ -10,6 +10,10 @@ if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]
 fi
 
 ulimit -n 9999
+
+MY_DOTFILES="$(realpath "$HOME/dotfiles")"
+export MY_DOTFILES
+
 # Customize to your needs...
 export GOPATH=~/go
 ELM_PLAT_PATH=~/code/Elm-Platform/0.15.1/.cabal-sandbox/bin
@@ -85,12 +89,13 @@ source $ZSH/oh-my-zsh.sh
 # No sudo on npm -- run once
   # sudo chown -R $USER /usr/local
 
-source ~/dotfiles/zshrc.sh
-source ~/dotfiles/.exports
-source ~/dotfiles/.functions
-source ~/dotfiles/.aliases
-source ~/dotfiles/.fzf_aliases
-source ~/dotfiles/.extras
+source $MY_DOTFILES/zshrc.sh
+source $MY_DOTFILES/.exports
+source $MY_DOTFILES/.functions
+source $MY_DOTFILES/.aliases
+source $MY_DOTFILES/.fzf_aliases
+[ -f $MY_DOTFILES/.extras ] && source $MY_DOTFILES/.extras
+[ -f $MY_DOTFILES/.env ] && source $MY_DOTFILES/.env
 # source ~/.fresh/build/shell.sh
 ###################################
 
@@ -215,7 +220,7 @@ export PATH=~/.fnm:$PATH
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/dotfiles/.p10k.zsh ]] || source ~/dotfiles/.p10k.zsh
+[[ ! -f $MY_DOTFILES/.p10k.zsh ]] || source $MY_DOTFILES/.p10k.zsh
 
 # Load fzf
 [ -x "$(command -v fzf)" ] && source <(fzf --zsh)

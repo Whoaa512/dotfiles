@@ -211,8 +211,6 @@ alias reload="exec $SHELL -l"
 
 # Alias vi => vim
   alias vi='vim'
-MY_DOTFILES="$(realpath "$HOME/dotfiles")"
-export MY_DOTFILES
 # Bash Aliases
   alias k9='kill -9'
   alias wh='which'
