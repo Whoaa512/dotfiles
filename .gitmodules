@@ -3,3 +3,6 @@
   url = /Users/carey.winslow/dotfiles/.zsh/zsh-completions
 	update = checkout
   branch = master
+[submodule "agent-scripts"]
+	path = agent-scripts
+	url = git@github.com:Whoaa512/agent-scripts.git

@@ -1,0 +1,1 @@
+../../agent-scripts/scripts/docs-list.ts
