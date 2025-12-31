@@ -38,7 +38,7 @@ EOF
 ```
 
 ### 5. Spawn Implementation Agent
-Use Task tool with `subagent_type: opus-super-coder` with `run_in_background: true`:
+Use Task tool with `subagent_type: super-coder` with `run_in_background: true`:
 - Reference the bead ID
 - Let agent explore codebase first
 - Request incremental commits and tests

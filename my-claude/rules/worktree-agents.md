@@ -15,5 +15,5 @@ Agents may fail with Edit/Write permissions on `.worktrees/*` paths even when gl
 3. **Agent for research, main for implementation** - Use agents to explore/plan, implement directly
 
 ## Session Evidence
-- 2025-12-26: Two opus-super-coder agents (a24b441, a2ba5a0) both failed on `.worktrees/boss-game-flow/` edits
+- 2025-12-26: Two super-coder agents (a24b441, a2ba5a0) both failed on `.worktrees/boss-game-flow/` edits
 - Same edits succeeded immediately when done from main context
