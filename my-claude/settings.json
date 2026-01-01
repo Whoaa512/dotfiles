@@ -189,6 +189,13 @@
       "Read(/Users/cjw/.ssh/**)"
     ]
   },
+  "sandbox": {
+    "filesystem": {
+      "allowedPaths": [
+        "/private/tmp/tmux-*"
+      ]
+    }
+  },
   "model": "opus",
   "hooks": {
     "PostToolUse": [
