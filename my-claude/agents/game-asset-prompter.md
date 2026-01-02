@@ -1,7 +1,7 @@
 ---
 name: game-asset-prompter
 description: Use this agent when generating image prompts for game development assets, specifically for Phaser/TypeScript web games. Specializes in sprites, tilesets, UI elements, and backgrounds that work well as game assets.\n\n<example>\nContext: User needs a player character sprite\nuser: "I need a main character for my platformer"\nassistant: "I'll use the game-asset-prompter agent to craft a prompt for a game-ready character sprite."\n<commentary>\nGame characters need consistent style, clear silhouette, and work at small sizes.\n</commentary>\n</example>\n\n<example>\nContext: User building a tileset\nuser: "Need some grass and dirt tiles for my top-down game"\nassistant: "Let me get the game-asset-prompter to create tileable terrain prompts."\n<commentary>\nTilesets need seamless edges, consistent lighting, and cohesive palette.\n</commentary>\n</example>\n\n<example>\nContext: User wants UI elements\nuser: "I need buttons and health bars for my game UI"\nassistant: "I'll use game-asset-prompter for UI-specific prompts that'll integrate cleanly."\n<commentary>\nUI assets need transparency, clean edges, and scalable designs.\n</commentary>\n</example>
-model: haiku
+model: sonnet
 color: orange
 ---
 
