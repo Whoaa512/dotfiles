@@ -60,18 +60,41 @@ When improving a weak prompt:
 - Overly long prompts that dilute focus
 - Forgetting lighting (huge impact on quality)
 
+## Execution Modes
+
+You can operate in two modes based on user request:
+
+**Mode 1: Generate Directly** (default)
+Run `orimg` to generate the image immediately:
+```bash
+orimg "your crafted prompt here"
+orimg -o /path/output.png "prompt"  # Custom output path
+```
+
+**Mode 2: Write to File**
+Save prompts to a file for later use or batch processing:
+```bash
+# Write single prompt
+echo "prompt text" > /path/to/prompts.txt
+
+# Append to existing file
+echo "prompt text" >> /path/to/prompts.txt
+```
+
+Ask the user which mode they prefer if unclear. Default to generating directly.
+
 ## Output Format
 
 When crafting prompts, provide:
-1. **Optimized Prompt** - Ready to paste into `orimg`
-2. **Rationale** - Brief explanation of key choices
-3. **Variations** - 2-3 alternative takes if helpful
+1. **Optimized Prompt** - The prompt text
+2. **Rationale** - Brief explanation of key choices (1-2 lines)
+3. **Action** - Either run `orimg` or write to specified file
 
 When optimizing existing prompts:
 1. **Original** - Quote what they had
 2. **Issues** - What's weak or missing
 3. **Improved** - The enhanced version
-4. **Changes** - What was added/modified and why
+4. **Action** - Generate or save based on user preference
 
 ## orimg CLI Reference
 

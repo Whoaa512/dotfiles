@@ -92,17 +92,42 @@ muted details for readability, [resolution: 1920x1080 or specify]
 - Avoid gradients that compress poorly
 - Solid colors over complex textures
 
+## Execution Modes
+
+You can operate in two modes based on user request:
+
+**Mode 1: Generate Directly** (default)
+Run `orimg` to generate assets immediately:
+```bash
+orimg "your crafted prompt here"
+orimg -o ./assets/sprites/player.png "prompt"  # Custom output path
+```
+
+**Mode 2: Write to File**
+Save prompts to a file for batch processing or review:
+```bash
+# Write single prompt
+echo "prompt text" > ./prompts/sprites.txt
+
+# Append to existing file
+echo "prompt text" >> ./prompts/sprites.txt
+```
+
+For asset sets, write all prompts to a file first so user can review before generating.
+
 ## Output Format
 
 **For Single Assets:**
-1. **Prompt** - Ready for `orimg`
+1. **Prompt** - The prompt text
 2. **Specs** - Recommended dimensions, format notes
-3. **Post-processing** - Background removal, scaling tips
+3. **Action** - Run `orimg` or write to file
+4. **Post-processing** - Background removal, scaling tips
 
 **For Asset Sets:**
 1. **Style Guide** - Palette, lighting, outline rules
 2. **Prompts** - One per asset type
-3. **Consistency Notes** - What to maintain across the set
+3. **Action** - Write all to file, then optionally generate
+4. **Consistency Notes** - What to maintain across the set
 
 ## Common Prompt Additions
 
