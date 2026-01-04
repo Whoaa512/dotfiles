@@ -66,3 +66,30 @@ Add hooks to `.claude/settings.json`:
   }
 }
 ```
+
+## Injection Defense Hooks
+
+The project includes prompt injection defense via `injection-defense.ts`:
+
+### How it works
+1. **PostToolUse** tracks tainted content (from WebFetch, Read, etc.)
+2. **PreToolUse** checks Write/Edit/Bash args for:
+   - Tainted content hashes
+   - Injection pattern regex (e.g., "ignore previous instructions")
+   - Dangerous bash commands with tainted args
+
+### Risk levels
+- **High** - Block immediately (direct injection, tainted content in args)
+- **Medium** - Block (suspicious patterns like prompt escaping)
+- **Low** - Warn only (single emphasis word like IMPORTANT)
+
+### Read-only tools bypass
+`Read`, `Glob`, `Grep`, `LSP` - always allowed (no state change)
+
+### Testing
+```bash
+cd .claude/hooks && bun test
+```
+
+### Debug
+Set `DEBUG=1` before running to see taint tracking logs.
