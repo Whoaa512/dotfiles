@@ -608,7 +608,7 @@ function ah (){
   claude --model haiku "$@"
 }
 function abd (){
-  claude --model haiku --agent beads-tracker "$@"
+  claude --model haiku --agent beads-tracker "$@" --append-system-prompt "This session is only for documenting/updating beads tracker related tasks. No editing or other tasks."
 }
 function ar (){
   claude -r "$@"
