@@ -23,6 +23,8 @@
     * run: `uv run <script_path>`
 * Nodejs/Typescript
   * for fastest iteration use `bun`
+  * always use `pnpm` for package management
+  * use `tsgo` provided by @typescript/native-preview (instead of `tsc`)
 
 ### Atomic Commits
 Stage specific files to keep commits focused:
