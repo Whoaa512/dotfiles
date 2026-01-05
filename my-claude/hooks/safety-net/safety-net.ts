@@ -111,6 +111,20 @@ function findDangerousAction(args: string[]): string | null {
             );
           }
         }
+
+        // Handle shell wrappers in -exec: find -exec sh -c 'rm -rf {}' \;
+        if (["bash", "sh", "zsh", "dash", "ksh"].includes(cmd)) {
+          const dashCArg = extractDashCArg(execTokens);
+          if (dashCArg !== null) {
+            const innerDanger = dangerousInText(dashCArg) || dangerousFindDeleteInText(dashCArg);
+            if (innerDanger) {
+              return (
+                "find -exec shell -c contains dangerous command. " +
+                "Use find -print first to verify targets."
+              );
+            }
+          }
+        }
       }
 
       i++;

@@ -221,6 +221,29 @@ describe("safety-net hook", () => {
     });
   });
 
+  describe("find -exec shell -c blocking", () => {
+    test("blocks find -exec sh -c 'rm -rf {}'", async () => {
+      const result = await runHook(bashInput("find . -name '*.bak' -exec sh -c 'rm -rf {}' \\;"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("find -exec");
+    });
+
+    test("blocks find -exec bash -c 'git reset --hard'", async () => {
+      const result = await runHook(bashInput("find . -type d -exec bash -c 'git reset --hard' \\;"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("allows find -exec cat {}", async () => {
+      const result = await runHook(bashInput("find . -name '*.txt' -exec cat {} \\;"));
+      expect(result).toBeNull();
+    });
+
+    test("allows find -exec sh -c 'echo {}'", async () => {
+      const result = await runHook(bashInput("find . -name '*.txt' -exec sh -c 'echo {}' \\;"));
+      expect(result).toBeNull();
+    });
+  });
+
   describe("chained commands", () => {
     test("blocks dangerous command in chain", async () => {
       const result = await runHook(bashInput("ls && git reset --hard"));
