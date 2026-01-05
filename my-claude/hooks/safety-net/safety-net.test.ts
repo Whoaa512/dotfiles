@@ -33,8 +33,15 @@ async function runHook(input: HookInput, env: Record<string, string> = {}): Prom
   proc.stdin.write(JSON.stringify(input));
   proc.stdin.end();
 
-  const output = await new Response(proc.stdout).text();
-  await proc.exited;
+  const [output, stderr] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+  ]);
+  const exitCode = await proc.exited;
+
+  if (exitCode !== 0 || stderr.trim()) {
+    console.error(`Hook stderr (exit ${exitCode}):`, stderr);
+  }
 
   if (!output.trim()) return null;
   return JSON.parse(output);
@@ -142,6 +149,21 @@ describe("safety-net hook", () => {
     test("allows rm -rf ./subdir with cwd", async () => {
       const result = await runHook(bashInput("rm -rf ./subdir", "/project"));
       expect(result).toBeNull();
+    });
+
+    test("blocks rm -rf with glob pattern", async () => {
+      const result = await runHook(bashInput("rm -rf *.backup"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks rm -rf with recursive glob", async () => {
+      const result = await runHook(bashInput("rm -rf **/*"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks rm -rf if ANY target is dangerous", async () => {
+      const result = await runHook(bashInput("rm -rf /tmp/safe /etc"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
     });
   });
 
