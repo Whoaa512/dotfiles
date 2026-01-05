@@ -2,11 +2,8 @@
  * Git command analysis rules for the safety net.
  */
 
+import { normalizeArg } from "./normalize.js";
 import { shortOpts } from "./shell.js";
-
-function normalizeArg(arg: string): string {
-  return arg.replace(/^[`({[$\\]+/, "").replace(/[`)}\]\\]+$/, "");
-}
 
 const REASON_GIT_CHECKOUT_DOUBLE_DASH =
   "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";

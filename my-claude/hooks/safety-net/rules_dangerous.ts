@@ -5,9 +5,10 @@
  * - Encoded payload to shell (base64 -d | bash)
  * - Git history destruction (reflog delete, gc --prune=now)
  * - Secure delete commands (shred --remove, srm)
+ * - Variable expansion bypass (${RM}, $CMD, -$R$F)
  */
 
-import { basename } from "path";
+import { normalizeCmd } from "./normalize.js";
 import { shortOpts } from "./shell.js";
 
 const SHELLS = new Set(["bash", "sh", "zsh", "dash", "ksh"]);
@@ -39,9 +40,14 @@ const REASON_DD_DEVICE =
 const REASON_GIT_FILTER_BRANCH_FORCE =
   "git filter-branch --force rewrites history destructively. Back up refs first.";
 
-function normalizeCmd(token: string): string {
-  return basename(token).toLowerCase();
-}
+const REASON_VARIABLE_CMD_BYPASS =
+  "Variable expansion in command position can bypass safety checks. Use literal command names.";
+
+const REASON_EVAL_DANGEROUS =
+  "eval executing potentially dangerous commands. Evaluate the command string directly.";
+
+const REASON_VARIABLE_FLAG_BYPASS =
+  "Variable expansion in flags can construct dangerous options like -rf. Use literal flags.";
 
 /**
  * Detect curl/wget piped to shell patterns.
@@ -285,6 +291,115 @@ export function analyzeGitFilterBranch(tokens: string[]): string | null {
     const lower = tok.toLowerCase();
     if (lower === "--force" || lower === "-f") {
       return REASON_GIT_FILTER_BRANCH_FORCE;
+    }
+  }
+
+  return null;
+}
+
+const DANGEROUS_CMD_PATTERNS = [
+  /\brm\b/, /\bgit\b/, /\bdd\b/, /\bshred\b/, /\bsrm\b/,
+  /\bmkfs\b/, /\bchmod\b/, /\bchown\b/, /\bkill\b/, /\bpkill\b/,
+];
+
+const DANGEROUS_IN_EVAL = [
+  /rm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r|--recursive\s+--force|--force\s+--recursive)/i,
+  /git\s+(reset\s+--hard|clean\s+-f|push\s+--force|checkout\s+--)/i,
+  /dd\s+.*of=/i,
+  /\bshred\b.*(-u|--remove)/i,
+];
+
+function containsVariable(token: string): boolean {
+  return /\$[A-Za-z_]|\$\{[^}]+\}/.test(token);
+}
+
+function isVariableOnly(token: string): boolean {
+  const stripped = token.trim();
+  return /^\$[A-Za-z_][A-Za-z0-9_]*$/.test(stripped) ||
+         /^\$\{[A-Za-z_][A-Za-z0-9_]*\}$/.test(stripped);
+}
+
+/**
+ * Detect variable expansion in command position that could bypass safety.
+ * E.g., ${RM} -rf / or $CMD where CMD could be rm
+ */
+export function analyzeVariableCommand(tokens: string[], segment: string): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = tokens[0];
+
+  // Variable in command position: $CMD, ${RM}, etc.
+  if (isVariableOnly(cmd)) {
+    // Check if the rest looks dangerous
+    const restJoined = tokens.slice(1).join(" ");
+    if (/-rf\b|--recursive.*--force|--force.*--recursive/.test(restJoined)) {
+      return REASON_VARIABLE_CMD_BYPASS;
+    }
+    // Check for dangerous-looking paths
+    if (/\s\/\s*$|\s~\s*$|\s\/\*/.test(restJoined) || tokens.includes("/") || tokens.includes("~")) {
+      return REASON_VARIABLE_CMD_BYPASS;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Detect eval with dangerous command strings.
+ */
+export function analyzeEval(tokens: string[], segment: string): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+  if (cmd !== "eval") return null;
+
+  // Get the eval argument (everything after eval)
+  const evalArg = tokens.slice(1).join(" ");
+
+  // Check for dangerous patterns in the eval string
+  for (const pattern of DANGEROUS_IN_EVAL) {
+    if (pattern.test(evalArg)) {
+      return REASON_EVAL_DANGEROUS;
+    }
+  }
+
+  // Also check if it contains dangerous patterns in the raw segment
+  // (handles cases like eval 'rm -rf /')
+  const quotedContent = segment.match(/eval\s+(['"])(.*?)\1/);
+  if (quotedContent) {
+    const content = quotedContent[2];
+    for (const pattern of DANGEROUS_IN_EVAL) {
+      if (pattern.test(content)) {
+        return REASON_EVAL_DANGEROUS;
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Detect variable flag construction that could construct -rf.
+ * E.g., R=r; F=f; rm -$R$F / or rm -${R}${F} /
+ */
+export function analyzeVariableFlags(tokens: string[], segment: string): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+
+  // Only check rm for now (main concern)
+  if (cmd !== "rm") return null;
+
+  // Check flags for variable expansion patterns
+  for (let i = 1; i < tokens.length; i++) {
+    const tok = tokens[i];
+    if (tok === "--") break;
+    if (!tok.startsWith("-")) continue;
+
+    // Flag contains variable: -$R$F, -${R}${F}, etc.
+    if (containsVariable(tok)) {
+      // The flag after - contains variables that could construct -rf
+      return REASON_VARIABLE_FLAG_BYPASS;
     }
   }
 

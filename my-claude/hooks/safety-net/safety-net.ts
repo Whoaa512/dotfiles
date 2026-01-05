@@ -9,12 +9,12 @@
  *   - Exit 0 with no output = allow command
  */
 
-import { basename } from "path";
 import { existsSync, mkdirSync, appendFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 
 import { loadConfig, type Config } from "./config.js";
+import { stripTokenWrappers, normalizeCmdToken } from "./normalize.js";
 import { checkCustomRules } from "./rules_custom.js";
 import {
   analyzePipeToShell,
@@ -24,6 +24,9 @@ import {
   analyzeSecureDelete,
   analyzeDdDevice,
   analyzeGitFilterBranch,
+  analyzeVariableCommand,
+  analyzeEval,
+  analyzeVariableFlags,
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
@@ -44,16 +47,6 @@ const REASON_XARGS_RM_RF =
 
 const REASON_PARALLEL_RM_RF =
   "parallel can feed arbitrary input to rm -rf. List files first, then delete individually.";
-
-function stripTokenWrappers(token: string): string {
-  let tok = token.trim();
-  while (tok.startsWith("$(")) {
-    tok = tok.slice(2);
-  }
-  tok = tok.replace(/^[\\`({[]+/, "");
-  tok = tok.replace(/[`)}\\]]+$/, "");
-  return tok;
-}
 
 function findDangerousAction(args: string[]): string | null {
   const consumesOne = new Set([
@@ -170,14 +163,6 @@ function paranoidRmMode(): boolean {
 
 function paranoidInterpretersMode(): boolean {
   return paranoidMode() || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
-}
-
-function normalizeCmdToken(token: string): string {
-  let tok = stripTokenWrappers(token);
-  tok = tok.replace(/;+$/, "");
-  tok = tok.toLowerCase();
-  tok = basename(tok);
-  return tok;
 }
 
 function extractDashCArg(tokens: string[]): string | null {
@@ -557,6 +542,18 @@ function analyzeSegment(
   // git filter-branch --force (history rewrite)
   const filterBranchReason = analyzeGitFilterBranch(strippedTokens);
   if (filterBranchReason) return [segment, filterBranchReason];
+
+  // Variable expansion bypass detection
+  const varCmdReason = analyzeVariableCommand(strippedTokens, segment);
+  if (varCmdReason) return [segment, varCmdReason];
+
+  // Eval with dangerous commands
+  const evalReason = analyzeEval(strippedTokens, segment);
+  if (evalReason) return [segment, evalReason];
+
+  // Variable flag construction (rm -$R$F)
+  const varFlagReason = analyzeVariableFlags(strippedTokens, segment);
+  if (varFlagReason) return [segment, varFlagReason];
 
   // Shell wrapper recursion: bash/sh/zsh -c '...'
   if (["bash", "sh", "zsh", "dash", "ksh"].includes(head)) {
