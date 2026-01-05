@@ -613,6 +613,7 @@ function abd (){
 function ar (){
   claude -r "$@"
 }
+alias ccsummarize='summarize --model cli/claude/opus --max-output-tokens 10k '
 alias xrg='xargs rg '
 alias x='xargs '
 alias mr='mise run '
