@@ -154,7 +154,7 @@ function gitSubcommandAndRest(tokens: string[]): [string | null, string[]] {
 
     if (tok.startsWith("--")) {
       if (tok.includes("=")) {
-        const [opt] = tok.split("=", 1);
+        const opt = tok.split("=")[0];
         if (optsWithValue.has(opt)) {
           i++;
           continue;
@@ -203,7 +203,7 @@ function checkoutPositionalArgs(rest: string[]): string[] {
       }
 
       if (tok.startsWith("--") && tok.includes("=")) {
-        const [opt] = tok.split("=", 1);
+        const opt = tok.split("=")[0];
         if (optsWithValue.has(opt)) {
           i++;
           continue;
