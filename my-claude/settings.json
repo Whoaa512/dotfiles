@@ -231,6 +231,16 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/code/cj/dotfiles/my-claude/hooks/safety-net/run.sh",
+            "timeout": 10
+          }
+        ]
+      },
+      {
         "matcher": "",
         "hooks": [
           {
