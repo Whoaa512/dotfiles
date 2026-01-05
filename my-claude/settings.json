@@ -115,6 +115,8 @@
       "Bash(bd comment:*)",
       "Bash(bd list:*)",
       "Bash(bd ready:*)",
+      "Bash(bd --no-daemon:*)",
+      "Bash(bd:*)",
       "Bash(bd prime:*)",
       "Bash(bd daemon:*)",
       "Bash(bd show:*)",
