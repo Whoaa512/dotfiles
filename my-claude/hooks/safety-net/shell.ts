@@ -2,6 +2,8 @@
  * Shell parsing helpers for the safety net.
  */
 
+import { shlexSplit as shlexSplitNative } from "./shlex.js";
+
 export function splitShellCommands(command: string): string[] {
   const parts: string[] = [];
   const buf: string[] = [];
@@ -95,84 +97,8 @@ export function splitShellCommands(command: string): string[] {
   return parts;
 }
 
-function shlexSplitViaPython(segment: string): string[] | null {
-  try {
-    const result = Bun.spawnSync({
-      cmd: ["mise", "exec", "python", "--", "python", "-c",
-        "import shlex,json,sys; print(json.dumps(shlex.split(sys.stdin.read(), posix=True)))"],
-      stdin: Buffer.from(segment),
-    });
-    if (result.exitCode === 0) {
-      const parsed = JSON.parse(result.stdout.toString());
-      if (Array.isArray(parsed)) {
-        return parsed;
-      }
-    }
-  } catch {
-    // Fall through to naive parser
-  }
-  return null;
-}
-
-function shlexSplitNaive(segment: string): string[] | null {
-  const tokens: string[] = [];
-  let current = "";
-  let inSingle = false;
-  let inDouble = false;
-  let escape = false;
-
-  for (let i = 0; i < segment.length; i++) {
-    const ch = segment[i];
-
-    if (escape) {
-      current += ch;
-      escape = false;
-      continue;
-    }
-
-    if (ch === "\\" && !inSingle) {
-      escape = true;
-      continue;
-    }
-
-    if (ch === "'" && !inDouble) {
-      inSingle = !inSingle;
-      continue;
-    }
-
-    if (ch === '"' && !inSingle) {
-      inDouble = !inDouble;
-      continue;
-    }
-
-    if (!inSingle && !inDouble && /\s/.test(ch)) {
-      if (current) {
-        tokens.push(current);
-        current = "";
-      }
-      continue;
-    }
-
-    current += ch;
-  }
-
-  if (inSingle || inDouble) {
-    return null;
-  }
-
-  if (current) {
-    tokens.push(current);
-  }
-
-  return tokens;
-}
-
 export function shlexSplit(segment: string): string[] | null {
-  const pythonResult = shlexSplitViaPython(segment);
-  if (pythonResult !== null) {
-    return pythonResult;
-  }
-  return shlexSplitNaive(segment);
+  return shlexSplitNative(segment);
 }
 
 function stripEnvAssignments(tokens: string[]): string[] {
