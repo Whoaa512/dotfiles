@@ -179,8 +179,9 @@ function stripEnvAssignments(tokens: string[]): string[] {
   let i = 0;
   while (i < tokens.length) {
     const tok = tokens[i];
-    if (!tok.includes("=")) break;
-    const [key] = tok.split("=", 1);
+    const eqIdx = tok.indexOf("=");
+    if (eqIdx < 0) break;
+    const key = tok.slice(0, eqIdx);
     if (!key || !/^[a-zA-Z_]/.test(key)) break;
     if (!/^[a-zA-Z0-9_]+$/.test(key)) break;
     i++;
