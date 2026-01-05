@@ -251,7 +251,7 @@ fi
 eval "$(mise completion zsh)"
 
 # bd
-[ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
+# [ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
 
 # SSH agent with 8hr key cache (Linux only - macOS uses keychain)
 if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then
