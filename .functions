@@ -415,6 +415,17 @@ alias gpprf='gppr -f'
 alias gpprn='gppr -n'
 alias gpprfn='gppr -f -n'
 
+bk_repo_slug() {
+  remote=$(git remote -v \
+      | grep origin \
+      | head -n1 \
+      | awk '{print $2}'
+    )
+  	echo "$remote" \
+      | grep -oE ':(.+).git' \
+      | sed -E 's/(\:|\.git)//g' \
+      | sed 's=/=-=g'
+}
 
 function add-brc-url() {
   local URL="https://github.com/$1/$2/commit"
