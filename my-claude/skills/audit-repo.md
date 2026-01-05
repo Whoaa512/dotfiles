@@ -24,6 +24,13 @@ If no path given, uses current directory.
 
 ## What It Checks
 
+### Prompt Injection (AI Safety)
+- "ignore previous instructions" patterns
+- Role manipulation ("you are now", "act as")
+- System prompt escaping (`<|im_start|>`, `[SYSTEM]`)
+- Hidden unicode (zero-width chars)
+- Base64-encoded injection payloads
+
 ### High Risk (Block)
 - Obfuscated code (base64 payloads, hex-encoded strings)
 - Reverse shells, data exfil patterns
@@ -43,6 +50,15 @@ If no path given, uses current directory.
 - External dependencies count
 - Network permissions requested
 - Privileged operations
+
+## Scripts
+
+```bash
+# Prompt injection scanner (recommended first step)
+bun run ~/.claude/skills/audit-repo/scan-injections.ts [path]
+
+# Exit codes: 0=clean, 1=medium risk, 2=high risk
+```
 
 ## Commands
 
