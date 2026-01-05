@@ -42,7 +42,7 @@ function stripTokenWrappers(token: string): string {
     tok = tok.slice(2);
   }
   tok = tok.replace(/^[\\`({[]+/, "");
-  tok = tok.replace(/[`)}]+$/, "");
+  tok = tok.replace(/[`)}\\]]+$/, "");
   return tok;
 }
 
