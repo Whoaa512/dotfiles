@@ -567,7 +567,7 @@ function analyzeSegment(
       const cmdStr = extractDashCArg(child);
       if (cmdStr !== null) {
         const replTokens = xargsReplacementTokens(strippedTokens);
-        if (replTokens.size && cmdStr.trim() === [...replTokens][0]) {
+        if (replTokens.size && replTokens.has(cmdStr.trim())) {
           return [segment, `xargs ${child[0]} -c can execute arbitrary commands from input.`];
         }
         if (replTokens.size && [...replTokens].some((t) => t && cmdStr.includes(t))) {
