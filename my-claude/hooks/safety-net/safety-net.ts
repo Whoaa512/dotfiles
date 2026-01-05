@@ -16,6 +16,13 @@ import { join } from "path";
 
 import { loadConfig, type Config } from "./config.js";
 import { checkCustomRules } from "./rules_custom.js";
+import {
+  analyzePipeToShell,
+  analyzeForkBomb,
+  analyzeDecodeToShell,
+  analyzeGitHistory,
+  analyzeSecureDelete,
+} from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
 import { splitShellCommands, shlexSplit, stripWrappers, shortOpts } from "./shell.js";
@@ -489,6 +496,7 @@ interface AnalysisContext {
   paranoidRm: boolean;
   paranoidInterpreters: boolean;
   config: Config | null;
+  pipeTarget: string | null;
 }
 
 function analyzeSegment(
@@ -510,6 +518,22 @@ function analyzeSegment(
 
   const head = normalizeCmdToken(strippedTokens[0]);
 
+  // Fork bomb detection (check raw segment text)
+  const forkBombReason = analyzeForkBomb(segment);
+  if (forkBombReason) return [segment, forkBombReason];
+
+  // Pipe-to-shell detection (curl | bash, wget | sh, bash <(curl...))
+  const pipeToShellReason = analyzePipeToShell(strippedTokens, ctx.pipeTarget, segment);
+  if (pipeToShellReason) return [segment, pipeToShellReason];
+
+  // Decode-to-shell detection (base64 -d | bash, xxd -r | sh)
+  const decodeToShellReason = analyzeDecodeToShell(strippedTokens, ctx.pipeTarget);
+  if (decodeToShellReason) return [segment, decodeToShellReason];
+
+  // Secure delete detection (shred --remove, srm)
+  const secureDeleteReason = analyzeSecureDelete(strippedTokens);
+  if (secureDeleteReason) return [segment, secureDeleteReason];
+
   // Shell wrapper recursion: bash/sh/zsh -c '...'
   if (["bash", "sh", "zsh", "dash", "ksh"].includes(head)) {
     const cmdStr = extractDashCArg(strippedTokens);
@@ -517,7 +541,7 @@ function analyzeSegment(
       if (ctx.depth >= MAX_RECURSION_DEPTH) {
         return [segment, "Command analysis recursion limit reached."];
       }
-      const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1 });
+      const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1, pipeTarget: null });
       if (analyzed) return analyzed;
     } else if (ctx.strict && hasShellDashC(strippedTokens)) {
       return [segment, "Unable to parse shell -c wrapper safely." + STRICT_SUFFIX];
@@ -579,7 +603,7 @@ function analyzeSegment(
         if (ctx.depth >= MAX_RECURSION_DEPTH) {
           return [segment, "Command analysis recursion limit reached."];
         }
-        const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1 });
+        const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1, pipeTarget: null });
         if (analyzed) return analyzed;
       } else if (hasShellDashC(child)) {
         return [segment, `xargs ${child[0]} -c can execute arbitrary commands from input.`];
@@ -641,7 +665,7 @@ function analyzeSegment(
           if (ctx.depth >= MAX_RECURSION_DEPTH) {
             return [segment, "Command analysis recursion limit reached."];
           }
-          const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1 });
+          const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1, pipeTarget: null });
           if (analyzed) return analyzed;
         }
       }
@@ -674,6 +698,7 @@ function analyzeSegment(
               const analyzed = analyzeCommand(cmdStr.replace("{}", arg), {
                 ...ctx,
                 depth: ctx.depth + 1,
+                pipeTarget: null,
               });
               if (analyzed) return analyzed;
             }
@@ -683,7 +708,7 @@ function analyzeSegment(
         if (ctx.depth >= MAX_RECURSION_DEPTH) {
           return [segment, "Command analysis recursion limit reached."];
         }
-        const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1 });
+        const analyzed = analyzeCommand(cmdStr, { ...ctx, depth: ctx.depth + 1, pipeTarget: null });
         if (analyzed) return analyzed;
       } else if (hasShellDashC(template)) {
         return [segment, `parallel ${template[0]} -c can execute arbitrary commands from input.`];
@@ -789,6 +814,8 @@ function analyzeSegment(
   if (head === "git") {
     const reason = analyzeGit(["git", ...strippedTokens.slice(1)]);
     if (reason) return [segment, reason];
+    const historyReason = analyzeGitHistory(["git", ...strippedTokens.slice(1)]);
+    if (historyReason) return [segment, historyReason];
     if (ctx.depth === 0 && ctx.config?.rules.length) {
       const customReason = checkCustomRules(strippedTokens, ctx.config.rules);
       if (customReason) return [segment, customReason];
@@ -834,6 +861,8 @@ function analyzeSegment(
     if (cmd === "git") {
       const reason = analyzeGit(["git", ...strippedTokens.slice(i + 1)]);
       if (reason) return [segment, reason];
+      const historyReason = analyzeGitHistory(["git", ...strippedTokens.slice(i + 1)]);
+      if (historyReason) return [segment, historyReason];
     }
     if (cmd === "find") {
       const reason = findDangerousAction(strippedTokens.slice(i + 1));
@@ -872,15 +901,37 @@ function segmentChangesCwd(segment: string): boolean {
   );
 }
 
+function extractPipeTarget(segment: string): string | null {
+  const tokens = shlexSplit(segment);
+  if (!tokens?.length) return null;
+  const stripped = stripWrappers(tokens);
+  if (!stripped.length) return null;
+  return normalizeCmdToken(stripped[0]);
+}
+
 function analyzeCommand(
   command: string,
   ctx: AnalysisContext
 ): [string, string] | null {
+  // Check for fork bombs on raw command before splitting (splitting breaks fork bomb patterns)
+  const forkBombReason = analyzeForkBomb(command);
+  if (forkBombReason) return [command, forkBombReason];
+
   let effectiveCwd = ctx.cwd;
   let config = ctx.config;
 
-  for (const segment of splitShellCommands(command)) {
-    const analyzed = analyzeSegment(segment, { ...ctx, cwd: effectiveCwd, config });
+  const segments = splitShellCommands(command);
+  for (let i = 0; i < segments.length; i++) {
+    const segment = segments[i];
+    const nextSegment = i + 1 < segments.length ? segments[i + 1] : null;
+    const pipeTarget = nextSegment ? extractPipeTarget(nextSegment) : null;
+
+    const analyzed = analyzeSegment(segment, {
+      ...ctx,
+      cwd: effectiveCwd,
+      config,
+      pipeTarget,
+    });
     if (analyzed) return analyzed;
 
     if (effectiveCwd !== null && segmentChangesCwd(segment)) {
@@ -1013,6 +1064,7 @@ async function main(): Promise<number> {
     paranoidRm,
     paranoidInterpreters,
     config,
+    pipeTarget: null,
   });
 
   if (analyzed) {
