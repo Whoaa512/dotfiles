@@ -361,6 +361,7 @@ alias reload="exec $SHELL -l"
   alias gtc='gt create'
   alias gtm='gt modify'
   alias gtmc='gt modify -c'
+  alias gtmcm='gt modify -c -m'
   alias gta='gt absorb'
   alias gtg='gt get'
   alias gtco='gt checkout'
@@ -585,9 +586,10 @@ function gpum() {
   git push upst "$(git_default_branch)"
 }
 
+unalias gcount 2>/dev/null || true
 function gcount() {
   def_branch="$(git_default_branch)"
-  git log --oneline "$(git merge-base "$def_branch" HEAD )"..HEAD | wc -l | tr -d ' '
+  git log --oneline "$(git merge-base "origin/$def_branch" HEAD )"..HEAD | wc -l | tr -d ' '
 }
 
 # allow colors in watch
