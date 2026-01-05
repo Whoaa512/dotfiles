@@ -2,7 +2,7 @@
  * Filesystem (rm) command analysis rules for the safety net.
  */
 
-import { basename, normalize, join } from "path";
+import { basename, normalize, join, resolve } from "path";
 import { shortOpts } from "./shell.js";
 
 const REASON_RM_RF = "rm -rf is destructive. List files first, then delete individually.";
@@ -66,14 +66,12 @@ function isCwdItself(path: string, cwd: string): boolean {
   const normalized = normalize(path);
   if (normalized === "." || normalized === "") return true;
 
-  let resolved: string;
-  if (path.startsWith("/")) {
-    resolved = normalize(path);
-  } else {
-    resolved = normalize(join(cwd, path));
-  }
+  // Resolve to absolute path, handling .. traversal properly
+  const resolved = path.startsWith("/")
+    ? resolve(path)
+    : resolve(cwd, path);
 
-  return resolved === normalize(cwd);
+  return resolved === resolve(cwd);
 }
 
 function isPathWithinCwd(path: string, cwd: string): boolean {
@@ -88,17 +86,16 @@ function isPathWithinCwd(path: string, cwd: string): boolean {
   const normalized = normalize(path);
   if (normalized === "." || normalized === "") return false;
 
-  let resolved: string;
-  if (path.startsWith("/")) {
-    resolved = normalize(path);
-  } else {
-    resolved = normalize(join(cwd, path));
-  }
+  // Resolve to absolute path, handling .. traversal properly
+  const resolved = path.startsWith("/")
+    ? resolve(path)
+    : resolve(cwd, path);
 
-  const cwdNormalized = normalize(cwd);
-  if (resolved === cwdNormalized) return false;
+  const cwdResolved = resolve(cwd);
+  if (resolved === cwdResolved) return false;
 
-  return resolved.startsWith(cwdNormalized + "/");
+  // Check if resolved path is strictly within cwd
+  return resolved.startsWith(cwdResolved + "/");
 }
 
 function rmTargets(tokens: string[]): string[] {

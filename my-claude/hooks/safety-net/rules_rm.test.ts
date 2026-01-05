@@ -122,6 +122,26 @@ describe("analyzeRm", () => {
       expect(result).not.toBeNull();
     });
 
+    test("blocks absolute path with .. escaping cwd", () => {
+      const result = analyzeRm(["rm", "-rf", "/project/../etc"], { cwd: "/project" });
+      expect(result).not.toBeNull();
+    });
+
+    test("blocks ./foo/../../etc traversal", () => {
+      const result = analyzeRm(["rm", "-rf", "./foo/../../etc"], { cwd: "/project" });
+      expect(result).not.toBeNull();
+    });
+
+    test("blocks deep traversal escaping cwd", () => {
+      const result = analyzeRm(["rm", "-rf", "a/b/c/../../../../other"], { cwd: "/project" });
+      expect(result).not.toBeNull();
+    });
+
+    test("allows path with .. that stays within cwd", () => {
+      const result = analyzeRm(["rm", "-rf", "a/b/../c"], { cwd: "/project" });
+      expect(result).toBeNull();
+    });
+
     test("blocks ~ paths even with cwd", () => {
       const result = analyzeRm(["rm", "-rf", "~/something"], { cwd: "/project" });
       expect(result).toContain("root or home");
