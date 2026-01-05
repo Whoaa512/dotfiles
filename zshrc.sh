@@ -38,6 +38,11 @@ function chpwd_update_git_vars() {
 function update_current_git_vars() {
     unset __CURRENT_GIT_STATUS
 
+    # Skip git status for treehouse directory - let PowerLevel10k handle it
+    if [[ "$PWD" == */treehouse* || "$PWD" == */pineapple* ]]; then
+        return
+    fi
+
     local gitstatus="$__GIT_PROMPT_DIR/gitstatus.py"
     _GIT_STATUS=`python ${gitstatus} 2> /dev/null`
     __CURRENT_GIT_STATUS=("${(@f)_GIT_STATUS}")
@@ -49,6 +54,7 @@ function update_current_git_vars() {
 	GIT_UNTRACKED=$__CURRENT_GIT_STATUS[6]
 	GIT_CLEAN=$__CURRENT_GIT_STATUS[7]
 }
+
 
 
 git_super_status() {
