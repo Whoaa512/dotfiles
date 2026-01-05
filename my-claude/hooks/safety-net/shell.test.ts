@@ -115,7 +115,7 @@ describe("stripWrappers", () => {
   });
 
   test("sudo with flags", () => {
-    expect(stripWrappers(["sudo", "-u", "root", "ls"])).toEqual(["root", "ls"]);
+    expect(stripWrappers(["sudo", "-u", "root", "ls"])).toEqual(["ls"]);
   });
 
   test("env wrapper", () => {

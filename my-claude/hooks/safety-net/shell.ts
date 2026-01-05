@@ -203,11 +203,21 @@ export function stripWrappers(tokens: string[]): string[] {
     const head = tokens[0].toLowerCase();
 
     if (head === "sudo") {
+      const sudoFlagsWithArgs = new Set(["-u", "-g", "-C", "-D", "-h", "-p", "-R", "-T", "-U"]);
       let i = 1;
-      while (i < tokens.length && tokens[i].startsWith("-") && tokens[i] !== "--") {
+      while (i < tokens.length) {
+        const tok = tokens[i];
+        if (tok === "--") {
+          i++;
+          break;
+        }
+        if (!tok.startsWith("-")) break;
+        if (sudoFlagsWithArgs.has(tok)) {
+          i += 2;
+          continue;
+        }
         i++;
       }
-      if (i < tokens.length && tokens[i] === "--") i++;
       tokens = tokens.slice(i);
       continue;
     }
