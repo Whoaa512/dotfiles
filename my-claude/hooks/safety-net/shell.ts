@@ -95,7 +95,26 @@ export function splitShellCommands(command: string): string[] {
   return parts;
 }
 
-export function shlexSplit(segment: string): string[] | null {
+function shlexSplitViaPython(segment: string): string[] | null {
+  try {
+    const result = Bun.spawnSync({
+      cmd: ["mise", "exec", "python", "--", "python", "-c",
+        "import shlex,json,sys; print(json.dumps(shlex.split(sys.stdin.read(), posix=True)))"],
+      stdin: Buffer.from(segment),
+    });
+    if (result.exitCode === 0) {
+      const parsed = JSON.parse(result.stdout.toString());
+      if (Array.isArray(parsed)) {
+        return parsed;
+      }
+    }
+  } catch {
+    // Fall through to naive parser
+  }
+  return null;
+}
+
+function shlexSplitNaive(segment: string): string[] | null {
   const tokens: string[] = [];
   let current = "";
   let inSingle = false;
@@ -146,6 +165,14 @@ export function shlexSplit(segment: string): string[] | null {
   }
 
   return tokens;
+}
+
+export function shlexSplit(segment: string): string[] | null {
+  const pythonResult = shlexSplitViaPython(segment);
+  if (pythonResult !== null) {
+    return pythonResult;
+  }
+  return shlexSplitNaive(segment);
 }
 
 function stripEnvAssignments(tokens: string[]): string[] {
