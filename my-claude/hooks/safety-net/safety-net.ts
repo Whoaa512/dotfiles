@@ -22,6 +22,8 @@ import {
   analyzeDecodeToShell,
   analyzeGitHistory,
   analyzeSecureDelete,
+  analyzeDdDevice,
+  analyzeGitFilterBranch,
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
@@ -547,6 +549,14 @@ function analyzeSegment(
   // Secure delete detection (shred --remove, srm)
   const secureDeleteReason = analyzeSecureDelete(strippedTokens);
   if (secureDeleteReason) return [segment, secureDeleteReason];
+
+  // dd writing to device files
+  const ddDeviceReason = analyzeDdDevice(strippedTokens);
+  if (ddDeviceReason) return [segment, ddDeviceReason];
+
+  // git filter-branch --force (history rewrite)
+  const filterBranchReason = analyzeGitFilterBranch(strippedTokens);
+  if (filterBranchReason) return [segment, filterBranchReason];
 
   // Shell wrapper recursion: bash/sh/zsh -c '...'
   if (["bash", "sh", "zsh", "dash", "ksh"].includes(head)) {

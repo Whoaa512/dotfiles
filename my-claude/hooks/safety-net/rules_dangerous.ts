@@ -33,6 +33,12 @@ const REASON_GIT_GC_PRUNE_NOW =
 const REASON_SECURE_DELETE =
   "Secure delete commands permanently destroy files beyond recovery. Verify targets carefully.";
 
+const REASON_DD_DEVICE =
+  "dd writing to a device can destroy disk data. Verify the output file path carefully.";
+
+const REASON_GIT_FILTER_BRANCH_FORCE =
+  "git filter-branch --force rewrites history destructively. Back up refs first.";
+
 function normalizeCmd(token: string): string {
   return basename(token).toLowerCase();
 }
@@ -237,6 +243,49 @@ export function analyzeSecureDelete(tokens: string[]): string | null {
       return REASON_SECURE_DELETE;
     }
     return null;
+  }
+
+  return null;
+}
+
+/**
+ * Detect dd writing to device files (of=/dev/*).
+ */
+export function analyzeDdDevice(tokens: string[]): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+  if (cmd !== "dd") return null;
+
+  for (const tok of tokens.slice(1)) {
+    // dd uses of=path syntax
+    if (tok.startsWith("of=")) {
+      const target = tok.slice(3);
+      if (target.startsWith("/dev/")) {
+        return REASON_DD_DEVICE;
+      }
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Detect git filter-branch --force (history rewrite).
+ */
+export function analyzeGitFilterBranch(tokens: string[]): string | null {
+  if (!tokens.length || normalizeCmd(tokens[0]) !== "git") return null;
+  if (tokens.length < 2) return null;
+
+  const subcommand = tokens[1].toLowerCase();
+  if (subcommand !== "filter-branch") return null;
+
+  // Check for --force or -f
+  for (const tok of tokens.slice(2)) {
+    const lower = tok.toLowerCase();
+    if (lower === "--force" || lower === "-f") {
+      return REASON_GIT_FILTER_BRANCH_FORCE;
+    }
   }
 
   return null;

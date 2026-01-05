@@ -453,4 +453,45 @@ describe("safety-net hook", () => {
       expect(result).toBeNull();
     });
   });
+
+  describe("dd device writing", () => {
+    test("blocks dd of=/dev/sda", async () => {
+      const result = await runHook(bashInput("dd if=/dev/zero of=/dev/sda"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("dd writing to a device");
+    });
+
+    test("blocks dd of=/dev/disk0", async () => {
+      const result = await runHook(bashInput("dd if=image.iso of=/dev/disk0 bs=4M"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("allows dd to regular file", async () => {
+      const result = await runHook(bashInput("dd if=/dev/zero of=file.img bs=1M count=100"));
+      expect(result).toBeNull();
+    });
+
+    test("allows dd without of", async () => {
+      const result = await runHook(bashInput("dd if=/dev/urandom bs=1M count=1"));
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("git filter-branch", () => {
+    test("blocks git filter-branch --force", async () => {
+      const result = await runHook(bashInput("git filter-branch --force --prune-empty HEAD"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("filter-branch --force");
+    });
+
+    test("blocks git filter-branch -f", async () => {
+      const result = await runHook(bashInput("git filter-branch -f HEAD"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("allows git filter-branch without force", async () => {
+      const result = await runHook(bashInput("git filter-branch --tree-filter 'rm -f file' HEAD"));
+      expect(result).toBeNull();
+    });
+  });
 });
