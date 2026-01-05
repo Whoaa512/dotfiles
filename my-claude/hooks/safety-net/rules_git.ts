@@ -4,6 +4,10 @@
 
 import { shortOpts } from "./shell.js";
 
+function normalizeArg(arg: string): string {
+  return arg.replace(/^[`({[$\\]+/, "").replace(/[`)}\]\\]+$/, "");
+}
+
 const REASON_GIT_CHECKOUT_DOUBLE_DASH =
   "git checkout -- discards uncommitted changes permanently. Use 'git stash' first.";
 const REASON_GIT_CHECKOUT_REF_DOUBLE_DASH =
@@ -35,17 +39,18 @@ export function analyzeGit(tokens: string[]): string | null {
   const [sub, rest] = gitSubcommandAndRest(tokens);
   if (!sub) return null;
 
-  const subLower = sub.toLowerCase();
-  const restLower = rest.map((t) => t.toLowerCase());
-  const short = shortOpts(rest);
+  const subLower = normalizeArg(sub).toLowerCase();
+  const restNormalized = rest.map(normalizeArg);
+  const restLower = restNormalized.map((t) => t.toLowerCase());
+  const short = shortOpts(restNormalized);
 
   if (subLower === "checkout") {
-    if (rest.includes("--")) {
-      const idx = rest.indexOf("--");
+    if (restNormalized.includes("--")) {
+      const idx = restNormalized.indexOf("--");
       return idx === 0 ? REASON_GIT_CHECKOUT_DOUBLE_DASH : REASON_GIT_CHECKOUT_REF_DOUBLE_DASH;
     }
-    if (rest.includes("-b") || short.has("b")) return null;
-    if (rest.includes("-B") || short.has("B")) return null;
+    if (restNormalized.includes("-b") || short.has("b")) return null;
+    if (restNormalized.includes("-B") || short.has("B")) return null;
     if (restLower.includes("--orphan")) return null;
 
     const hasPathspecFromFile = restLower.some(

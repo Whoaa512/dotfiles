@@ -216,6 +216,28 @@ describe("safety-net hook", () => {
     });
   });
 
+  describe("command substitution", () => {
+    test("blocks $() command substitution with dangerous content", async () => {
+      const result = await runHook(bashInput("echo $(git reset --hard)"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks backtick command substitution with dangerous content", async () => {
+      const result = await runHook(bashInput("echo `git reset --hard`"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks nested command substitution", async () => {
+      const result = await runHook(bashInput("$($(git reset --hard))"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks rm -rf in command substitution", async () => {
+      const result = await runHook(bashInput("echo $(rm -rf /)"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+  });
+
   describe("invalid input handling", () => {
     test("handles empty command", async () => {
       const result = await runHook(bashInput(""));
@@ -251,6 +273,9 @@ describe("safety-net hook", () => {
       expect(result).toBeNull();
     });
 
+    // Conservative: heredoc content is just data to cat, not executed.
+    // However, proper heredoc parsing is complex and error-prone.
+    // Blocking these rare edge cases is safer than risking a bypass.
     test("blocks heredoc with dangerous content (conservative)", async () => {
       const result = await runHook(bashInput("cat << 'EOF'\ngit reset --hard\nEOF"));
       expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
