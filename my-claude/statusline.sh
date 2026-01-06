@@ -12,31 +12,9 @@ if command -v jq >/dev/null 2>&1; then
   HAS_JQ=1
 fi
 
-# Get the directory where this statusline script is located
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-LOG_FILE="${SCRIPT_DIR}/statusline.log"
-TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
-
-# ---- logging ----
-{
-  echo "[$TIMESTAMP] Status line triggered (cc-statusline v${STATUSLINE_VERSION})"
-  echo "[$TIMESTAMP] Input:"
-  if [ "$HAS_JQ" -eq 1 ]; then
-    echo "$input" | jq . 2>/dev/null || echo "$input"
-    echo "[$TIMESTAMP] Using jq for JSON parsing"
-  else
-    echo "$input"
-    echo "[$TIMESTAMP] WARNING: jq not found, using bash fallback for JSON parsing"
-  fi
-  echo "---"
-} >> "$LOG_FILE" 2>/dev/null
-
 # ---- color helpers (force colors for Claude Code) ----
 use_color=1
 [ -n "$NO_COLOR" ] && use_color=0
-
-C() { if [ "$use_color" -eq 1 ]; then printf '\033[%sm' "$1"; fi; }
-RST() { if [ "$use_color" -eq 1 ]; then printf '\033[0m'; fi; }
 
 # ---- modern sleek colors ----
 dir_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;117m'; fi; }    # sky blue
@@ -46,64 +24,12 @@ cc_version_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;249m'; fi
 style_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;245m'; fi; } # gray
 rst() { if [ "$use_color" -eq 1 ]; then printf '\033[0m'; fi; }
 
-# ---- time helpers ----
-to_epoch() {
-  ts="$1"
-  if command -v gdate >/dev/null 2>&1; then gdate -d "$ts" +%s 2>/dev/null && return; fi
-  date -u -j -f "%Y-%m-%dT%H:%M:%S%z" "${ts/Z/+0000}" +%s 2>/dev/null && return
-  python3 - "$ts" <<'PY' 2>/dev/null
-import sys, datetime
-s=sys.argv[1].replace('Z','+00:00')
-print(int(datetime.datetime.fromisoformat(s).timestamp()))
-PY
-}
-
-fmt_time_hm() {
-  epoch="$1"
-  if date -r 0 +%s >/dev/null 2>&1; then date -r "$epoch" +"%H:%M"; else date -d "@$epoch" +"%H:%M"; fi
-}
-
 progress_bar() {
   pct="${1:-0}"; width="${2:-10}"
   [[ "$pct" =~ ^[0-9]+$ ]] || pct=0; ((pct<0))&&pct=0; ((pct>100))&&pct=100
   filled=$(( pct * width / 100 )); empty=$(( width - filled ))
   printf '%*s' "$filled" '' | tr ' ' '='
   printf '%*s' "$empty" '' | tr ' ' '-'
-}
-
-# git utilities
-num_or_zero() { v="$1"; [[ "$v" =~ ^[0-9]+$ ]] && echo "$v" || echo 0; }
-
-# ---- JSON extraction utilities ----
-# Pure bash JSON value extractor (fallback when jq not available)
-extract_json_string() {
-  local json="$1"
-  local key="$2"
-  local default="${3:-}"
-  
-  # For nested keys like workspace.current_dir, get the last part
-  local field="${key##*.}"
-  field="${field%% *}"  # Remove any jq operators
-  
-  # Try to extract string value (quoted)
-  local value=$(echo "$json" | grep -o "\"\${field}\"[[:space:]]*:[[:space:]]*\"[^\"]*\"" | head -1 | sed 's/.*:[[:space:]]*"\([^"]*\)".*/\1/')
-  
-  # Convert escaped backslashes to forward slashes for Windows paths
-  if [ -n "$value" ]; then
-    value=$(echo "$value" | sed 's/\\\\/\//g')
-  fi
-  
-  # If no string value found, try to extract number value (unquoted)
-  if [ -z "$value" ] || [ "$value" = "null" ]; then
-    value=$(echo "$json" | grep -o "\"\${field}\"[[:space:]]*:[[:space:]]*[0-9.]\+" | head -1 | sed 's/.*:[[:space:]]*\([0-9.]\+\).*/\1/')
-  fi
-  
-  # Return value or default
-  if [ -n "$value" ] && [ "$value" != "null" ]; then
-    echo "$value"
-  else
-    echo "$default"
-  fi
 }
 
 # ---- basics ----
@@ -131,9 +57,9 @@ else
   # Extract model name from nested model object
   model_name=$(echo "$input" | grep -o '"model"[[:space:]]*:[[:space:]]*{[^}]*"display_name"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*"display_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
   [ -z "$model_name" ] && model_name="Claude"
-  # Model version is in the model ID, not a separate field  
+  # Model version is in the model ID, not a separate field
   model_version=""  # Not available in Claude Code JSON
-  session_id=$(extract_json_string "$input" "session_id" "")
+  session_id=$(echo "$input" | grep -o '"session_id"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
   # CC version is at the root level
   cc_version=$(echo "$input" | grep -o '"version"[[:space:]]*:[[:space:]]*"[^"]*"' | head -1 | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
   # Output style is nested
@@ -142,7 +68,6 @@ fi
 
 # ---- git colors ----
 git_color() { if [ "$use_color" -eq 1 ]; then printf '\033[38;5;150m'; fi; }  # soft green
-rst() { if [ "$use_color" -eq 1 ]; then printf '\033[0m'; fi; }
 
 # ---- git ----
 git_branch=""
@@ -186,14 +111,6 @@ if [ "$HAS_JQ" -eq 1 ]; then
   fi
 fi
 
-# ---- log extracted data ----
-{
-  echo "[$TIMESTAMP] Extracted: dir=${current_dir:-}, model=${model_name:-}, version=${model_version:-}, git=${git_branch:-}, context=${context_pct:-}, cost=${cost_usd:-}, cost_ph=${cost_per_hour:-}, tokens=${tot_tokens:-}, tpm=${tpm:-}, session_pct=${session_pct:-}"
-  if [ "$HAS_JQ" -eq 0 ]; then
-    echo "[$TIMESTAMP] Note: Context, tokens, and session info require jq for full functionality"
-  fi
-} >> "$LOG_FILE" 2>/dev/null
-
 # ---- render statusline ----
 # Line 1: Core info (directory, git, model, claude code version, output style)
 printf '📁 %s%s%s' "$(dir_color)" "$current_dir" "$(rst)"
@@ -221,38 +138,8 @@ if [ -z "$line2" ] && [ -z "$context_pct" ]; then
   line2="🧠 $(context_color)Context Remaining: TBD$(rst)"
 fi
 
-# Line 3: Cost and usage analytics
-line3=""
-if [ -n "$cost_usd" ] && [[ "$cost_usd" =~ ^[0-9.]+$ ]]; then
-  if [ -n "$cost_per_hour" ] && [[ "$cost_per_hour" =~ ^[0-9.]+$ ]]; then
-    cost_per_hour_formatted=$(printf '%.2f' "$cost_per_hour")
-    line3="💰 $(cost_color)\$$(printf '%.2f' "$cost_usd")$(rst) ($(burn_color)\$${cost_per_hour_formatted}/h$(rst))"
-  else
-    line3="💰 $(cost_color)\$$(printf '%.2f' "$cost_usd")$(rst)"
-  fi
-fi
-if [ -n "$tot_tokens" ] && [[ "$tot_tokens" =~ ^[0-9]+$ ]]; then
-  if [ -n "$tpm" ] && [[ "$tpm" =~ ^[0-9.]+$ ]]; then
-    tpm_formatted=$(printf '%.0f' "$tpm")
-    if [ -n "$line3" ]; then
-      line3="$line3  📊 $(usage_color)${tot_tokens} tok (${tpm_formatted} tpm)$(rst)"
-    else
-      line3="📊 $(usage_color)${tot_tokens} tok (${tpm_formatted} tpm)$(rst)"
-    fi
-  else
-    if [ -n "$line3" ]; then
-      line3="$line3  📊 $(usage_color)${tot_tokens} tok$(rst)"
-    else
-      line3="📊 $(usage_color)${tot_tokens} tok$(rst)"
-    fi
-  fi
-fi
-
 # Print lines
 if [ -n "$line2" ]; then
   printf '\n%s' "$line2"
-fi
-if [ -n "$line3" ]; then
-  printf '\n%s' "$line3"
 fi
 printf '\n'
