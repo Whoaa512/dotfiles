@@ -215,8 +215,8 @@ fi
 export PATH="$HOME/.yarn/bin:$PATH"
 
 # fnm
-export PATH=~/.fnm:$PATH
-[ -x "$(command -v fnm)" ] && eval "$(fnm env --use-on-cd)"
+# export PATH=~/.fnm:$PATH
+# [ -x "$(command -v fnm)" ] && eval "$(fnm env --use-on-cd)"
 
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
