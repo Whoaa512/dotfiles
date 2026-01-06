@@ -297,11 +297,6 @@ export function analyzeGitFilterBranch(tokens: string[]): string | null {
   return null;
 }
 
-const DANGEROUS_CMD_PATTERNS = [
-  /\brm\b/, /\bgit\b/, /\bdd\b/, /\bshred\b/, /\bsrm\b/,
-  /\bmkfs\b/, /\bchmod\b/, /\bchown\b/, /\bkill\b/, /\bpkill\b/,
-];
-
 const DANGEROUS_IN_EVAL = [
   /rm\s+(-[a-z]*r[a-z]*f|-[a-z]*f[a-z]*r|--recursive\s+--force|--force\s+--recursive)/i,
   /git\s+(reset\s+--hard|clean\s+-f|push\s+--force|checkout\s+--)/i,

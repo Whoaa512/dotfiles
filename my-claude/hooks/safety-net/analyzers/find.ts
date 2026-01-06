@@ -3,7 +3,7 @@
  */
 
 import { stripTokenWrappers, normalizeCmdToken } from "../normalize.js";
-import { stripWrappers, shortOpts } from "../shell.js";
+import { stripWrappers, shortOpts, extractDashCArg } from "../shell.js";
 
 /**
  * Check for dangerous actions in find command args.
@@ -106,25 +106,5 @@ export function findDangerousAction(
     i++;
   }
 
-  return null;
-}
-
-/**
- * Extract the argument to -c flag from shell tokens.
- */
-function extractDashCArg(tokens: string[]): string | null {
-  for (let i = 1; i < tokens.length; i++) {
-    const tok = tokens[i];
-    if (tok === "--") return null;
-    if (tok === "-c") {
-      return i + 1 < tokens.length ? tokens[i + 1] : null;
-    }
-    if (tok.startsWith("-") && tok.length > 1 && /^[a-z]+$/i.test(tok.slice(1))) {
-      const letters = new Set(tok.slice(1));
-      if (letters.has("c") && [...letters].every((c) => ["c", "l", "i", "s"].includes(c))) {
-        return i + 1 < tokens.length ? tokens[i + 1] : null;
-      }
-    }
-  }
   return null;
 }

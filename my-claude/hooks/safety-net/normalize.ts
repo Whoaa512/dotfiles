@@ -1,10 +1,9 @@
 /**
  * Token normalization utilities for safety-net.
  *
- * Consolidates various normalization functions used across the codebase:
- * - stripTokenWrappers (safety-net.ts) - strips $(), backticks, brackets
- * - normalizeArg (rules_git.ts) - strips shell wrappers from args
- * - normalizeCmdToken (safety-net.ts) - full normalization for command matching
+ * - stripTokenWrappers: strips $(), backticks, brackets
+ * - normalizeCmdToken: full normalization for command matching
+ * - normalizeCmd: simple basename + lowercase
  */
 
 import { basename } from "path";
@@ -14,24 +13,16 @@ import { basename } from "path";
  * Used for matching tokens that may be wrapped in command substitution.
  */
 export function stripTokenWrappers(token: string): string {
-  let tok = token.trim();
-  // Strip leading $( for command substitution
-  while (tok.startsWith("$(")) {
-    tok = tok.slice(2);
-  }
-  // Strip leading shell wrappers: backslash, backtick, parens, braces, brackets
-  tok = tok.replace(/^[\\`({[]+/, "");
-  // Strip trailing shell wrappers
-  tok = tok.replace(/[`)}\\]]+$/, "");
-  return tok;
-}
-
-/**
- * Normalize an argument by stripping shell wrappers.
- * Alias for stripTokenWrappers for backwards compatibility.
- */
-export function normalizeArg(arg: string): string {
-  return stripTokenWrappers(arg);
+	let tok = token.trim();
+	// Strip leading $( for command substitution
+	while (tok.startsWith("$(")) {
+		tok = tok.slice(2);
+	}
+	// Strip leading shell wrappers: backslash, backtick, parens, braces, brackets
+	tok = tok.replace(/^[\\`({[]+/, "");
+	// Strip trailing shell wrappers
+	tok = tok.replace(/[`)}\\]]+$/, "");
+	return tok;
 }
 
 /**
@@ -42,11 +33,11 @@ export function normalizeArg(arg: string): string {
  * 4. Extract basename (handle paths like /usr/bin/rm)
  */
 export function normalizeCmdToken(token: string): string {
-  let tok = stripTokenWrappers(token);
-  tok = tok.replace(/;+$/, "");
-  tok = tok.toLowerCase();
-  tok = basename(tok);
-  return tok;
+	let tok = stripTokenWrappers(token);
+	tok = tok.replace(/;+$/, "");
+	tok = tok.toLowerCase();
+	tok = basename(tok);
+	return tok;
 }
 
 /**
@@ -54,5 +45,5 @@ export function normalizeCmdToken(token: string): string {
  * Used when token is already clean (no wrappers).
  */
 export function normalizeCmd(token: string): string {
-  return basename(token).toLowerCase();
+	return basename(token).toLowerCase();
 }

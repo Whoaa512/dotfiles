@@ -2,7 +2,7 @@
  * Git command analysis rules for the safety net.
  */
 
-import { normalizeArg } from "./normalize.js";
+import { stripTokenWrappers } from "./normalize.js";
 import { shortOpts } from "./shell.js";
 
 const REASON_GIT_CHECKOUT_DOUBLE_DASH =
@@ -36,8 +36,8 @@ export function analyzeGit(tokens: string[]): string | null {
   const [sub, rest] = gitSubcommandAndRest(tokens);
   if (!sub) return null;
 
-  const subLower = normalizeArg(sub).toLowerCase();
-  const restNormalized = rest.map(normalizeArg);
+  const subLower = stripTokenWrappers(sub).toLowerCase();
+  const restNormalized = rest.map(stripTokenWrappers);
   const restLower = restNormalized.map((t) => t.toLowerCase());
   const short = shortOpts(restNormalized);
 

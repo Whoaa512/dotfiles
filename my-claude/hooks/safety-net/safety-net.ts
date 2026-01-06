@@ -30,7 +30,7 @@ import {
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
-import { splitShellCommands, shlexSplit, stripWrappers, shortOpts } from "./shell.js";
+import { splitShellCommands, shlexSplit, stripWrappers, shortOpts, extractDashCArg } from "./shell.js";
 import { extractXargsChildCommand, xargsReplacementTokens } from "./analyzers/xargs.js";
 import { extractParallelTemplateAndArgs } from "./analyzers/parallel.js";
 import { findDangerousAction as findDangerousActionCore } from "./analyzers/find.js";
@@ -77,23 +77,6 @@ function paranoidRmMode(): boolean {
 
 function paranoidInterpretersMode(): boolean {
   return paranoidMode() || envTruthy("SAFETY_NET_PARANOID_INTERPRETERS");
-}
-
-function extractDashCArg(tokens: string[]): string | null {
-  for (let i = 1; i < tokens.length; i++) {
-    const tok = tokens[i];
-    if (tok === "--") return null;
-    if (tok === "-c") {
-      return i + 1 < tokens.length ? tokens[i + 1] : null;
-    }
-    if (tok.startsWith("-") && tok.length > 1 && /^[a-z]+$/i.test(tok.slice(1))) {
-      const letters = new Set(tok.slice(1));
-      if (letters.has("c") && [...letters].every((c) => ["c", "l", "i", "s"].includes(c))) {
-        return i + 1 < tokens.length ? tokens[i + 1] : null;
-      }
-    }
-  }
-  return null;
 }
 
 function hasShellDashC(tokens: string[]): boolean {
