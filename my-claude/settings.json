@@ -256,8 +256,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "$HOME/code/cj/dotfiles/my-claude/hooks/safety-net/run.sh",
-            "timeout": 10
+            "command": "$HOME/code/cj/dotfiles/my-claude/hooks/safety-llm/run.sh",
+            "timeout": 30
           }
         ]
       },
