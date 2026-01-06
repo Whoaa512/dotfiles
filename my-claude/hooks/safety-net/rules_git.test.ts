@@ -144,6 +144,20 @@ describe("analyzeGit", () => {
       expect(analyzeGit(["git", "push", "--force-with-lease"])).toBeNull();
     });
 
+    test("allows push --force-if-includes alone", () => {
+      expect(analyzeGit(["git", "push", "--force-if-includes"])).toBeNull();
+    });
+
+    test("blocks push --force with --force-if-includes together", () => {
+      const result = analyzeGit(["git", "push", "--force", "--force-if-includes"]);
+      expect(result).toContain("Force push");
+    });
+
+    test("blocks push -f with --force-if-includes together", () => {
+      const result = analyzeGit(["git", "push", "-f", "--force-if-includes"]);
+      expect(result).toContain("Force push");
+    });
+
     test("allows normal push", () => {
       expect(analyzeGit(["git", "push", "origin", "main"])).toBeNull();
     });
