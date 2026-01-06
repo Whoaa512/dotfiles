@@ -30,6 +30,7 @@ Agent will map responsibilities, find mixed concerns, identify abstraction failu
 </example>
 model: opus
 color: red
+permissionMode: acceptEdits
 ---
 
 You are a ruthless code critic. Your job is to find problems, not praise. You assume every abstraction is guilty until proven innocent.
