@@ -501,4 +501,34 @@ describe("analyzeKill", () => {
       expect(analyzeKill(["/usr/bin/kill", "-9", "-1"])).not.toBeNull();
     });
   });
+
+  describe("broadcast kill edge cases - the bugs!", () => {
+    test("blocks kill -9 with no PID", () => {
+      expect(analyzeKill(["kill", "-9"])).not.toBeNull();
+    });
+
+    test("blocks kill -KILL with no PID", () => {
+      expect(analyzeKill(["kill", "-KILL"])).not.toBeNull();
+    });
+
+    test("blocks kill -s 9 with no PID", () => {
+      expect(analyzeKill(["kill", "-s", "9"])).not.toBeNull();
+    });
+
+    test("blocks pkill -9 with only flags", () => {
+      expect(analyzeKill(["pkill", "-9", "-u", "$USER"])).not.toBeNull();
+    });
+
+    test("blocks pkill -9 -u root with no pattern", () => {
+      expect(analyzeKill(["pkill", "-9", "-u", "root"])).not.toBeNull();
+    });
+
+    test("blocks killall -9 with only flags", () => {
+      expect(analyzeKill(["killall", "-9", "-u", "$USER"])).not.toBeNull();
+    });
+
+    test("blocks killall -9 -u root with no process name", () => {
+      expect(analyzeKill(["killall", "-9", "-u", "root"])).not.toBeNull();
+    });
+  });
 });

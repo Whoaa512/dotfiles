@@ -536,9 +536,10 @@ function analyzeKillCmd(tokens: string[]): string | null {
   if (!args.length) return null;
 
   let hasForceSignal = false;
-  let hasBroadcastPid = false;
+  let hasTarget = false;
 
-  for (const tok of args) {
+  for (let i = 0; i < args.length; i++) {
+    const tok = args[i];
     if (tok === "--") break;
 
     // Check for -9, -KILL, -SIGKILL
@@ -548,27 +549,28 @@ function analyzeKillCmd(tokens: string[]): string | null {
         hasForceSignal = true;
         continue;
       }
-      // Check for combined: -s 9, -s KILL
-      if (tok === "-s") continue;
-    }
-
-    // PID -1 kills all user processes
-    if (tok === "-1") {
-      hasBroadcastPid = true;
-    }
-  }
-
-  // Also check for -s SIGNAL pattern
-  for (let i = 0; i < args.length - 1; i++) {
-    if (args[i] === "-s") {
-      const sig = args[i + 1].toUpperCase();
-      if (KILL_SIGNALS.has(sig) || sig === "SIGKILL") {
-        hasForceSignal = true;
+      // Check for -s SIGNAL syntax
+      if (tok === "-s") {
+        // Next token is the signal, not a target
+        if (i + 1 < args.length) {
+          const sig = args[i + 1].toUpperCase();
+          if (KILL_SIGNALS.has(sig) || sig === "SIGKILL") {
+            hasForceSignal = true;
+          }
+          i++; // Skip the signal value
+        }
+        continue;
       }
+      // Other flag, skip
+      continue;
     }
+
+    // Non-flag argument is a target (PID)
+    hasTarget = true;
   }
 
-  if (hasForceSignal && hasBroadcastPid) {
+  // Block force signal with no target
+  if (hasForceSignal && !hasTarget) {
     return REASON_BROADCAST_KILL;
   }
 
@@ -580,11 +582,18 @@ function analyzeKillall(tokens: string[]): string | null {
   if (!args.length) return null;
 
   let hasForceSignal = false;
-  let hasProcessName = false;
+  let hasTarget = false;
+
+  // Flags that take an argument
+  const flagsTakingArg = new Set(["-u", "--user"]);
 
   for (let i = 0; i < args.length; i++) {
     const tok = args[i];
-    if (tok === "--") break;
+    if (tok === "--") {
+      // Everything after -- is target
+      if (i + 1 < args.length) hasTarget = true;
+      break;
+    }
 
     // Check for -9, -KILL, -SIGKILL, --signal=9
     if (tok.startsWith("-")) {
@@ -600,16 +609,19 @@ function analyzeKillall(tokens: string[]): string | null {
         }
         continue;
       }
-      // Skip other flags
+      // Other flags: skip both flag and its argument if it takes one
+      if (flagsTakingArg.has(tok) && i + 1 < args.length) {
+        i++; // Skip the argument
+      }
       continue;
     }
 
-    // Non-flag argument is a process name
-    hasProcessName = true;
+    // Non-flag argument is a target (process name)
+    hasTarget = true;
   }
 
-  // Block killall -9 without a specific process name
-  if (hasForceSignal && !hasProcessName) {
+  // Block force signal with no target
+  if (hasForceSignal && !hasTarget) {
     return REASON_BROADCAST_KILL;
   }
 
@@ -621,13 +633,16 @@ function analyzePkill(tokens: string[]): string | null {
   if (!args.length) return null;
 
   let hasForceSignal = false;
-  let hasPattern = false;
+  let hasTarget = false;
+
+  // Flags that take an argument
+  const flagsTakingArg = new Set(["-u", "--user", "-g", "--pgroup", "-P", "--parent", "-s", "--session"]);
 
   for (let i = 0; i < args.length; i++) {
     const tok = args[i];
     if (tok === "--") {
-      // Everything after -- is pattern
-      if (i + 1 < args.length) hasPattern = true;
+      // Everything after -- is target/pattern
+      if (i + 1 < args.length) hasTarget = true;
       break;
     }
 
@@ -646,16 +661,19 @@ function analyzePkill(tokens: string[]): string | null {
         }
         continue;
       }
-      // Skip other flags but don't count as pattern
+      // Other flags: skip both flag and its argument if it takes one
+      if (flagsTakingArg.has(tok) && i + 1 < args.length) {
+        i++; // Skip the argument
+      }
       continue;
     }
 
-    // Non-flag argument is the pattern
-    hasPattern = true;
+    // Non-flag argument is the target (pattern/process)
+    hasTarget = true;
   }
 
-  // Block pkill -9 without a specific pattern
-  if (hasForceSignal && !hasPattern) {
+  // Block force signal with no target
+  if (hasForceSignal && !hasTarget) {
     return REASON_BROADCAST_KILL;
   }
 
