@@ -287,6 +287,26 @@ describe("analyzeChown", () => {
       expect(analyzeChown(["chown", "--recursive", "root:root", "/"])).not.toBeNull();
     });
 
+    test("blocks chown -R on /etc/passwd (subdirectory)", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/etc/passwd"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /etc/foo (subdirectory)", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/etc/foo"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /usr/bin (subdirectory)", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/usr/bin"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /var/log (subdirectory)", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/var/log"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /home/user (subdirectory)", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/home/user"])).not.toBeNull();
+    });
+
     test("allows chown -R on safe paths", () => {
       expect(analyzeChown(["chown", "-R", "user:user", "/tmp/mydir"])).toBeNull();
     });

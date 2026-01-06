@@ -435,7 +435,7 @@ export function analyzeChmod(tokens: string[]): string | null {
 
 /**
  * Detect dangerous chown -R on sensitive paths.
- * Blocks: chown -R on /, /etc, /usr, /var, /home, ~
+ * Blocks: chown -R on /, /etc, /usr, /var, /home, ~ and their subdirectories
  */
 export function analyzeChown(tokens: string[]): string | null {
   if (!tokens.length) return null;
@@ -455,9 +455,12 @@ export function analyzeChown(tokens: string[]): string | null {
     if (SENSITIVE_PATHS.includes(normalized)) {
       return REASON_CHOWN_SENSITIVE_PATH;
     }
-    // Also catch paths starting with sensitive dirs
-    if (normalized === "/" || normalized === "~") {
-      return REASON_CHOWN_SENSITIVE_PATH;
+    // Also catch subdirectories of sensitive paths
+    for (const sensitive of SENSITIVE_PATHS) {
+      if (sensitive === "/" || sensitive === "~") continue; // Already checked above
+      if (normalized.startsWith(sensitive + "/")) {
+        return REASON_CHOWN_SENSITIVE_PATH;
+      }
     }
   }
 
