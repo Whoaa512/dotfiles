@@ -27,6 +27,8 @@ import {
   analyzeVariableCommand,
   analyzeEval,
   analyzeVariableFlags,
+  analyzeChmod,
+  analyzeChown,
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
@@ -185,6 +187,14 @@ function analyzeSegment(
   // Variable flag construction (rm -$R$F)
   const varFlagReason = analyzeVariableFlags(strippedTokens, segment);
   if (varFlagReason) return [segment, varFlagReason];
+
+  // chmod -R 777/666 (world-writable recursive)
+  const chmodReason = analyzeChmod(strippedTokens);
+  if (chmodReason) return [segment, chmodReason];
+
+  // chown -R on sensitive paths
+  const chownReason = analyzeChown(strippedTokens);
+  if (chownReason) return [segment, chownReason];
 
   // Shell wrapper recursion: bash/sh/zsh -c '...'
   if (["bash", "sh", "zsh", "dash", "ksh"].includes(head)) {

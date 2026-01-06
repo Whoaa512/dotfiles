@@ -5,6 +5,8 @@ import {
   analyzeDecodeToShell,
   analyzeGitHistory,
   analyzeSecureDelete,
+  analyzeChmod,
+  analyzeChown,
 } from "./rules_dangerous.js";
 
 describe("analyzePipeToShell", () => {
@@ -219,6 +221,82 @@ describe("analyzeSecureDelete", () => {
 
     test("blocks srm with path", () => {
       expect(analyzeSecureDelete(["/usr/bin/srm", "file.txt"])).not.toBeNull();
+    });
+  });
+});
+
+describe("analyzeChmod", () => {
+  describe("world-writable recursive", () => {
+    test("blocks chmod -R 777", () => {
+      expect(analyzeChmod(["chmod", "-R", "777", "/some/dir"])).not.toBeNull();
+    });
+
+    test("blocks chmod 777 -R", () => {
+      expect(analyzeChmod(["chmod", "777", "-R", "/some/dir"])).not.toBeNull();
+    });
+
+    test("blocks chmod -R 666", () => {
+      expect(analyzeChmod(["chmod", "-R", "666", "/some/dir"])).not.toBeNull();
+    });
+
+    test("blocks chmod --recursive 777", () => {
+      expect(analyzeChmod(["chmod", "--recursive", "777", "/some/dir"])).not.toBeNull();
+    });
+
+    test("allows chmod 777 without -R", () => {
+      expect(analyzeChmod(["chmod", "777", "file.txt"])).toBeNull();
+    });
+
+    test("allows chmod -R 755", () => {
+      expect(analyzeChmod(["chmod", "-R", "755", "/some/dir"])).toBeNull();
+    });
+
+    test("allows chmod -R 644", () => {
+      expect(analyzeChmod(["chmod", "-R", "644", "/some/dir"])).toBeNull();
+    });
+  });
+});
+
+describe("analyzeChown", () => {
+  describe("recursive on sensitive paths", () => {
+    test("blocks chown -R on /", () => {
+      expect(analyzeChown(["chown", "-R", "root:root", "/"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /etc", () => {
+      expect(analyzeChown(["chown", "-R", "root:root", "/etc"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /usr", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/usr"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /var", () => {
+      expect(analyzeChown(["chown", "-R", "www-data:www-data", "/var"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on /home", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/home"])).not.toBeNull();
+    });
+
+    test("blocks chown -R on ~", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "~"])).not.toBeNull();
+    });
+
+    test("blocks chown --recursive on /", () => {
+      expect(analyzeChown(["chown", "--recursive", "root:root", "/"])).not.toBeNull();
+    });
+
+    test("allows chown -R on safe paths", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "/tmp/mydir"])).toBeNull();
+    });
+
+    test("allows chown without -R on /", () => {
+      expect(analyzeChown(["chown", "root:root", "/some/file"])).toBeNull();
+    });
+
+    test("allows chown on project dirs", () => {
+      expect(analyzeChown(["chown", "-R", "user:user", "./myproject"])).toBeNull();
     });
   });
 });

@@ -49,6 +49,12 @@ const REASON_EVAL_DANGEROUS =
 const REASON_VARIABLE_FLAG_BYPASS =
   "Variable expansion in flags can construct dangerous options like -rf. Use literal flags.";
 
+const REASON_CHMOD_WORLD_WRITABLE =
+  "chmod -R 777/666 makes files world-writable recursively. This is a security risk.";
+
+const REASON_CHOWN_SENSITIVE_PATH =
+  "chown -R on sensitive system paths can break system ownership. Verify the target path.";
+
 /**
  * Detect curl/wget piped to shell patterns.
  * @param tokens - Parsed tokens from the left side of a pipe
@@ -395,6 +401,63 @@ export function analyzeVariableFlags(tokens: string[], segment: string): string 
     if (containsVariable(tok)) {
       // The flag after - contains variables that could construct -rf
       return REASON_VARIABLE_FLAG_BYPASS;
+    }
+  }
+
+  return null;
+}
+
+const SENSITIVE_PATHS = ["/", "/etc", "/usr", "/var", "/home", "~"];
+
+/**
+ * Detect dangerous chmod patterns (world-writable recursive).
+ * Blocks: chmod -R 777, chmod 777 -R, chmod -R 666
+ */
+export function analyzeChmod(tokens: string[]): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+  if (cmd !== "chmod") return null;
+
+  const opts = shortOpts(tokens);
+  const hasRecursive = opts.has("R") || tokens.includes("--recursive");
+  if (!hasRecursive) return null;
+
+  // Check for dangerous modes: 777, 666
+  for (const tok of tokens.slice(1)) {
+    if (tok === "777" || tok === "666") {
+      return REASON_CHMOD_WORLD_WRITABLE;
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Detect dangerous chown -R on sensitive paths.
+ * Blocks: chown -R on /, /etc, /usr, /var, /home, ~
+ */
+export function analyzeChown(tokens: string[]): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+  if (cmd !== "chown") return null;
+
+  const opts = shortOpts(tokens);
+  const hasRecursive = opts.has("R") || tokens.includes("--recursive");
+  if (!hasRecursive) return null;
+
+  // Check for sensitive paths in arguments
+  for (const tok of tokens.slice(1)) {
+    if (tok.startsWith("-")) continue;
+    // Normalize path for comparison
+    const normalized = tok.replace(/\/+$/, "") || "/";
+    if (SENSITIVE_PATHS.includes(normalized)) {
+      return REASON_CHOWN_SENSITIVE_PATH;
+    }
+    // Also catch paths starting with sensitive dirs
+    if (normalized === "/" || normalized === "~") {
+      return REASON_CHOWN_SENSITIVE_PATH;
     }
   }
 
