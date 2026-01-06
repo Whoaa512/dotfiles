@@ -55,6 +55,9 @@ const REASON_CHMOD_WORLD_WRITABLE =
 const REASON_CHOWN_SENSITIVE_PATH =
   "chown -R on sensitive system paths can break system ownership. Verify the target path.";
 
+const REASON_FILESYSTEM_DESTRUCTION =
+  "Filesystem creation/wiping commands destroy all data on the target device. Never run these.";
+
 /**
  * Detect curl/wget piped to shell patterns.
  * @param tokens - Parsed tokens from the left side of a pipe
@@ -408,6 +411,31 @@ export function analyzeVariableFlags(tokens: string[], segment: string): string 
 }
 
 const SENSITIVE_PATHS = ["/", "/etc", "/usr", "/var", "/home", "~"];
+
+// Filesystem destruction commands - always block
+const FILESYSTEM_DESTRUCTION_CMDS = new Set(["mkfs", "wipefs", "mkswap"]);
+
+/**
+ * Detect filesystem destruction commands (mkfs, wipefs, mkswap).
+ * These destroy all data on the target device - block unconditionally.
+ */
+export function analyzeFilesystemDestruction(tokens: string[]): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+
+  // Direct match: mkfs, wipefs, mkswap
+  if (FILESYSTEM_DESTRUCTION_CMDS.has(cmd)) {
+    return REASON_FILESYSTEM_DESTRUCTION;
+  }
+
+  // Match mkfs.* variants (mkfs.ext4, mkfs.xfs, mkfs.btrfs, etc.)
+  if (cmd.startsWith("mkfs.")) {
+    return REASON_FILESYSTEM_DESTRUCTION;
+  }
+
+  return null;
+}
 
 /**
  * Detect dangerous chmod patterns (world-writable recursive).

@@ -562,4 +562,39 @@ describe("safety-net hook", () => {
       expect(result).toBeNull();
     });
   });
+
+  describe("filesystem destruction commands", () => {
+    test("blocks mkfs", async () => {
+      const result = await runHook(bashInput("mkfs /dev/sda1"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("Filesystem creation/wiping");
+    });
+
+    test("blocks mkfs.ext4", async () => {
+      const result = await runHook(bashInput("mkfs.ext4 /dev/sda1"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks mkfs.xfs", async () => {
+      const result = await runHook(bashInput("mkfs.xfs /dev/nvme0n1p1"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+
+    test("blocks wipefs", async () => {
+      const result = await runHook(bashInput("wipefs -a /dev/sda"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("Filesystem creation/wiping");
+    });
+
+    test("blocks mkswap", async () => {
+      const result = await runHook(bashInput("mkswap /dev/sda2"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+      expect(result?.hookSpecificOutput?.permissionDecisionReason).toContain("Filesystem creation/wiping");
+    });
+
+    test("blocks sudo mkfs.ext4", async () => {
+      const result = await runHook(bashInput("sudo mkfs.ext4 /dev/sda1"));
+      expect(result?.hookSpecificOutput?.permissionDecision).toBe("deny");
+    });
+  });
 });

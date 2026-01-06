@@ -7,6 +7,7 @@ import {
   analyzeSecureDelete,
   analyzeChmod,
   analyzeChown,
+  analyzeFilesystemDestruction,
 } from "./rules_dangerous.js";
 
 describe("analyzePipeToShell", () => {
@@ -317,6 +318,76 @@ describe("analyzeChown", () => {
 
     test("allows chown on project dirs", () => {
       expect(analyzeChown(["chown", "-R", "user:user", "./myproject"])).toBeNull();
+    });
+  });
+});
+
+describe("analyzeFilesystemDestruction", () => {
+  describe("mkfs variants", () => {
+    test("blocks mkfs", () => {
+      expect(analyzeFilesystemDestruction(["mkfs", "/dev/sda1"])).not.toBeNull();
+    });
+
+    test("blocks mkfs.ext4", () => {
+      expect(analyzeFilesystemDestruction(["mkfs.ext4", "/dev/sda1"])).not.toBeNull();
+    });
+
+    test("blocks mkfs.xfs", () => {
+      expect(analyzeFilesystemDestruction(["mkfs.xfs", "/dev/nvme0n1p1"])).not.toBeNull();
+    });
+
+    test("blocks mkfs.btrfs", () => {
+      expect(analyzeFilesystemDestruction(["mkfs.btrfs", "/dev/sdb"])).not.toBeNull();
+    });
+
+    test("blocks mkfs.vfat", () => {
+      expect(analyzeFilesystemDestruction(["mkfs.vfat", "-F", "32", "/dev/sdc1"])).not.toBeNull();
+    });
+
+    test("blocks /sbin/mkfs.ext4", () => {
+      expect(analyzeFilesystemDestruction(["/sbin/mkfs.ext4", "/dev/sda1"])).not.toBeNull();
+    });
+  });
+
+  describe("wipefs", () => {
+    test("blocks wipefs", () => {
+      expect(analyzeFilesystemDestruction(["wipefs", "/dev/sda"])).not.toBeNull();
+    });
+
+    test("blocks wipefs -a", () => {
+      expect(analyzeFilesystemDestruction(["wipefs", "-a", "/dev/sda"])).not.toBeNull();
+    });
+
+    test("blocks /usr/sbin/wipefs", () => {
+      expect(analyzeFilesystemDestruction(["/usr/sbin/wipefs", "-a", "/dev/sda"])).not.toBeNull();
+    });
+  });
+
+  describe("mkswap", () => {
+    test("blocks mkswap", () => {
+      expect(analyzeFilesystemDestruction(["mkswap", "/dev/sda2"])).not.toBeNull();
+    });
+
+    test("blocks mkswap with label", () => {
+      expect(analyzeFilesystemDestruction(["mkswap", "-L", "swap", "/dev/sda2"])).not.toBeNull();
+    });
+
+    test("blocks /sbin/mkswap", () => {
+      expect(analyzeFilesystemDestruction(["/sbin/mkswap", "/dev/sda2"])).not.toBeNull();
+    });
+  });
+
+  describe("safe commands", () => {
+    test("allows empty tokens", () => {
+      expect(analyzeFilesystemDestruction([])).toBeNull();
+    });
+
+    test("allows unrelated commands", () => {
+      expect(analyzeFilesystemDestruction(["ls", "-la"])).toBeNull();
+    });
+
+    test("allows mkdir", () => {
+      expect(analyzeFilesystemDestruction(["mkdir", "-p", "/tmp/test"])).toBeNull();
     });
   });
 });

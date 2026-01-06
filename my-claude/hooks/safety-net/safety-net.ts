@@ -29,6 +29,7 @@ import {
   analyzeVariableFlags,
   analyzeChmod,
   analyzeChown,
+  analyzeFilesystemDestruction,
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
@@ -163,6 +164,10 @@ function analyzeSegment(
   // Decode-to-shell detection (base64 -d | bash, xxd -r | sh)
   const decodeToShellReason = analyzeDecodeToShell(strippedTokens, ctx.pipeTarget);
   if (decodeToShellReason) return [segment, decodeToShellReason];
+
+  // Filesystem destruction commands (mkfs, wipefs, mkswap)
+  const fsDestroyReason = analyzeFilesystemDestruction(strippedTokens);
+  if (fsDestroyReason) return [segment, fsDestroyReason];
 
   // Secure delete detection (shred --remove, srm)
   const secureDeleteReason = analyzeSecureDelete(strippedTokens);
