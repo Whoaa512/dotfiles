@@ -135,9 +135,8 @@ describe("analyzeGit", () => {
       expect(result).toContain("Force push");
     });
 
-    test("blocks push --force with --force-with-lease together", () => {
-      const result = analyzeGit(["git", "push", "--force", "--force-with-lease"]);
-      expect(result).toContain("Force push");
+    test("allows push --force with --force-with-lease together", () => {
+      expect(analyzeGit(["git", "push", "--force", "--force-with-lease"])).toBeNull();
     });
 
     test("allows push --force-with-lease alone", () => {
@@ -148,14 +147,12 @@ describe("analyzeGit", () => {
       expect(analyzeGit(["git", "push", "--force-if-includes"])).toBeNull();
     });
 
-    test("blocks push --force with --force-if-includes together", () => {
-      const result = analyzeGit(["git", "push", "--force", "--force-if-includes"]);
-      expect(result).toContain("Force push");
+    test("allows push --force with --force-if-includes together", () => {
+      expect(analyzeGit(["git", "push", "--force", "--force-if-includes"])).toBeNull();
     });
 
-    test("blocks push -f with --force-if-includes together", () => {
-      const result = analyzeGit(["git", "push", "-f", "--force-if-includes"]);
-      expect(result).toContain("Force push");
+    test("allows push -f with --force-if-includes together", () => {
+      expect(analyzeGit(["git", "push", "-f", "--force-if-includes"])).toBeNull();
     });
 
     test("allows normal push", () => {

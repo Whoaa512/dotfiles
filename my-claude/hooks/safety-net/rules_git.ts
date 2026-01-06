@@ -84,11 +84,10 @@ export function analyzeGit(tokens: string[]): string | null {
   if (subLower === "push") {
     const hasForceWithLease = restLower.some((t) => t.startsWith("--force-with-lease"));
     const hasForceIfIncludes = restLower.includes("--force-if-includes");
-    const hasForce = restLower.includes("--force") || short.has("f");
     const isSafe = hasForceWithLease || hasForceIfIncludes;
-    if (hasForce && !isSafe) return REASON_GIT_PUSH_FORCE;
-    if (restLower.includes("--force") && isSafe) return REASON_GIT_PUSH_FORCE;
-    if (short.has("f") && isSafe) return REASON_GIT_PUSH_FORCE;
+    if (isSafe) return null;
+    const hasForce = restLower.includes("--force") || short.has("f");
+    if (hasForce) return REASON_GIT_PUSH_FORCE;
     return null;
   }
 
