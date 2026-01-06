@@ -8,6 +8,7 @@ import {
   analyzeChmod,
   analyzeChown,
   analyzeFilesystemDestruction,
+  analyzeKill,
 } from "./rules_dangerous.js";
 
 describe("analyzePipeToShell", () => {
@@ -388,6 +389,116 @@ describe("analyzeFilesystemDestruction", () => {
 
     test("allows mkdir", () => {
       expect(analyzeFilesystemDestruction(["mkdir", "-p", "/tmp/test"])).toBeNull();
+    });
+  });
+});
+
+describe("analyzeKill", () => {
+  describe("kill command", () => {
+    test("blocks kill -9 -1", () => {
+      expect(analyzeKill(["kill", "-9", "-1"])).not.toBeNull();
+    });
+
+    test("blocks kill -KILL -1", () => {
+      expect(analyzeKill(["kill", "-KILL", "-1"])).not.toBeNull();
+    });
+
+    test("blocks kill -SIGKILL -1", () => {
+      expect(analyzeKill(["kill", "-SIGKILL", "-1"])).not.toBeNull();
+    });
+
+    test("blocks kill -s 9 -1", () => {
+      expect(analyzeKill(["kill", "-s", "9", "-1"])).not.toBeNull();
+    });
+
+    test("blocks kill -s KILL -1", () => {
+      expect(analyzeKill(["kill", "-s", "KILL", "-1"])).not.toBeNull();
+    });
+
+    test("allows kill -9 1234 (specific PID)", () => {
+      expect(analyzeKill(["kill", "-9", "1234"])).toBeNull();
+    });
+
+    test("allows kill -9 1234 5678 (multiple PIDs)", () => {
+      expect(analyzeKill(["kill", "-9", "1234", "5678"])).toBeNull();
+    });
+
+    test("allows kill 1234", () => {
+      expect(analyzeKill(["kill", "1234"])).toBeNull();
+    });
+
+    test("allows kill -15 -1 (SIGTERM, not SIGKILL)", () => {
+      expect(analyzeKill(["kill", "-15", "-1"])).toBeNull();
+    });
+  });
+
+  describe("killall command", () => {
+    test("blocks killall -9 (no process name)", () => {
+      expect(analyzeKill(["killall", "-9"])).not.toBeNull();
+    });
+
+    test("blocks killall -KILL (no process name)", () => {
+      expect(analyzeKill(["killall", "-KILL"])).not.toBeNull();
+    });
+
+    test("blocks killall --signal=9 (no process name)", () => {
+      expect(analyzeKill(["killall", "--signal=9"])).not.toBeNull();
+    });
+
+    test("allows killall -9 firefox (specific process)", () => {
+      expect(analyzeKill(["killall", "-9", "firefox"])).toBeNull();
+    });
+
+    test("allows killall firefox", () => {
+      expect(analyzeKill(["killall", "firefox"])).toBeNull();
+    });
+
+    test("allows killall -15 (SIGTERM without process is less dangerous)", () => {
+      expect(analyzeKill(["killall", "-15"])).toBeNull();
+    });
+  });
+
+  describe("pkill command", () => {
+    test("blocks pkill -9 (no pattern)", () => {
+      expect(analyzeKill(["pkill", "-9"])).not.toBeNull();
+    });
+
+    test("blocks pkill -KILL (no pattern)", () => {
+      expect(analyzeKill(["pkill", "-KILL"])).not.toBeNull();
+    });
+
+    test("blocks pkill --signal=9 (no pattern)", () => {
+      expect(analyzeKill(["pkill", "--signal=9"])).not.toBeNull();
+    });
+
+    test("allows pkill -9 firefox (specific pattern)", () => {
+      expect(analyzeKill(["pkill", "-9", "firefox"])).toBeNull();
+    });
+
+    test("allows pkill firefox", () => {
+      expect(analyzeKill(["pkill", "firefox"])).toBeNull();
+    });
+
+    test("allows pkill -15 (SIGTERM without pattern is less dangerous)", () => {
+      expect(analyzeKill(["pkill", "-15"])).toBeNull();
+    });
+
+    test("allows pkill -9 -- pattern (pattern after --)", () => {
+      expect(analyzeKill(["pkill", "-9", "--", "myprocess"])).toBeNull();
+    });
+  });
+
+  describe("edge cases", () => {
+    test("allows empty tokens", () => {
+      expect(analyzeKill([])).toBeNull();
+    });
+
+    test("allows unrelated commands", () => {
+      expect(analyzeKill(["ls", "-la"])).toBeNull();
+    });
+
+    test("handles /usr/bin/kill path", () => {
+      expect(analyzeKill(["/usr/bin/kill", "-9", "-1"])).not.toBeNull();
     });
   });
 });

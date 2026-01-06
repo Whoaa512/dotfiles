@@ -58,6 +58,9 @@ const REASON_CHOWN_SENSITIVE_PATH =
 const REASON_FILESYSTEM_DESTRUCTION =
   "Filesystem creation/wiping commands destroy all data on the target device. Never run these.";
 
+const REASON_BROADCAST_KILL =
+  "This kills all user processes (PID -1 or no target), which will terminate your session and lose work.";
+
 /**
  * Detect curl/wget piped to shell patterns.
  * @param tokens - Parsed tokens from the left side of a pipe
@@ -490,6 +493,170 @@ export function analyzeChown(tokens: string[]): string | null {
         return REASON_CHOWN_SENSITIVE_PATH;
       }
     }
+  }
+
+  return null;
+}
+
+// Signals that forcefully terminate (cannot be caught)
+const KILL_SIGNALS = new Set(["9", "KILL", "SIGKILL"]);
+
+/**
+ * Detect dangerous broadcast kill commands.
+ * Blocks:
+ *   - kill -9 -1 (kills all user processes)
+ *   - kill -KILL -1
+ *   - killall -9 without specific process (mass kill)
+ *   - pkill -9 without specific pattern (mass kill)
+ *
+ * Safe: kill -9 1234 (specific PID)
+ */
+export function analyzeKill(tokens: string[]): string | null {
+  if (!tokens.length) return null;
+
+  const cmd = normalizeCmd(tokens[0]);
+
+  if (cmd === "kill") {
+    return analyzeKillCmd(tokens);
+  }
+
+  if (cmd === "killall") {
+    return analyzeKillall(tokens);
+  }
+
+  if (cmd === "pkill") {
+    return analyzePkill(tokens);
+  }
+
+  return null;
+}
+
+function analyzeKillCmd(tokens: string[]): string | null {
+  const args = tokens.slice(1);
+  if (!args.length) return null;
+
+  let hasForceSignal = false;
+  let hasBroadcastPid = false;
+
+  for (const tok of args) {
+    if (tok === "--") break;
+
+    // Check for -9, -KILL, -SIGKILL
+    if (tok.startsWith("-")) {
+      const signalPart = tok.slice(1).toUpperCase();
+      if (KILL_SIGNALS.has(signalPart) || signalPart === "SIGKILL") {
+        hasForceSignal = true;
+        continue;
+      }
+      // Check for combined: -s 9, -s KILL
+      if (tok === "-s") continue;
+    }
+
+    // PID -1 kills all user processes
+    if (tok === "-1") {
+      hasBroadcastPid = true;
+    }
+  }
+
+  // Also check for -s SIGNAL pattern
+  for (let i = 0; i < args.length - 1; i++) {
+    if (args[i] === "-s") {
+      const sig = args[i + 1].toUpperCase();
+      if (KILL_SIGNALS.has(sig) || sig === "SIGKILL") {
+        hasForceSignal = true;
+      }
+    }
+  }
+
+  if (hasForceSignal && hasBroadcastPid) {
+    return REASON_BROADCAST_KILL;
+  }
+
+  return null;
+}
+
+function analyzeKillall(tokens: string[]): string | null {
+  const args = tokens.slice(1);
+  if (!args.length) return null;
+
+  let hasForceSignal = false;
+  let hasProcessName = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const tok = args[i];
+    if (tok === "--") break;
+
+    // Check for -9, -KILL, -SIGKILL, --signal=9
+    if (tok.startsWith("-")) {
+      const signalPart = tok.slice(1).toUpperCase();
+      if (KILL_SIGNALS.has(signalPart) || signalPart === "SIGKILL") {
+        hasForceSignal = true;
+        continue;
+      }
+      if (tok.startsWith("--signal=")) {
+        const sig = tok.slice("--signal=".length).toUpperCase();
+        if (KILL_SIGNALS.has(sig) || sig === "SIGKILL") {
+          hasForceSignal = true;
+        }
+        continue;
+      }
+      // Skip other flags
+      continue;
+    }
+
+    // Non-flag argument is a process name
+    hasProcessName = true;
+  }
+
+  // Block killall -9 without a specific process name
+  if (hasForceSignal && !hasProcessName) {
+    return REASON_BROADCAST_KILL;
+  }
+
+  return null;
+}
+
+function analyzePkill(tokens: string[]): string | null {
+  const args = tokens.slice(1);
+  if (!args.length) return null;
+
+  let hasForceSignal = false;
+  let hasPattern = false;
+
+  for (let i = 0; i < args.length; i++) {
+    const tok = args[i];
+    if (tok === "--") {
+      // Everything after -- is pattern
+      if (i + 1 < args.length) hasPattern = true;
+      break;
+    }
+
+    // Check for -9, -KILL, -SIGKILL, --signal=9
+    if (tok.startsWith("-")) {
+      const stripped = tok.slice(1);
+      const signalPart = stripped.toUpperCase();
+      if (KILL_SIGNALS.has(signalPart) || signalPart === "SIGKILL") {
+        hasForceSignal = true;
+        continue;
+      }
+      if (tok.startsWith("--signal=")) {
+        const sig = tok.slice("--signal=".length).toUpperCase();
+        if (KILL_SIGNALS.has(sig) || sig === "SIGKILL") {
+          hasForceSignal = true;
+        }
+        continue;
+      }
+      // Skip other flags but don't count as pattern
+      continue;
+    }
+
+    // Non-flag argument is the pattern
+    hasPattern = true;
+  }
+
+  // Block pkill -9 without a specific pattern
+  if (hasForceSignal && !hasPattern) {
+    return REASON_BROADCAST_KILL;
   }
 
   return null;

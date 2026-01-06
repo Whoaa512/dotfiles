@@ -30,6 +30,7 @@ import {
   analyzeChmod,
   analyzeChown,
   analyzeFilesystemDestruction,
+  analyzeKill,
 } from "./rules_dangerous.js";
 import { analyzeGit } from "./rules_git.js";
 import { analyzeRm } from "./rules_rm.js";
@@ -200,6 +201,10 @@ function analyzeSegment(
   // chown -R on sensitive paths
   const chownReason = analyzeChown(strippedTokens);
   if (chownReason) return [segment, chownReason];
+
+  // Dangerous kill commands (broadcast kills)
+  const killReason = analyzeKill(strippedTokens);
+  if (killReason) return [segment, killReason];
 
   // Shell wrapper recursion: bash/sh/zsh -c '...'
   if (["bash", "sh", "zsh", "dash", "ksh"].includes(head)) {
