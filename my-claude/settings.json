@@ -17,6 +17,7 @@
       "Bash(ffmpeg:*)",
       "Bash(git add:*)",
       "Bash(git stash)",
+      "Bash(git show:*)",
       "Bash(golangci-lint run:*)",
       "Bash(swiftlint:*)",
       "Bash(git check-ignore:*)",
