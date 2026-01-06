@@ -11,7 +11,16 @@
 import { normalizeCmd } from "./normalize.js";
 import { shortOpts } from "./shell.js";
 
-const SHELLS = new Set(["bash", "sh", "zsh", "dash", "ksh"]);
+const SHELLS = new Set([
+  // Traditional shells
+  "bash", "sh", "zsh", "dash", "ksh",
+  // Interpreters that can execute arbitrary code
+  "python", "python3", "python2",
+  "ruby",
+  "perl",
+  "node", "nodejs",
+  "php",
+]);
 
 const REASON_PIPE_TO_SHELL =
   "Piping remote content directly to a shell is dangerous. Download first, review, then execute.";

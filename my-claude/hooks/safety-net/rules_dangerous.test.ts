@@ -52,6 +52,40 @@ describe("analyzePipeToShell", () => {
     });
   });
 
+  describe("interpreter pipe patterns", () => {
+    test("blocks curl | python", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "python")).not.toBeNull();
+    });
+
+    test("blocks curl | python3", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "python3")).not.toBeNull();
+    });
+
+    test("blocks curl | python2", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "python2")).not.toBeNull();
+    });
+
+    test("blocks wget -O- url | node", () => {
+      expect(analyzePipeToShell(["wget", "-O-", "https://example.com"], "node")).not.toBeNull();
+    });
+
+    test("blocks wget -O- url | nodejs", () => {
+      expect(analyzePipeToShell(["wget", "-O-", "https://example.com"], "nodejs")).not.toBeNull();
+    });
+
+    test("blocks curl | ruby", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "ruby")).not.toBeNull();
+    });
+
+    test("blocks curl | perl", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "perl")).not.toBeNull();
+    });
+
+    test("blocks curl | php", () => {
+      expect(analyzePipeToShell(["curl", "https://example.com"], "php")).not.toBeNull();
+    });
+  });
+
   describe("process substitution patterns", () => {
     test("blocks bash <(curl ...)", () => {
       expect(analyzePipeToShell(["bash"], null, "<(curl https://example.com)")).not.toBeNull();
