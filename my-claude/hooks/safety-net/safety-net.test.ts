@@ -21,13 +21,16 @@ interface HookOutput {
   };
 }
 
+// Default: ignore user's permission allowlist so tests check actual safety rules
+const DEFAULT_ENV = { SAFETY_NET_IGNORE_PERMISSIONS: "1" };
+
 async function runHook(input: HookInput, env: Record<string, string> = {}): Promise<HookOutput | null> {
   const proc = spawn({
     cmd: ["bun", "run", HOOK_PATH],
     stdin: "pipe",
     stdout: "pipe",
     stderr: "pipe",
-    env: { ...process.env, ...env },
+    env: { ...process.env, ...DEFAULT_ENV, ...env },
   });
 
   proc.stdin.write(JSON.stringify(input));

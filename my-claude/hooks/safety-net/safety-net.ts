@@ -15,6 +15,7 @@ import { join } from "path";
 
 import { loadConfig, type Config } from "./config.js";
 import { normalizeCmdToken } from "./normalize.js";
+import { isCommandPreApproved } from "./permissions.js";
 import { checkCustomRules } from "./rules_custom.js";
 import {
   analyzePipeToShell,
@@ -726,6 +727,12 @@ async function main(): Promise<number> {
 
   let cwd = typeof inputData.cwd === "string" ? inputData.cwd.trim() : null;
   if (cwd === "") cwd = null;
+
+  // Skip analysis for pre-approved commands (from permissions.allow)
+  // Can be disabled with SAFETY_NET_IGNORE_PERMISSIONS=1 for testing
+  if (!envTruthy("SAFETY_NET_IGNORE_PERMISSIONS") && isCommandPreApproved(command, cwd)) {
+    return 0;
+  }
 
   const config = loadConfig(cwd);
 
