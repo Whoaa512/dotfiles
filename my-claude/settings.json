@@ -20,6 +20,8 @@
       "Bash(git show:*)",
       "Bash(golangci-lint run:*)",
       "Bash(swiftlint:*)",
+      "Bash(digga:*)",
+      "Bash(whois:*)",
       "Bash(git check-ignore:*)",
       "Skill(commit)",
       "Bash(codesign:*)",
