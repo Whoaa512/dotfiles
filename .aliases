@@ -194,10 +194,13 @@ command -v grunt > /dev/null && alias grunt="grunt --stack"
 
 # Stuff I never really use but cannot delete either because of http://xkcd.com/530/
 alias stfu="osascript -e 'set volume output muted true'"
-alias pumpitup="osascript -e 'set volume 7'"
+alias pumpitup="osascript -e 'set volume output volume 100'"
 
 # Lock the screen (when going AFK)
 alias afk="/System/Library/CoreServices/Menu\ Extras/User.menu/Contents/Resources/CGSession -suspend"
+
+# Print PATH entries one per line
+alias path='echo -e ${PATH//:/\\n}'
 
 # Reload the shell (i.e. invoke as a login shell)
 alias reload="exec $SHELL -l"

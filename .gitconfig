@@ -156,6 +156,10 @@
 	ff = false
 
 # Use `origin` as the default remote on the `master` branch in all cases
+[branch]
+	# Show most recently changed branches first
+	sort = -committerdate
+
 [branch "master"]
 	remote = origin
 	merge = refs/heads/master
