@@ -65,6 +65,12 @@
 	# List contributors with number of commits
 	contributors = shortlog --summary --numbered
 
+	# List all aliases
+	aliases = config --get-regexp alias
+
+	# Show configured email
+	whoami = config user.email
+
 	# Merge GitHub pull request on top of the current branch or,
 	# if a branch name is specified, on top of the specified branch
 	mpr = "!f() { \
