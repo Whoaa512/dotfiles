@@ -592,8 +592,8 @@ function gpum() {
 
 unalias gcount 2>/dev/null || true
 function gcount() {
-  def_branch="$(git_default_branch)"
-  git log --oneline "$(git merge-base "origin/$def_branch" HEAD )"..HEAD | wc -l | tr -d ' '
+  base_branch="${1:-"origin/$(git_default_branch)"}"
+  git log --oneline "$(git merge-base "$base_branch" HEAD )"..HEAD | wc -l | tr -d ' '
 }
 
 # allow colors in watch
