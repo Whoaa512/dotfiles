@@ -513,8 +513,8 @@ alias reload="exec $SHELL -l"
 
 alias lt='echo "please install eza or tree"'
 if [[ $(command -v eza) ]]; then
-  alias l='eza -lahF auto'
-  alias ll='eza -lhF auto'
+  alias l='eza --sort=modified -lahF auto'
+  alias ll='eza --sort=modified -lhF auto'
   alias lt='eza -lahF auto -T'
   alias exa='eza' # muscle memory is hard to break
 else
