@@ -46,6 +46,8 @@ Thumbs.db
 *sublime-project
 junit.xml
 *.local.*
+.asana.json
+.asana-cli/
 
 # Git worktrees
 .worktrees/
