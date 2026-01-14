@@ -262,3 +262,4 @@ fi
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+alias gh-public='GH_HOST=github.com gh'
