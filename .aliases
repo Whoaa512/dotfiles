@@ -308,8 +308,8 @@ alias reload="exec $SHELL -l"
   alias gplri='git pull --rebase=i'
   alias gplro='git pull --rebase origin'
   alias gplroi='git pull --rebase=i origin'
-  alias gplru='git pull --rebase upst'
-  alias gplrui='git pull --rebase=i upst'
+  alias gplru='git pull --rebase upstream'
+  alias gplrui='git pull --rebase=i upstream'
   alias gplrob='git pull --rebase origin `git branch --show-current`'
   alias gplrobi='git pull --rebase=i origin `git branch --show-current`'
   alias gplron='git pull --rebase origin next'
@@ -318,14 +318,14 @@ alias reload="exec $SHELL -l"
   alias gplroghi='git pull --rebase=i origin gh-pages'
   alias gplrod='git pull --rebase origin develop; gsu'
   alias gplrodi='git pull --rebase=i origin develop; gsu'
-  alias gplrugh='git pull --rebase upst gh-pages'
-  alias gplrughi='git pull --rebase=i upst gh-pages'
-  alias gplrud='git pull --rebase upst develop'
-  alias gplrudi='git pull --rebase=i upst develop'
+  alias gplrugh='git pull --rebase upstream gh-pages'
+  alias gplrughi='git pull --rebase=i upstream gh-pages'
+  alias gplrud='git pull --rebase upstream develop'
+  alias gplrudi='git pull --rebase=i upstream develop'
   alias gplo='git pull origin'
   alias gplod='git pull origin develop'
-  alias gplu='git pull upst'
-  alias gplud='git pull upst develop'
+  alias gplu='git pull upstream'
+  alias gplud='git pull upstream develop'
   alias gp='git push'
   alias gpf='git push --force-with-lease'
   alias gpfn='git push --force-with-lease --no-verify'
@@ -334,17 +334,17 @@ alias reload="exec $SHELL -l"
   alias gpu='git push upst'
   alias gpod='git push origin develop'
   alias gpogh='git push origin gh-pages'
-  alias gpud='git push upst develop'
-  alias gpugh='git push upst gh-pages'
+  alias gpud='git push upstream develop'
+  alias gpugh='git push upstream gh-pages'
   alias grb='git rebase'
   alias grbc='git rebase --continue'
   alias gr='git remote'
   alias gra='git remote add'
   alias grao='git remote add origin'
-  alias grau='git remote add upst'
+  alias grau='git remote add upstream'
   alias grr='git remote rm'
   alias grro='git remote rm origin'
-  alias grru='git remote rm upst'
+  alias grru='git remote rm upstream'
   alias grv='git remote -v'
   alias gsu='git submodule update --init --recursive'
   alias gsuc='git submodule update --init --recursive --checkout'
@@ -564,11 +564,11 @@ function gcom() {
 }
 
 function gplrum() {
-  git pull --rebase upst "$(git_default_branch)"
+  git pull --rebase upstream "$(git_default_branch)"
 }
 
 function gplum() {
-  git pull upst "$(git_default_branch)"
+  git pull upstream "$(git_default_branch)"
 }
 
 function gpfom() {
@@ -587,7 +587,7 @@ function gpom() {
 }
 
 function gpum() {
-  git push upst "$(git_default_branch)"
+  git push upstream "$(git_default_branch)"
 }
 
 unalias gcount 2>/dev/null || true
