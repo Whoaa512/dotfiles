@@ -65,11 +65,21 @@
 	# List contributors with number of commits
 	contributors = shortlog --summary --numbered
 
-	# List all aliases
-	aliases = config --get-regexp alias
-
-	# Show configured email
-	whoami = config user.email
+	# Merge GitHub pull request on top of the current branch or,
+	# if a branch name is specified, on top of the specified branch
+	mpr = "!f() { \
+		declare currentBranch=\"$(git symbolic-ref --short HEAD)\"; \
+		declare branch=\"${2:-$currentBranch}\"; \
+		if [ $(printf \"%s\" \"$1\" | grep '^[0-9]\\+$' > /dev/null; printf $?) -eq 0 ]; then \
+			git fetch origin refs/pull/$1/head:pr/$1 && \
+			git checkout -B $branch && \
+			git rebase $branch pr/$1 && \
+			git checkout -B $branch && \
+			git merge pr/$1 && \
+			git branch -D pr/$1 && \
+			git commit --amend -m \"$(git log -1 --pretty=%B)\n\nCloses #$1.\"; \
+		fi \
+	}; f"
 
 [apply]
 
@@ -146,16 +156,16 @@
 	ff = false
 
 # Use `origin` as the default remote on the `master` branch in all cases
-[branch]
-	# Show most recently changed branches first
-	sort = -committerdate
-
 [branch "master"]
 	remote = origin
 	merge = refs/heads/master
 
 [push]
-	default = simple
+
+	# Use the Git 1.x.x default to avoid errors on machines with old Git
+	# installations. To use `simple` instead, add this to your `~/.extra` file:
+	# `git config --global push.default simple`. See http://git.io/mMah-w.
+	default = current
 	# Make `git push` push relevant annotated tags when pushing branches out.
 	followTags = true
 
