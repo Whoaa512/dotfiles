@@ -282,7 +282,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Funk.aiff"
+            "command": "$HOME/.claude/hooks/play-notification.sh"
           }
         ]
       }
@@ -293,7 +293,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "afplay /System/Library/Sounds/Funk.aiff"
+            "command": "$HOME/.claude/hooks/play-notification.sh"
           }
         ]
       }
