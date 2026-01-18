@@ -17,6 +17,20 @@
     - then spawn code critic agent to review
     - repeat until all work is complete
   - after the work loop completes have a final reviewer asses the output, if a game spawn game designer, if an app spawn product owner, or user may request specific final reviewer agent
+- when I ask you to do a plan loop (N iterations, M agents):
+  - defaults: N=2 iterations, M=3 agents
+  - fan out: spawn M parallel agents with different lenses, pick from:
+    - grug-architect (simplicity, architecture)
+    - code-critic (complexity, risks)
+    - product-owner (user value, scope)
+    - jared-biz-strategist (business, GTM)
+    - game-designer (if game-related)
+  - fan in: synthesize findings, identify conflicts/consensus
+  - repeat for N iterations or early break when:
+    - all agents converge on approach
+    - no UNCONFIRMED items remain
+    - implementation steps are concrete & sequenceable
+  - final output: single plan doc with dissenting notes if any
 - when asked to interview me about something, use the askuserquestion tool
 
 ### shorthand
