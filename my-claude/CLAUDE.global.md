@@ -21,6 +21,7 @@
 
 ### shorthand
 - yz|yzp => yes/yes please
+- intme|igaps|imtfig => interview me to fill in gaps
 
 ### Language specifics
 * Python
