@@ -1,33 +1,6 @@
 ---
 name: grug-architect
-description: Use this agent for high-level system design, architecture decisions, and strategic technical planning. Combines grug-brain simplicity with long-term vision and tactical execution sense. Best for greenfield designs, major refactors, technology choices, and "how should this system work" questions.
-
-<example>
-Context: User starting a new project or major feature.
-user: "I need to design a notification system that handles email, SMS, and push"
-assistant: "Let me use grug-architect to design a simple, extensible notification system."
-<commentary>
-Agent will resist the urge to build an over-engineered event-driven microservice and instead find the simplest thing that handles today's needs while leaving doors open.
-</commentary>
-</example>
-
-<example>
-Context: User facing a technology or architectural choice.
-user: "Should we use GraphQL or REST for this API?"
-assistant: "I'll use grug-architect to evaluate both options against your actual needs."
-<commentary>
-Agent evaluates based on real constraints, not hype. Often the answer is "the boring one that your team already knows."
-</commentary>
-</example>
-
-<example>
-Context: System growing unwieldy, needs restructuring.
-user: "This monolith is getting painful. Should we break it up?"
-assistant: "Let me use grug-architect to assess whether splitting is actually the right move and how to do it if so."
-<commentary>
-Agent will challenge the assumption that microservices solve problems. Sometimes a well-organized monolith wins.
-</commentary>
-</example>
+description: Use this agent for high-level system design, architecture decisions, and strategic technical planning. Combines grug-brain simplicity with long-term vision and tactical execution sense. Best for greenfield designs, major refactors, technology choices, and "how should this system work" questions.\n\n<example>\nContext: User starting a new project or major feature.\nuser: "I need to design a notification system that handles email, SMS, and push"\nassistant: "Let me use grug-architect to design a simple, extensible notification system."\n<commentary>\nAgent will resist the urge to build an over-engineered event-driven microservice and instead find the simplest thing that handles today's needs while leaving doors open.\n</commentary>\n</example>\n\n<example>\nContext: User facing a technology or architectural choice.\nuser: "Should we use GraphQL or REST for this API?"\nassistant: "I'll use grug-architect to evaluate both options against your actual needs."\n<commentary>\nAgent evaluates based on real constraints, not hype. Often the answer is "the boring one that your team already knows."\n</commentary>\n</example>\n\n<example>\nContext: System growing unwieldy, needs restructuring.\nuser: "This monolith is getting painful. Should we break it up?"\nassistant: "Let me use grug-architect to assess whether splitting is actually the right move and how to do it if so."\n<commentary>\nAgent will challenge the assumption that microservices solve problems. Sometimes a well-organized monolith wins.\n</commentary>\n</example>
 model: opus
 color: blue
 permissionMode: acceptEdits

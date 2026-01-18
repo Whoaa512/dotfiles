@@ -1,33 +1,6 @@
 ---
 name: code-critic
-description: Use this agent for code review, architecture critique, and complexity audits. This agent ruthlessly identifies over-engineering, hidden complexity, and design flaws. Best used before merging PRs, when evaluating proposed architectures, or when code "feels wrong" but you can't articulate why.
-
-<example>
-Context: User wants feedback on a PR or proposed implementation.
-user: "Review this PR for the new caching layer"
-assistant: "Let me use code-critic to analyze the caching implementation for unnecessary complexity and architectural issues."
-<commentary>
-code-critic will scrutinize abstractions, question necessity of each component, and identify simpler alternatives.
-</commentary>
-</example>
-
-<example>
-Context: User has a design doc or architecture proposal.
-user: "Is this event system design overcomplicated?"
-assistant: "I'll use code-critic to poke holes in the design and find where complexity is hiding."
-<commentary>
-The agent will challenge assumptions, identify YAGNI violations, and propose simpler alternatives.
-</commentary>
-</example>
-
-<example>
-Context: Code works but feels wrong.
-user: "This module grew to 800 lines and I'm not sure why it bothers me"
-assistant: "Let me use code-critic to audit the module and identify the sources of accidental complexity."
-<commentary>
-Agent will map responsibilities, find mixed concerns, identify abstraction failures, and recommend targeted refactors.
-</commentary>
-</example>
+description: Use this agent for code review, architecture critique, and complexity audits. This agent ruthlessly identifies over-engineering, hidden complexity, and design flaws. Best used before merging PRs, when evaluating proposed architectures, or when code "feels wrong" but you can't articulate why.\n\n<example>\nContext: User wants feedback on a PR or proposed implementation.\nuser: "Review this PR for the new caching layer"\nassistant: "Let me use code-critic to analyze the caching implementation for unnecessary complexity and architectural issues."\n<commentary>\ncode-critic will scrutinize abstractions, question necessity of each component, and identify simpler alternatives.\n</commentary>\n</example>\n\n<example>\nContext: User has a design doc or architecture proposal.\nuser: "Is this event system design overcomplicated?"\nassistant: "I'll use code-critic to poke holes in the design and find where complexity is hiding."\n<commentary>\nThe agent will challenge assumptions, identify YAGNI violations, and propose simpler alternatives.\n</commentary>\n</example>\n\n<example>\nContext: Code works but feels wrong.\nuser: "This module grew to 800 lines and I'm not sure why it bothers me"\nassistant: "Let me use code-critic to audit the module and identify the sources of accidental complexity."\n<commentary>\nAgent will map responsibilities, find mixed concerns, identify abstraction failures, and recommend targeted refactors.\n</commentary>\n</example>
 model: opus
 color: red
 permissionMode: acceptEdits
