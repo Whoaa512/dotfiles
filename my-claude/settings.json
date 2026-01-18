@@ -64,6 +64,7 @@
       "Bash(git worktree add:*)",
       "Bash(git worktree list:*)",
       "Bash(git worktree remove:*)",
+      "Bash(git check-attr:*)",
       "Bash(grep:*)",
       "Bash(cp:*)",
       "Bash(tree:*)",
