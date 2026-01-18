@@ -283,6 +283,15 @@
             "command": "claude-tool-review"
           }
         ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
+          }
+        ]
       }
     ],
     "Stop": [
@@ -292,6 +301,14 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/play-notification.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
           }
         ]
       }
@@ -326,6 +343,14 @@
             "command": "$HOME/.claude/hooks/session-start-continuity.sh"
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
+          }
+        ]
       }
     ],
     "UserPromptSubmit": [
@@ -334,6 +359,14 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/skill-activation-prompt.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
           }
         ]
       }
@@ -354,6 +387,14 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/session-end-cleanup.sh"
+          }
+        ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
           }
         ]
       }
