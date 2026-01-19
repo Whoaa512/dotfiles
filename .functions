@@ -666,28 +666,39 @@ join_strings() {
   printf "\n"
 }
 
-# Docker helpers
-function dr() {
-  docker run -a stdout -a stderr -i $@
-}
-function drb() {
-  docker run -a stdout -a stderr -i -v "$(pwd):/jorb/repo" "$@" /bin/bash &
-  sleep 1
-  dps | awk '{print $1}' | sed -n 2p
-}
+# Cycle iTerm2 tab through HSL gradient
+tabcolor() {
+  if [[ "$1" == "reset" ]]; then
+    echo -ne "\033]6;1;bg;*;default\a"
+    rm -f /tmp/tabcolor_idx 2>/dev/null
+    return
+  fi
 
+  # HSL hue wheel: S=75%, L=55% - pre-computed RGB
+  local colors=(
+    "230:92:92"    # 0° red
+    "230:138:92"   # 30° orange
+    "230:184:92"   # 60° yellow
+    "184:230:92"   # 90° lime
+    "138:230:92"   # 120° green
+    "92:230:138"   # 150° spring
+    "92:230:184"   # 180° cyan
+    "92:184:230"   # 210° sky
+    "92:138:230"   # 240° blue
+    "138:92:230"   # 270° purple
+    "184:92:230"   # 300° magenta
+    "230:92:184"   # 330° pink
+  )
 
-function dp() {
-  docker pull "$@"
-}
-function dps() {
-  docker ps "$@"
-}
+  # Read and increment index
+  local idx=0
+  [[ -f /tmp/tabcolor_idx ]] && idx=$(cat /tmp/tabcolor_idx)
+  echo $(( (idx + 1) % ${#colors[@]} )) > /tmp/tabcolor_idx
 
-function dk() {
-  docker kill "$@"
-}
+  local pick=${colors[$idx]}
+  IFS=':' read -r r g b <<< "$pick"
 
-function de() {
-  docker exec -it "$@" /bin/bash
+  echo -ne "\033]6;1;bg;red;brightness;$r\a"
+  echo -ne "\033]6;1;bg;green;brightness;$g\a"
+  echo -ne "\033]6;1;bg;blue;brightness;$b\a"
 }
