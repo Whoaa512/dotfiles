@@ -83,6 +83,9 @@ COMPLETION_WAITING_DOTS="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
 
+# Skip compaudit security check (~60ms)
+ZSH_DISABLE_COMPFIX=true
+
 source $ZSH/oh-my-zsh.sh
 [[ -f /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
@@ -231,13 +234,9 @@ typeset -g POWERLEVEL9K_INSTANT_PROMPT=quiet
 
 alias tmux="TERM=xterm-256color tmux"
 
-# Brew completions
-if type brew &>/dev/null
-then
+# Brew completions (compinit already run by omz)
+if type brew &>/dev/null; then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
-
-  autoload -Uz compinit
-  compinit
 fi
 
 [ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
