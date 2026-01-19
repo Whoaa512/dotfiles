@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+"""Set iTerm2 tab color for all panes in current tab."""
+import iterm2
+import sys
+
+# HSL hue wheel: S=75%, L=55% - pre-computed RGB
+COLORS = [
+    (230, 92, 92),    # 0° red
+    (230, 138, 92),   # 30° orange
+    (230, 184, 92),   # 60° yellow
+    (184, 230, 92),   # 90° lime
+    (138, 230, 92),   # 120° green
+    (92, 230, 138),   # 150° spring
+    (92, 230, 184),   # 180° cyan
+    (92, 184, 230),   # 210° sky
+    (92, 138, 230),   # 240° blue
+    (138, 92, 230),   # 270° purple
+    (184, 92, 230),   # 300° magenta
+    (230, 92, 184),   # 330° pink
+]
+
+IDX_FILE = "/tmp/tabcolor_idx"
+
+async def main(connection):
+    if len(sys.argv) > 1 and sys.argv[1] == "reset":
+        app = await iterm2.async_get_app(connection)
+        window = app.current_terminal_window
+        if window:
+            for session in window.current_tab.sessions:
+                change = iterm2.LocalWriteOnlyProfile()
+                change.set_use_tab_color(False)
+                await session.async_set_profile_properties(change)
+        try:
+            import os
+            os.remove(IDX_FILE)
+        except FileNotFoundError:
+            pass
+        return
+
+    # Read and increment index
+    try:
+        with open(IDX_FILE) as f:
+            idx = int(f.read().strip())
+    except (FileNotFoundError, ValueError):
+        idx = 0
+
+    with open(IDX_FILE, "w") as f:
+        f.write(str((idx + 1) % len(COLORS)))
+
+    r, g, b = COLORS[idx]
+
+    app = await iterm2.async_get_app(connection)
+    window = app.current_terminal_window
+    if window:
+        for session in window.current_tab.sessions:
+            change = iterm2.LocalWriteOnlyProfile()
+            change.set_tab_color(iterm2.Color(r, g, b))
+            change.set_use_tab_color(True)
+            await session.async_set_profile_properties(change)
+
+iterm2.run_until_complete(main)
