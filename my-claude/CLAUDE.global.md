@@ -31,11 +31,23 @@
     - no UNCONFIRMED items remain
     - implementation steps are concrete & sequenceable
   - final output: single plan doc with dissenting notes if any
+- when I ask you to do a council loop (review council):
+  - fan out: spawn agents in parallel, each with a review lens:
+    - product-owner (completeness, user value alignment)
+    - super-coder (correctness, implementation quality)
+    - grug-architect (clarity, simplicity, maintainability)
+    - code-critic (risks, edge cases, test coverage)
+  - fan in: synthesize findings into:
+    - consensus items (all agree)
+    - concerns (with severity: blocker/major/minor)
+    - recommendations (prioritized)
+  - output: single review doc, dissenting notes preserved
 - when asked to interview me about something, use the askuserquestion tool
 
 ### shorthand
 - yz|yzp => yes/yes please
 - intme|igaps|imtfig => interview me to fill in gaps
+- council|cloop => council loop (spawn review council)
 
 ### Language specifics
 * Python
