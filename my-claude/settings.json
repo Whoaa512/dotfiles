@@ -146,6 +146,7 @@
       "Bash(pnpm run build:*)",
       "Bash(pnpm run lint:*)",
       "Bash(pnpm lint:*)",
+      "Bash(pnpm eslint:*)",
       "Bash(pnpm run test:*)",
       "Bash(pnpm test:*)",
       "Bash(bun build)",
