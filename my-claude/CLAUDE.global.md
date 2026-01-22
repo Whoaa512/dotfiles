@@ -25,6 +25,8 @@
     - product-owner (user value, scope)
     - jared-biz-strategist (business, GTM)
     - game-designer (if game-related)
+    - nyx (security vulnerabilities, if code touches auth/input/crypto)
+    - kim (threat modeling, if architecture decisions impact security)
   - fan in: synthesize findings, identify conflicts/consensus
   - repeat for N iterations or early break when:
     - all agents converge on approach
@@ -37,6 +39,8 @@
     - super-coder (correctness, implementation quality)
     - grug-architect (clarity, simplicity, maintainability)
     - code-critic (risks, edge cases, test coverage)
+    - nyx (security vulnerabilities, injection flaws, crypto issues)
+    - kim (threat model, attack surface, trust boundaries)
   - fan in: synthesize findings into:
     - consensus items (all agree)
     - concerns (with severity: blocker/major/minor)
