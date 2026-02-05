@@ -1,8 +1,3 @@
-[submodule ".zsh/zsh-completions"]
-  path = .zsh/zsh-completions
-  url = https://github.com/zsh-users/zsh-completions.git
-	update = checkout
-  branch = master
 [submodule "agent-scripts"]
 	path = agent-scripts
 	url = git@github.com:Whoaa512/agent-scripts.git
