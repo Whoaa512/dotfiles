@@ -1,0 +1,50 @@
+#!/usr/bin/env zsh
+#
+# iterm-tab - Set iTerm2 tab/session title
+#
+# Usage:
+#   iterm-tab              # set to current directory basename
+#   iterm-tab <name>       # set to custom name
+#   iterm-tab --install    # install auto-updating shell hooks
+#   iterm-tab --uninstall  # remove shell hooks
+
+set -euo pipefail
+
+_iterm_set_tab() {
+  printf '\e]1;%s\a' "$1"
+}
+
+_iterm_set_window() {
+  printf '\e]2;%s\a' "$1"
+}
+
+_install_hooks() {
+  echo "Hooks are already installed via ~/dotfiles/zshrc.sh"
+  echo "Restart your shell to activate."
+}
+
+_uninstall_hooks() {
+  echo "Hooks live in ~/dotfiles/zshrc.sh — edit that file to remove."
+}
+
+case "${1:-}" in
+  --install)   _install_hooks ;;
+  --uninstall) _uninstall_hooks ;;
+  --help|-h)
+    echo "Usage: iterm-tab [name|--install|--uninstall]"
+    echo ""
+    echo "  (no args)     Set tab title to current directory name"
+    echo "  <name>        Set tab title to custom name"
+    echo "  --install     Install zsh hooks for auto-updating tab title"
+    echo "                Tab shows dir name, window shows dir (process) while running"
+    echo "  --uninstall   Remove the shell hooks"
+    ;;
+  "")
+    _iterm_set_tab "${PWD##*/}"
+    _iterm_set_window "${PWD##*/}"
+    ;;
+  *)
+    _iterm_set_tab "$1"
+    _iterm_set_window "$1"
+    ;;
+esac
