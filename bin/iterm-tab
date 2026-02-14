@@ -40,11 +40,19 @@ case "${1:-}" in
     echo "  --uninstall   Remove the shell hooks"
     ;;
   "")
-    _iterm_set_tab "${PWD##*/}"
-    _iterm_set_window "${PWD##*/}"
+    TITLE="${PWD##*/}"
+    if [[ -n "${SSH_TTY:-}" ]]; then
+      TITLE="$(hostname -s):$TITLE"
+    fi
+    _iterm_set_tab "$TITLE"
+    _iterm_set_window "$TITLE"
     ;;
   *)
-    _iterm_set_tab "$1"
-    _iterm_set_window "$1"
+    TITLE="$1"
+    if [[ -n "${SSH_TTY:-}" ]]; then
+      TITLE="$(hostname -s):$TITLE"
+    fi
+    _iterm_set_tab "$TITLE"
+    _iterm_set_window "$TITLE"
     ;;
 esac

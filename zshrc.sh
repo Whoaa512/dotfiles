@@ -16,9 +16,16 @@ add-zsh-hook preexec preexec_update_git_vars
 add-zsh-hook precmd precmd_update_git_vars
 
 # iTerm2 tab title: show current dir, running process in parens
-_iterm_tab_dir() { printf '\e]1;%s\a' "${PWD##*/}"; }
-_iterm_tab_preexec() { printf '\e]2;%s (%s)\a' "${PWD##*/}" "${1%% *}"; }
-_iterm_tab_precmd() { printf '\e]2;%s\a' "${PWD##*/}"; _iterm_tab_dir; }
+_iterm_tab_title() {
+  local title="${PWD##*/}"
+  if [[ -n "${SSH_TTY:-}" ]]; then
+    title="$(hostname -s):$title"
+  fi
+  echo "$title"
+}
+_iterm_tab_dir() { printf '\e]1;%s\a' "$(_iterm_tab_title)"; }
+_iterm_tab_preexec() { printf '\e]2;%s (%s)\a' "$(_iterm_tab_title)" "${1%% *}"; }
+_iterm_tab_precmd() { printf '\e]2;%s\a' "$(_iterm_tab_title)"; _iterm_tab_dir; }
 add-zsh-hook chpwd _iterm_tab_dir
 add-zsh-hook preexec _iterm_tab_preexec
 add-zsh-hook precmd _iterm_tab_precmd
