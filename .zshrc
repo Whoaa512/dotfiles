@@ -266,3 +266,6 @@ fi
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
+# OpenClaw Completion
+source "/Users/cjw/.openclaw/completions/openclaw.zsh"
