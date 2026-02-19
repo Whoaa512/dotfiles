@@ -280,3 +280,46 @@ When spawning background agents:
 - If you must check status, use `TaskOutput(block=false)` sparingly
 - Read output files directly (`/tmp/claude/.../tasks/<id>.output`) if needed
 - Trust the agents - don't babysit them
+
+## Codex Orchestration
+
+Use Codex CLI for coding tasks. Right-size thinking and autonomy per task.
+
+### Thinking Levels
+- `--thinking off` or `--thinking low` — mechanical/quick tasks (renames, small fixes)
+- `--thinking high` — complex refactors, architecture, multi-file changes
+- Higher thinking = slower. That's fine. Don't panic.
+
+### Autonomy (YOLO mode)
+- `--approval-mode full-auto` — runs commands, edits files without prompting
+- Use when task scope is clear and bounded
+- Skip for destructive/ambiguous work
+
+### Launching
+```bash
+# Background with output capture
+codex --thinking high --approval-mode full-auto "your prompt" > /tmp/codex-run.log 2>&1 &
+CODEX_PID=$!
+
+# Quick tasks
+codex --thinking low --approval-mode full-auto "rename X to Y in src/"
+```
+
+### Monitoring
+```bash
+# Check if still running
+kill -0 $CODEX_PID 2>/dev/null && echo "running" || echo "done"
+
+# Peek at tail (NOT cat — protect context window)
+tail -20 /tmp/codex-run.log
+
+# Wait for completion
+wait $CODEX_PID
+```
+
+### Key Rules
+- **Don't over-poll.** Each full log read bloats context. Use `tail`, not `cat`.
+- **Don't take over.** If Codex is slow, it's thinking. That's the point.
+- **Kill and re-prompt > hand-coding** when truly stuck (no output 5+ min).
+- **Right-size thinking.** Don't use `high` for a one-liner.
+- For parallel independent subtasks, launch multiple background Codex processes.
