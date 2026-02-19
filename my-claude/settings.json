@@ -228,13 +228,6 @@
       "Read(/Users/cjw/.ssh/**)"
     ]
   },
-  "sandbox": {
-    "filesystem": {
-      "allowedPaths": [
-        "/private/tmp/tmux-*"
-      ]
-    }
-  },
   "model": "opus",
   "hooks": {
     "PostToolUse": [
@@ -413,5 +406,13 @@
     "swift-lsp@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true
+  "sandbox": {
+    "filesystem": {
+      "allowedPaths": [
+        "/private/tmp/tmux-*"
+      ]
+    }
+  },
+  "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true
 }
