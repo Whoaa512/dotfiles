@@ -13,7 +13,7 @@
 - When writing commit messages, Focus on why. if you don't know why, ask the user
 - when I ask you to do a dev loop it takes this form:
   - loop:
-    - spawn super coder to implement the ask, 1 thing at a time
+    - spawn codex CLI to implement the ask, 1 thing at a time
     - then spawn code critic agent to review
     - repeat until all work is complete
   - after the work loop completes have a final reviewer asses the output, if a game spawn game designer, if an app spawn product owner, or user may request specific final reviewer agent
