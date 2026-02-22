@@ -1,0 +1,7 @@
+#!/bin/bash
+# Rename origin to upstream and add your fork as orig
+# Usage: git-fork-remotes <fork-url>
+#   e.g. git-fork-remotes git@github.com:Whoaa512/some-repo.git
+set -euo pipefail
+[[ -z "${1:-}" ]] && echo "Usage: git-fork-remotes <fork-url>" && exit 1
+git remote rename origin upstream && git remote add orig "$1" && git remote -v
