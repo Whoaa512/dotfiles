@@ -414,5 +414,6 @@
     }
   },
   "alwaysThinkingEnabled": true,
+  "effortLevel": "medium",
   "skipDangerousModePermissionPrompt": true
 }
