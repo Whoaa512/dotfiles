@@ -258,6 +258,14 @@ function a() {
 # 	fi;
 # }
 
+function z() {
+	if [ $# -eq 0 ]; then
+		zed .;
+	else
+		zed "$@";
+	fi;
+}
+
 function c() {
 	if [ $# -eq 0 ]; then
 		code .;
@@ -665,4 +673,3 @@ join_strings() {
   done
   printf "\n"
 }
-
