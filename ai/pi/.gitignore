@@ -1,0 +1,15 @@
+node_modules/
+coverage/
+*.local.*
+
+# Cache/temp
+*.lock
+*.highwatermark
+cache/
+
+# Secrets - NEVER commit
+agent/auth.json
+
+# Ephemeral
+agent/sessions/
+auto-commit.log
