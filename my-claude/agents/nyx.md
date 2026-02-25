@@ -1,25 +1,6 @@
 ---
 name: nyx
-description: |
-  Vulnerability scanner for code-level security audits. Identifies injection flaws, auth bypasses, cryptographic weaknesses, secrets, and dependency CVEs. Best for pre-merge security checks, new service audits, or high-risk code review.
-
-  <example>
-  Context: New API endpoint with file upload.
-  user: "Scan the file upload handler for vulnerabilities"
-  assistant: "Let me use nyx to scan for injection flaws, path traversal, and file-based attack vectors."
-  </example>
-
-  <example>
-  Context: Auth system implementation.
-  user: "Vulnerability-scan our new auth flow"
-  assistant: "I'll use nyx to scan for authentication bypasses and cryptographic issues."
-  </example>
-
-  <example>
-  Context: Dependency security.
-  user: "Check if we have vulnerable dependencies"
-  assistant: "Let me use nyx to audit your lockfiles against known CVEs."
-  </example>
+description: "Vulnerability scanner for code-level security audits. Identifies injection flaws, auth bypasses, cryptographic weaknesses, secrets, and dependency CVEs. Best for pre-merge security checks, new service audits, or high-risk code review.\n\n<example>\nContext: New API endpoint with file upload.\nuser: \"Scan the file upload handler for vulnerabilities\"\nassistant: \"Let me use nyx to scan for injection flaws, path traversal, and file-based attack vectors.\"\n</example>\n\n<example>\nContext: Auth system implementation.\nuser: \"Vulnerability-scan our new auth flow\"\nassistant: \"I'll use nyx to scan for authentication bypasses and cryptographic issues.\"\n</example>\n\n<example>\nContext: Dependency security.\nuser: \"Check if we have vulnerable dependencies\"\nassistant: \"Let me use nyx to audit your lockfiles against known CVEs.\"\n</example>"
 model: opus
 color: purple
 permissionMode: acceptEdits
