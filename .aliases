@@ -624,6 +624,7 @@ function abd (){
 function ar (){
   claude -r "$@"
 }
+function ay (){ claude --dangerously-skip-permissions "$@" }
 alias ccsummarize='summarize --model cli/claude/opus --max-output-tokens 10k '
 alias xrg='xargs rg '
 alias x='xargs '
