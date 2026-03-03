@@ -263,6 +263,7 @@ if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
   export EDITOR="vim"
   export VISUAL="vim"
 fi
+export GIT_EDITOR="$EDITOR"
 
 # Added by Windsurf
 export PATH="$HOME/.codeium/windsurf/bin:$PATH"
