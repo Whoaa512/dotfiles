@@ -13,6 +13,7 @@ agent/auth.json
 # Machine-specific (use settings.json.template)
 agent/settings.json
 agent/models.json
+trunk-commit-allow.txt
 
 # Ephemeral
 agent/sessions/
