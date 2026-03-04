@@ -10,6 +10,10 @@ cache/
 # Secrets - NEVER commit
 agent/auth.json
 
+# Machine-specific (use settings.json.template)
+agent/settings.json
+agent/models.json
+
 # Ephemeral
 agent/sessions/
 auto-commit.log

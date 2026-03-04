@@ -32,7 +32,7 @@ link_file() {
     echo "link: ${target#$TARGET_DIR/}"
 }
 
-mkdir -p "$TARGET_DIR/agent/"{agents,extensions/{plan-mode,subagent},prompts,skills/{asana,graphite,gt-pr-align},sessions}
+mkdir -p "$TARGET_DIR/agent/"{agents,extensions/{plan-mode,subagent},prompts,skills/{asana,debate,gdoc,graphite,gt-pr-align},scripts,sessions}
 
 echo "=== Top-level ==="
 link_file "$SOURCE_DIR/.gitignore"     "$TARGET_DIR/.gitignore"
@@ -50,11 +50,16 @@ fi
 
 echo ""
 echo "=== Settings ==="
-link_file "$SOURCE_DIR/agent/settings.json" "$TARGET_DIR/agent/settings.json"
+if [ ! -e "$TARGET_DIR/agent/settings.json" ]; then
+    cp "$SOURCE_DIR/agent/settings.json.template" "$TARGET_DIR/agent/settings.json"
+    echo "copy: agent/settings.json (from template — edit for your machine)"
+else
+    echo "ok:   agent/settings.json (already exists, not overwriting)"
+fi
 
 echo ""
 echo "=== Pi-only agents (from dotfiles/ai/pi) ==="
-for f in planner.md reviewer.md scout.md worker.md; do
+for f in planner.md reviewer.md scout.md worker.md debate-gpt.md debate-opus.md; do
     link_file "$SOURCE_DIR/agent/agents/$f" "$TARGET_DIR/agent/agents/$f"
 done
 
@@ -67,7 +72,7 @@ done
 
 echo ""
 echo "=== Local extensions (from dotfiles/ai/pi) ==="
-for f in claude-rules.ts elapsed-timer.ts external-context.ts footer.ts titlebar-spinner.ts todo.ts; do
+for f in claude-rules.ts elapsed-timer.ts external-context.ts footer.ts no-commit-to-trunk.ts titlebar-spinner.ts todo.ts; do
     link_file "$SOURCE_DIR/agent/extensions/$f" "$TARGET_DIR/agent/extensions/$f"
 done
 
@@ -97,7 +102,7 @@ done
 
 echo ""
 echo "=== Skills ==="
-for s in asana graphite gt-pr-align; do
+for s in asana debate gdoc graphite gt-pr-align; do
     link_file "$SOURCE_DIR/agent/skills/$s/SKILL.md" "$TARGET_DIR/agent/skills/$s/SKILL.md"
 done
 
@@ -109,5 +114,7 @@ echo "  extensions: $PI_MONO_EXT"
 echo ""
 echo "NOT synced (machine-local):"
 echo "  agent/auth.json"
+echo "  agent/settings.json (edit manually or copy from settings.json.template)"
+echo "  agent/models.json"
 echo "  agent/sessions/"
 echo "  auto-commit.log"
