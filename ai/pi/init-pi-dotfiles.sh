@@ -72,7 +72,7 @@ done
 
 echo ""
 echo "=== Local extensions (from dotfiles/ai/pi) ==="
-for f in claude-rules.ts elapsed-timer.ts external-context.ts footer.ts no-commit-to-trunk.ts titlebar-spinner.ts todo.ts; do
+for f in claude-rules.ts elapsed-timer.ts external-context.ts footer.ts titlebar-spinner.ts todo.ts; do
     link_file "$SOURCE_DIR/agent/extensions/$f" "$TARGET_DIR/agent/extensions/$f"
 done
 
