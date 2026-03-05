@@ -258,7 +258,6 @@ if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then
 fi
 
 export EDITOR="code"
-export VISUAL="code"
 if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
   export EDITOR="vim"
   export VISUAL="vim"
