@@ -87,7 +87,16 @@ plugins=(git zsh-syntax-highlighting zsh-autosuggestions)
 ZSH_DISABLE_COMPFIX=true
 
 source $ZSH/oh-my-zsh.sh
-[[ -f /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+if [[ "$(uname -m)" == "arm64" ]]; then
+  export HOMEBREW_PREFIX="/opt/homebrew"
+  export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+  export HOMEBREW_REPOSITORY="/opt/homebrew"
+  export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}"
+  export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:"
+  export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
+elif [[ -f /opt/homebrew/bin/brew ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
 # No sudo on npm -- run once
   # sudo chown -R $USER /usr/local
@@ -236,18 +245,37 @@ alias tmux="TERM=xterm-256color tmux"
 
 # Brew completions (compinit already run by omz)
 if type brew &>/dev/null; then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+  FPATH="${HOMEBREW_PREFIX:-/opt/homebrew}/share/zsh/site-functions:${FPATH}"
 fi
 
-[ -x "$(command -v kubectl)" ] && source <(kubectl completion zsh)
-[ -x "$(command -v fx)" ] && source <(fx --comp zsh)
+if [ -x "$(command -v kubectl)" ]; then
+  kubectl() {
+    unfunction kubectl
+    source <(command kubectl completion zsh)
+    kubectl "$@"
+  }
+fi
+if [ -x "$(command -v fx)" ]; then
+  fx() {
+    unfunction fx
+    source <(command fx --comp zsh)
+    fx "$@"
+  }
+fi
 
 # bun completions
 [ -s "/Users/cjw/.bun/_bun" ] && source "/Users/cjw/.bun/_bun"
 
 # Mise
-[ -x "$(command -v mise)" ] && eval "$(mise activate zsh)"
-eval "$(mise completion zsh)"
+if [ -x "$(command -v mise)" ]; then
+  eval "$(mise activate zsh --shims)"
+  mise() {
+    unfunction mise
+    eval "$(command mise activate zsh)"
+    eval "$(command mise completion zsh)"
+    mise "$@"
+  }
+fi
 
 # bd
 # [ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
@@ -265,9 +293,9 @@ fi
 export GIT_EDITOR="$EDITOR"
 
 # Added by Windsurf
-export PATH="$HOME/.codeium/windsurf/bin:$PATH"
+# export PATH="$HOME/.codeium/windsurf/bin:$PATH"
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # OpenClaw Completion
-source "/Users/cjw/.openclaw/completions/openclaw.zsh"
+# source "/Users/cjw/.openclaw/completions/openclaw.zsh"
