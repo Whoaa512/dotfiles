@@ -38,6 +38,10 @@ const allowList = loadAllowList();
 
 
 export default function (pi: ExtensionAPI) {
+	pi.on("session_start", async (_event, ctx) => {
+		ctx.ui.setStatus("trunk-guard", "🔒");
+	});
+
 	pi.on("tool_call", async (event, ctx) => {
 		if (event.toolName !== "bash") return;
 
