@@ -31,6 +31,17 @@ asana task dep rm <task> <blocked-by>
 asana blocked               # Show blocked tasks
 ```
 
+## Multi-Project & Sections
+```bash
+asana task project add <task-gid> <project-gid>   # Add task to another project
+asana task project rm <task-gid> <project-gid>     # Remove task from project
+asana task project list <task-gid>                 # List projects for a task
+
+asana section list --project <project-gid>         # List sections in a project
+asana section add-task <section-gid> <task-gid>    # Move task into a section
+asana section create --project <gid> --name "X"    # Create a section
+```
+
 ## Search & Explore
 ```bash
 asana search "query"        # Text search
