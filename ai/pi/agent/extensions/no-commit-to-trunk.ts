@@ -36,6 +36,18 @@ function loadAllowList(): RegExp[] {
 
 const allowList = loadAllowList();
 
+function resolveEffectiveCwd(command: string, cwd: string): string {
+	const cdMatch = command.match(/^\s*cd\s+(\S+)\s*(?:&&|;)/);
+	if (!cdMatch) {
+		const gitCFlag = command.match(/\bgit\s+-C\s+(\S+)/);
+		if (gitCFlag) {
+			return join(cwd, gitCFlag[1]);
+		}
+		return cwd;
+	}
+	return join(cwd, cdMatch[1]);
+}
+
 
 export default function (pi: ExtensionAPI) {
 	pi.on("session_start", async (_event, ctx) => {
@@ -50,10 +62,14 @@ export default function (pi: ExtensionAPI) {
 		const command = event.input.command as string;
 		const isCommit = COMMIT_PATTERNS.some((p) => p.test(command));
 		if (!isCommit) return;
+
+		const effectiveCwd = resolveEffectiveCwd(command, ctx.cwd);
+		if (allowList.some((pattern) => pattern.test(effectiveCwd))) return;
+
 		const isCdIntoAllowedDir = /\bcd\b/.test(command) && allowList.some((pattern) => pattern.test(command));
 		if (isCdIntoAllowedDir) return;
 
-		const branch = getCurrentBranch(ctx.cwd);
+		const branch = getCurrentBranch(effectiveCwd);
 		if (!branch || !PROTECTED_BRANCHES.includes(branch)) return;
 
 		return {
