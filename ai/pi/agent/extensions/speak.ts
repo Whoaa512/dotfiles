@@ -246,16 +246,22 @@ export default function (pi: ExtensionAPI) {
 			ctx.ui.setStatus("tts", "🔊 Speaking...");
 
 			const child = spawn("naturalreader", [
-				"speak", "--file", tmpFile, "--voice", "Echo", "--source", "openai", "--type", "pro"
-			], { stdio: "ignore" });
+				"speak", "--file", tmpFile
+			], { stdio: ["ignore", "pipe", "pipe"] });
 
 			speakingProcess = child;
 
-			child.on("close", () => {
+			let stderr = "";
+			child.stderr?.on("data", (chunk: Buffer) => { stderr += chunk.toString(); });
+
+			child.on("close", (code) => {
 				if (speakingProcess === child) {
 					speakingProcess = null;
 					speakingTmpFile = null;
 					ctx.ui.setStatus("tts", undefined);
+					if (code !== 0 && stderr) {
+						ctx.ui.notify(`naturalreader exited ${code}: ${stderr.slice(0, 200)}`, "error");
+					}
 				}
 				try { unlinkSync(tmpFile); } catch {}
 			});
