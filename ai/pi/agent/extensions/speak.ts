@@ -1,5 +1,5 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { execSync } from "node:child_process";
+import { execSync, spawn, type ChildProcess } from "node:child_process";
 import { writeFileSync, unlinkSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -59,6 +59,9 @@ function listItems(): Array<{ session_id: string; session_file: string; cwd: str
 		db.close();
 	}
 }
+
+let speakingProcess: ChildProcess | null = null;
+let speakingTmpFile: string | null = null;
 
 function getLastAssistantText(ctx: ExtensionContext): string | null {
 	const entries = ctx.sessionManager.getBranch();
@@ -131,10 +134,29 @@ function getSessionInfo(ctx: ExtensionContext) {
 	};
 }
 
+function killSpeaking(ui?: ExtensionContext["ui"]) {
+	if (!speakingProcess) return false;
+
+	speakingProcess.kill("SIGTERM");
+	speakingProcess = null;
+
+	if (speakingTmpFile) {
+		try { unlinkSync(speakingTmpFile); } catch {}
+		speakingTmpFile = null;
+	}
+
+	if (ui) {
+		ui.setStatus("tts", undefined);
+	}
+
+	return true;
+}
+
 export default function (pi: ExtensionAPI) {
 	pi.on("input", async (_event, ctx) => {
 		const { id } = getSessionInfo(ctx);
 		removeItem(id);
+		killSpeaking(ctx.ui);
 		return { action: "continue" as const };
 	});
 
@@ -199,6 +221,12 @@ export default function (pi: ExtensionAPI) {
 	pi.registerCommand("speak", {
 		description: "Read the last assistant response aloud via naturalreader",
 		handler: async (_args, ctx) => {
+			if (speakingProcess) {
+				killSpeaking(ctx.ui);
+				ctx.ui.notify("Stopped speaking", "info");
+				return;
+			}
+
 			const text = getLastAssistantText(ctx);
 			if (!text) {
 				ctx.ui.notify("No assistant response to read", "error");
@@ -212,22 +240,51 @@ export default function (pi: ExtensionAPI) {
 			}
 
 			const tmpFile = join(tmpdir(), `pi-speak-${Date.now()}.txt`);
-			try {
-				writeFileSync(tmpFile, cleaned, "utf-8");
-				ctx.ui.notify("Speaking...", "info");
-				execSync(
-					`naturalreader speak --file "${tmpFile}" --voice Echo --source openai --type pro`,
-					{ stdio: "inherit", timeout: 120_000 }
-				);
-			} catch (err: any) {
-				if (err.status !== null) {
+			writeFileSync(tmpFile, cleaned, "utf-8");
+			speakingTmpFile = tmpFile;
+
+			ctx.ui.setStatus("tts", "🔊 Speaking...");
+
+			const child = spawn("naturalreader", [
+				"speak", "--file", tmpFile, "--voice", "Echo", "--source", "openai", "--type", "pro"
+			], { stdio: "ignore" });
+
+			speakingProcess = child;
+
+			child.on("close", () => {
+				if (speakingProcess === child) {
+					speakingProcess = null;
+					speakingTmpFile = null;
+					ctx.ui.setStatus("tts", undefined);
+				}
+				try { unlinkSync(tmpFile); } catch {}
+			});
+
+			child.on("error", (err) => {
+				if (speakingProcess === child) {
+					speakingProcess = null;
+					speakingTmpFile = null;
+					ctx.ui.setStatus("tts", undefined);
 					ctx.ui.notify(`naturalreader failed: ${err.message}`, "error");
 				}
-			} finally {
-				try {
-					unlinkSync(tmpFile);
-				} catch {}
-			}
+				try { unlinkSync(tmpFile); } catch {}
+			});
+		},
+	});
+
+	pi.registerCommand("stop", {
+		description: "Stop speaking",
+		handler: async (_args, ctx) => {
+			const wasSpeaking = killSpeaking(ctx.ui);
+			ctx.ui.notify(wasSpeaking ? "Stopped speaking" : "Nothing playing", "info");
+		},
+	});
+
+	pi.registerCommand("speak-stop", {
+		description: "Stop speaking",
+		handler: async (_args, ctx) => {
+			const wasSpeaking = killSpeaking(ctx.ui);
+			ctx.ui.notify(wasSpeaking ? "Stopped speaking" : "Nothing playing", "info");
 		},
 	});
 }
