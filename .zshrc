@@ -298,4 +298,4 @@ export GIT_EDITOR="$EDITOR"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # OpenClaw Completion
-# source "/Users/cjw/.openclaw/completions/openclaw.zsh"
+[ -f ~/.openclaw/completions/openclaw.zsh ] && source "~/.openclaw/completions/openclaw.zsh"
