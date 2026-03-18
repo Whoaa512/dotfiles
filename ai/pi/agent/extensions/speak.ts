@@ -1,11 +1,64 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { execSync, spawn } from "node:child_process";
-import { writeFileSync, unlinkSync, mkdirSync, readdirSync, existsSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { writeFileSync, unlinkSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, dirname } from "node:path";
+import { join } from "node:path";
 
-const QUEUE_DIR = join(process.env.HOME!, ".pi", "tts-queue");
-const DAEMON_SCRIPT = join(dirname(import.meta.url.replace("file://", "")), "pi-tts-daemon.ts");
+const DB_PATH = join(process.env.HOME!, ".pi", "attention.db");
+
+function getDb() {
+	const sqlite = require("node:sqlite");
+	mkdirSync(join(process.env.HOME!, ".pi"), { recursive: true });
+	const db = new sqlite.DatabaseSync(DB_PATH);
+	db.exec(`CREATE TABLE IF NOT EXISTS queue (
+		session_id TEXT PRIMARY KEY,
+		session_file TEXT,
+		cwd TEXT,
+		summary TEXT NOT NULL,
+		timestamp INTEGER NOT NULL
+	)`);
+	return db;
+}
+
+function upsertItem(sessionId: string, sessionFile: string | null, cwd: string, summary: string) {
+	const db = getDb();
+	try {
+		db.prepare(
+			`INSERT INTO queue (session_id, session_file, cwd, summary, timestamp)
+			 VALUES (?, ?, ?, ?, ?)
+			 ON CONFLICT(session_id) DO UPDATE SET summary = ?, timestamp = ?`
+		).run(sessionId, sessionFile, cwd, summary, Date.now(), summary, Date.now());
+	} finally {
+		db.close();
+	}
+}
+
+function removeItem(sessionId: string) {
+	const db = getDb();
+	try {
+		db.prepare("DELETE FROM queue WHERE session_id = ?").run(sessionId);
+	} finally {
+		db.close();
+	}
+}
+
+function clearAll() {
+	const db = getDb();
+	try {
+		db.exec("DELETE FROM queue");
+	} finally {
+		db.close();
+	}
+}
+
+function listItems(): Array<{ session_id: string; session_file: string; cwd: string; summary: string; timestamp: number }> {
+	const db = getDb();
+	try {
+		return db.prepare("SELECT * FROM queue ORDER BY timestamp DESC").all();
+	} finally {
+		db.close();
+	}
+}
 
 function getLastAssistantText(ctx: ExtensionContext): string | null {
 	const entries = ctx.sessionManager.getBranch();
@@ -38,21 +91,6 @@ function stripMarkdown(text: string): string {
 		.trim();
 }
 
-function clearQueue() {
-	if (!existsSync(QUEUE_DIR)) return;
-	for (const f of readdirSync(QUEUE_DIR)) {
-		if (f.endsWith(".json")) {
-			try { unlinkSync(join(QUEUE_DIR, f)); } catch {}
-		}
-	}
-}
-
-function queueMessage(message: string) {
-	mkdirSync(QUEUE_DIR, { recursive: true });
-	const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`;
-	writeFileSync(join(QUEUE_DIR, filename), JSON.stringify({ message, timestamp: Date.now() }));
-}
-
 async function classifyNeedsInput(text: string): Promise<boolean> {
 	const apiKey = process.env.OPENROUTER_API_KEY;
 	if (!apiKey) return false;
@@ -61,7 +99,7 @@ async function classifyNeedsInput(text: string): Promise<boolean> {
 		const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
 			method: "POST",
 			headers: {
-				"Authorization": `Bearer ${apiKey}`,
+				Authorization: `Bearer ${apiKey}`,
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
@@ -77,7 +115,7 @@ async function classifyNeedsInput(text: string): Promise<boolean> {
 				],
 			}),
 		});
-		const data = await res.json();
+		const data = (await res.json()) as any;
 		const answer = data.choices?.[0]?.message?.content?.trim()?.toLowerCase() ?? "";
 		return answer.includes("input");
 	} catch {
@@ -85,22 +123,18 @@ async function classifyNeedsInput(text: string): Promise<boolean> {
 	}
 }
 
-function ensureDaemon() {
-	try {
-		execSync("tmux has-session -t pi-tts 2>/dev/null");
-	} catch {
-		const cmd = `bun run ${DAEMON_SCRIPT}`;
-		execSync(`tmux new-session -d -s pi-tts '${cmd}'`);
-	}
+function getSessionInfo(ctx: ExtensionContext) {
+	return {
+		id: ctx.sessionManager.getSessionId(),
+		file: ctx.sessionManager.getSessionFile() ?? "",
+		cwd: ctx.cwd,
+	};
 }
 
 export default function (pi: ExtensionAPI) {
-	pi.on("session_start", async () => {
-		ensureDaemon();
-	});
-
-	pi.on("input", async () => {
-		clearQueue();
+	pi.on("input", async (_event, ctx) => {
+		const { id } = getSessionInfo(ctx);
+		removeItem(id);
 		return { action: "continue" as const };
 	});
 
@@ -112,12 +146,54 @@ export default function (pi: ExtensionAPI) {
 		if (!cleaned) return;
 
 		const needsInput = await classifyNeedsInput(cleaned);
+		const { id, file, cwd } = getSessionInfo(ctx);
+
 		if (needsInput) {
-			const summary = cleaned.length > 300
-				? cleaned.slice(0, 297) + "..."
-				: cleaned;
-			queueMessage(`Hey, pi needs your attention. ${summary}`);
+			const summary =
+				cleaned.length > 200 ? cleaned.slice(0, 197) + "..." : cleaned;
+			upsertItem(id, file, cwd, summary);
+		} else {
+			removeItem(id);
 		}
+	});
+
+	pi.registerCommand("attention", {
+		description: "View/manage the attention queue of sessions waiting for input",
+		handler: async (args, ctx) => {
+			const parts = args?.trim().split(/\s+/) ?? [];
+			const subcommand = parts[0] ?? "";
+
+			if (subcommand === "clear") {
+				clearAll();
+				ctx.ui.notify("Attention queue cleared", "info");
+				return;
+			}
+
+			if (subcommand === "dismiss") {
+				const target = parts[1];
+				if (!target) {
+					ctx.ui.notify("Usage: /attention dismiss <session_id>", "error");
+					return;
+				}
+				removeItem(target);
+				ctx.ui.notify(`Dismissed ${target}`, "info");
+				return;
+			}
+
+			const items = listItems();
+			if (items.length === 0) {
+				ctx.ui.notify("No sessions waiting for attention", "info");
+				return;
+			}
+
+			const lines = items.map((item) => {
+				const age = Math.round((Date.now() - item.timestamp) / 60_000);
+				const dir = item.cwd.replace(process.env.HOME!, "~");
+				return `[${age}m ago] ${dir}\n  ${item.summary.slice(0, 120)}`;
+			});
+
+			ctx.ui.notify(`${items.length} session(s) waiting:\n\n${lines.join("\n\n")}`, "info");
+		},
 	});
 
 	pi.registerCommand("speak", {
@@ -139,25 +215,19 @@ export default function (pi: ExtensionAPI) {
 			try {
 				writeFileSync(tmpFile, cleaned, "utf-8");
 				ctx.ui.notify("Speaking...", "info");
-				execSync(`naturalreader speak --file "${tmpFile}" --voice Echo --source openai --type pro`, {
-					stdio: "inherit",
-					timeout: 120_000,
-				});
+				execSync(
+					`naturalreader speak --file "${tmpFile}" --voice Echo --source openai --type pro`,
+					{ stdio: "inherit", timeout: 120_000 }
+				);
 			} catch (err: any) {
 				if (err.status !== null) {
 					ctx.ui.notify(`naturalreader failed: ${err.message}`, "error");
 				}
 			} finally {
-				try { unlinkSync(tmpFile); } catch {}
+				try {
+					unlinkSync(tmpFile);
+				} catch {}
 			}
-		},
-	});
-
-	pi.registerCommand("speak-stop", {
-		description: "Clear TTS queue and stop pending notifications",
-		handler: async (_args, ctx) => {
-			clearQueue();
-			ctx.ui.notify("TTS queue cleared", "info");
 		},
 	});
 }

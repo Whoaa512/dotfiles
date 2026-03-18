@@ -1,0 +1,57 @@
+#!/usr/bin/env node
+
+const sqlite = require("node:sqlite");
+const path = require("node:path");
+const fs = require("node:fs");
+
+const DB_PATH = path.join(process.env.HOME, ".pi", "attention.db");
+
+function getDb() {
+	if (!fs.existsSync(DB_PATH)) {
+		console.log("No attention queue found.");
+		process.exit(0);
+	}
+	return new sqlite.DatabaseSync(DB_PATH);
+}
+
+const args = process.argv.slice(2);
+const cmd = args[0] ?? "list";
+
+if (cmd === "list" || cmd === "ls") {
+	const db = getDb();
+	const items = db.prepare("SELECT * FROM queue ORDER BY timestamp DESC").all();
+	db.close();
+
+	if (items.length === 0) {
+		console.log("No sessions waiting for attention.");
+		process.exit(0);
+	}
+
+	console.log(`\n${items.length} session(s) waiting:\n`);
+	for (const item of items) {
+		const age = Math.round((Date.now() - item.timestamp) / 60000);
+		const dir = item.cwd.replace(process.env.HOME, "~");
+		const timeStr = age < 60 ? `${age}m ago` : `${Math.round(age / 60)}h ago`;
+		console.log(`  ${timeStr}  ${dir}`);
+		console.log(`  ID: ${item.session_id}`);
+		console.log(`  ${item.summary.slice(0, 120)}`);
+		console.log();
+	}
+} else if (cmd === "dismiss") {
+	const target = args[1];
+	if (!target) {
+		console.error("Usage: pi-queue dismiss <session_id>");
+		process.exit(1);
+	}
+	const db = getDb();
+	db.prepare("DELETE FROM queue WHERE session_id = ?").run(target);
+	db.close();
+	console.log(`Dismissed ${target}`);
+} else if (cmd === "clear") {
+	const db = getDb();
+	db.exec("DELETE FROM queue");
+	db.close();
+	console.log("Queue cleared.");
+} else {
+	console.log("Usage: pi-queue [list|dismiss <id>|clear]");
+}
