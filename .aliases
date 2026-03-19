@@ -361,6 +361,7 @@ alias reload="exec $SHELL -l"
   alias grbi="git rebase --interactive"
   alias grba="git rebase --abort"
   alias undo_head="git reset HEAD~"
+  alias glp="git log -p"
 
 # graphite (gt) aliases
   alias gtl='gt log short --stack --no-interactive'
