@@ -49,8 +49,8 @@
 - when asked to interview me about something, use the askuserquestion tool
 
 ### shorthand
-- yz|yzp: yes/yes please
-- intme: interview me to fill in gaps
+- yz|yzp: yes please
+- intme: interview me to fill in gaps. if it can be answered by reading code do that first
 - tcb: copy to my clipboard
 - council: council loop (spawn review council)
 
