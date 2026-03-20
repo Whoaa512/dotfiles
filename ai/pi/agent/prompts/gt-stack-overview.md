@@ -44,7 +44,30 @@ GH_HOST=git.musta.ch gh pr list --head "$branch" --json number,title,state,isDra
 - Look for `buildkite/*-required` context: SUCCESS=🟢, FAILURE=🔴, PENDING=🟡
 - Ignore `Test Plan` and `Code Review` contexts (not CI)
 
-## 4. Output the table
+## 4. Investigate required CI failures
+For any branch where `buildkite/*-required` is FAILURE, **always** dig into the build logs to explain why:
+
+```bash
+# Parse pipeline slug + build number from the targetUrl
+# e.g. https://buildkite.com/airbnb/airbnb-twig-ci-required/builds/87970
+bk build view -p <pipeline-slug> <build-number> -o json | jq '{state, jobs: [.jobs[] | select(.state == "failed") | {name, state, id}]}'
+
+# For each failed job, fetch and tail the log
+bk api /pipelines/<pipeline-slug>/builds/<build-number>/jobs/<job-id>/log | jq -r '.content' | tail -80
+```
+
+Extract from the logs:
+- **Failing test names** and their file paths
+- **Root cause** (the actual error/exception, not just "test failed")
+- **Which branch introduced the failure** — if multiple branches fail with the same error, note this
+
+Include a **CI Failure Analysis** section after the table with:
+- Error message and location
+- Root cause explanation
+- Which stack nodes are affected
+- Suggested fix if obvious from the error
+
+## 5. Output the table
 </instructions>
 
 <output_format>
