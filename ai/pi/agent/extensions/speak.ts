@@ -1,6 +1,6 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { spawn, type ChildProcess } from "node:child_process";
-import { writeFileSync, unlinkSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
+import { spawn, execSync, type ChildProcess } from "node:child_process";
+import { writeFileSync, unlinkSync, mkdirSync, readdirSync, readFileSync, rmSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -76,19 +76,94 @@ function stripMarkdown(text: string): string {
 		.trim();
 }
 
-async function classifyNeedsInput(text: string): Promise<boolean> {
-	const apiKey = process.env.OPENROUTER_API_KEY;
-	if (!apiKey) return false;
+type ClassifyConfig = { baseUrl: string; apiKey: string; model: string; headers?: Record<string, string> };
+
+let classifyConfigCache: ClassifyConfig | null | undefined;
+
+function resolveConfigValue(config: string): string | undefined {
+	if (config.startsWith("!")) {
+		try {
+			return execSync(config.slice(1), { encoding: "utf-8", timeout: 10000, stdio: ["ignore", "pipe", "ignore"] }).trim() || undefined;
+		} catch { return undefined; }
+	}
+	return process.env[config] || config;
+}
+
+function loadClassifyConfig(): ClassifyConfig | null {
+	if (classifyConfigCache !== undefined) return classifyConfigCache;
+
+	const envModel = process.env.PI_CLASSIFY_MODEL;
+	const defaultProvider = "devai";
+	const defaultModel = "gpt-5-nano";
+
+	let providerName = defaultProvider;
+	let modelId = defaultModel;
+	if (envModel?.includes("/")) {
+		[providerName, modelId] = envModel.split("/", 2);
+	} else if (envModel) {
+		modelId = envModel;
+	}
+
+	const modelsPath = join(process.env.HOME!, ".pi", "agent", "models.json");
+	if (!existsSync(modelsPath)) {
+		const apiKey = process.env.OPENROUTER_API_KEY;
+		if (!apiKey) { classifyConfigCache = null; return null; }
+		classifyConfigCache = { baseUrl: "https://openrouter.ai/api/v1", apiKey, model: `openai/${modelId}` };
+		return classifyConfigCache;
+	}
 
 	try {
-		const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+		const modelsJson = JSON.parse(readFileSync(modelsPath, "utf-8"));
+		const provider = modelsJson.providers?.[providerName];
+		if (!provider?.baseUrl || !provider?.apiKey) {
+			classifyConfigCache = null;
+			return null;
+		}
+
+		const resolvedKey = resolveConfigValue(provider.apiKey);
+		if (!resolvedKey) { classifyConfigCache = null; return null; }
+
+		const resolvedHeaders: Record<string, string> = {};
+		if (provider.headers) {
+			for (const [k, v] of Object.entries(provider.headers)) {
+				const rv = resolveConfigValue(v as string);
+				if (rv) resolvedHeaders[k] = rv;
+			}
+		}
+
+		classifyConfigCache = {
+			baseUrl: provider.baseUrl,
+			apiKey: resolvedKey,
+			model: modelId,
+			headers: Object.keys(resolvedHeaders).length > 0 ? resolvedHeaders : undefined,
+		};
+		return classifyConfigCache;
+	} catch {
+		classifyConfigCache = null;
+		return null;
+	}
+}
+
+function invalidateClassifyConfig() {
+	classifyConfigCache = undefined;
+}
+
+async function classifyNeedsInput(text: string): Promise<boolean> {
+	const config = loadClassifyConfig();
+	if (!config) return false;
+
+	try {
+		const headers: Record<string, string> = {
+			Authorization: `Bearer ${config.apiKey}`,
+			"Content-Type": "application/json",
+			...(config.headers ?? {}),
+		};
+
+		const res = await fetch(`${config.baseUrl}/chat/completions`, {
 			method: "POST",
-			headers: {
-				Authorization: `Bearer ${apiKey}`,
-				"Content-Type": "application/json",
-			},
+			headers,
 			body: JSON.stringify({
-				model: "openai/gpt-4.1-nano",
+				model: config.model,
 				max_tokens: 10,
 				messages: [
 					{
@@ -104,6 +179,7 @@ async function classifyNeedsInput(text: string): Promise<boolean> {
 		const answer = data.choices?.[0]?.message?.content?.trim()?.toLowerCase() ?? "";
 		return answer.includes("input");
 	} catch {
+		invalidateClassifyConfig();
 		return false;
 	}
 }
