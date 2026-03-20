@@ -92,20 +92,26 @@ function resolveConfigValue(config: string): string | undefined {
 function loadClassifyConfig(): ClassifyConfig | null {
 	if (classifyConfigCache !== undefined) return classifyConfigCache;
 
-	const envModel = process.env.PI_CLASSIFY_MODEL;
-	const defaultProvider = "devai";
-	const defaultModel = "gpt-5-nano";
-
-	let providerName = defaultProvider;
-	let modelId = defaultModel;
-	if (envModel?.includes("/")) {
-		[providerName, modelId] = envModel.split("/", 2);
-	} else if (envModel) {
-		modelId = envModel;
+	const modelsPath = join(process.env.HOME!, ".pi", "agent", "models.json");
+	let modelsJson: any = null;
+	if (existsSync(modelsPath)) {
+		try { modelsJson = JSON.parse(readFileSync(modelsPath, "utf-8")); } catch {}
 	}
 
-	const modelsPath = join(process.env.HOME!, ".pi", "agent", "models.json");
-	if (!existsSync(modelsPath)) {
+	const configStr = process.env.PI_CLASSIFY_MODEL
+		?? modelsJson?.defaults?.classifyModel
+		?? "devai/gpt-5-nano";
+
+	let providerName: string;
+	let modelId: string;
+	if (configStr.includes("/")) {
+		[providerName, modelId] = configStr.split("/", 2);
+	} else {
+		providerName = "devai";
+		modelId = configStr;
+	}
+
+	if (!modelsJson?.providers?.[providerName]) {
 		const apiKey = process.env.OPENROUTER_API_KEY;
 		if (!apiKey) { classifyConfigCache = null; return null; }
 		classifyConfigCache = { baseUrl: "https://openrouter.ai/api/v1", apiKey, model: `openai/${modelId}` };
@@ -113,12 +119,7 @@ function loadClassifyConfig(): ClassifyConfig | null {
 	}
 
 	try {
-		const modelsJson = JSON.parse(readFileSync(modelsPath, "utf-8"));
-		const provider = modelsJson.providers?.[providerName];
-		if (!provider?.baseUrl || !provider?.apiKey) {
-			classifyConfigCache = null;
-			return null;
-		}
+		const provider = modelsJson.providers[providerName];
 
 		const resolvedKey = resolveConfigValue(provider.apiKey);
 		if (!resolvedKey) { classifyConfigCache = null; return null; }
