@@ -1,63 +1,45 @@
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import { execSync, spawn, type ChildProcess } from "node:child_process";
-import { writeFileSync, unlinkSync, mkdirSync } from "node:fs";
+import { spawn, type ChildProcess } from "node:child_process";
+import { writeFileSync, unlinkSync, mkdirSync, readdirSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-const DB_PATH = join(process.env.HOME!, ".pi", "attention.db");
+const QUEUE_DIR = join(process.env.HOME!, ".pi", "attention-queue");
 
-function getDb() {
-	const sqlite = require("node:sqlite");
-	mkdirSync(join(process.env.HOME!, ".pi"), { recursive: true });
-	const db = new sqlite.DatabaseSync(DB_PATH);
-	db.exec(`CREATE TABLE IF NOT EXISTS queue (
-		session_id TEXT PRIMARY KEY,
-		session_file TEXT,
-		cwd TEXT,
-		summary TEXT NOT NULL,
-		timestamp INTEGER NOT NULL
-	)`);
-	return db;
+type QueueItem = { session_id: string; session_file: string; cwd: string; summary: string; timestamp: number };
+
+function itemPath(sessionId: string): string {
+	return join(QUEUE_DIR, `${sessionId}.json`);
 }
 
 function upsertItem(sessionId: string, sessionFile: string | null, cwd: string, summary: string) {
-	const db = getDb();
-	try {
-		db.prepare(
-			`INSERT INTO queue (session_id, session_file, cwd, summary, timestamp)
-			 VALUES (?, ?, ?, ?, ?)
-			 ON CONFLICT(session_id) DO UPDATE SET summary = ?, timestamp = ?`
-		).run(sessionId, sessionFile, cwd, summary, Date.now(), summary, Date.now());
-	} finally {
-		db.close();
-	}
+	mkdirSync(QUEUE_DIR, { recursive: true });
+	const item: QueueItem = { session_id: sessionId, session_file: sessionFile ?? "", cwd, summary, timestamp: Date.now() };
+	writeFileSync(itemPath(sessionId), JSON.stringify(item), "utf-8");
 }
 
 function removeItem(sessionId: string) {
-	const db = getDb();
-	try {
-		db.prepare("DELETE FROM queue WHERE session_id = ?").run(sessionId);
-	} finally {
-		db.close();
-	}
+	try { unlinkSync(itemPath(sessionId)); } catch {}
 }
 
 function clearAll() {
-	const db = getDb();
-	try {
-		db.exec("DELETE FROM queue");
-	} finally {
-		db.close();
-	}
+	try { rmSync(QUEUE_DIR, { recursive: true, force: true }); } catch {}
 }
 
-function listItems(): Array<{ session_id: string; session_file: string; cwd: string; summary: string; timestamp: number }> {
-	const db = getDb();
+function listItems(): QueueItem[] {
+	let files: string[];
 	try {
-		return db.prepare("SELECT * FROM queue ORDER BY timestamp DESC").all();
-	} finally {
-		db.close();
+		files = readdirSync(QUEUE_DIR).filter(f => f.endsWith(".json"));
+	} catch {
+		return [];
 	}
+	const items: QueueItem[] = [];
+	for (const f of files) {
+		try {
+			items.push(JSON.parse(readFileSync(join(QUEUE_DIR, f), "utf-8")));
+		} catch {}
+	}
+	return items.sort((a, b) => b.timestamp - a.timestamp);
 }
 
 let speakingProcess: ChildProcess | null = null;
