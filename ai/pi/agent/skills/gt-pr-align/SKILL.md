@@ -7,6 +7,16 @@ description: Align PR titles and descriptions with repo template. Use when PRs n
 
 Analyze current branch/stack PRs and ensure titles and descriptions align with the repo's pull request template.
 
+## Body Style
+
+PR bodies should be **lean and why-focused**. Each template section should contain only what a reviewer needs:
+
+- **Summary**: Lead with *why* this change exists (the problem/motivation), then a one-liner *what* it does to address it. No commit message dumps, no implementation details — those belong in the diff.
+- **How was it tested?**: Concise bullet list of test methods used.
+- **Reviewers**: Tag if applicable, skip if not.
+
+**Don't** paste commit messages or detailed implementation notes above or inside the Summary. The body is not a changelog — it's context for the reviewer.
+
 ## Steps
 
 1. **Detect context:**
@@ -24,10 +34,10 @@ Analyze current branch/stack PRs and ensure titles and descriptions align with t
    - If none: use defaults (title, summary, why, test plan)
 
 3. **Analyze each PR:**
-   - Compare title against commits and changes
-   - Check all template sections filled
+   - Check all template sections are filled (not boilerplate)
+   - Check body follows lean style: why + one-liner what, no commit dumps
    - Identify missing "why" context
-   - Note empty/boilerplate sections
+   - Check title consistency across stack (common prefix, etc.)
 
 4. **Present findings:**
    | PR | Title | Alignment |
