@@ -39,6 +39,7 @@ List all available prompt commands. Read every `.md` file in `~/.pi/agent/prompt
 │  /respond                 — Read context → draft in my voice │
 │  /ho, /handoff            — Generate prompt for new session  │
 │  /intme, /interview       — Interview me to fill gaps        │
+│  /learnings               — Compound session → CLAUDE.md     │
 │  /feedback                — Give ME feedback on my prompting │
 │  /write-review            — Draft peer/upward review         │
 ├─────────────────────────────────────────────────────────────┤
