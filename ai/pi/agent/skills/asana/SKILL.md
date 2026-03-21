@@ -66,3 +66,19 @@ asana task get <gid>        # Task details
 asana --help                # All commands
 asana <cmd> --help          # Subcommands & flags
 ```
+
+## Team Board Reference (Source Code Infrastructure)
+
+Project GID: `1210814738437308`
+
+| Section | GID | Use for |
+|---------|-----|---------|
+| Review Conductor | 1210814688138200 | review-conductor work |
+| Airchat review | 1213418534336418 | airchat-review features, fixes, metrics |
+| Ergo Graduation | 1210814688138198 | ergo graduation work |
+| Ergo Polyglot | 1212072294914290 | polyglot support |
+| Twig | 1212361636738091 | twig repo work |
+| Graphite | 1213736100609525 | graphite trial |
+| KTLO Work | 1213751483520520 | repo-scout, infra maintenance, operational work |
+
+When adding tasks to team board, place them in the correct section by domain.
