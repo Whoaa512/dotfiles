@@ -185,46 +185,6 @@ git worktree remove .worktrees/feature-x              # cleanup
   - Fold a branch's changes into its parent: `gt fold`
   - Insert new stack node (aka branch) between the current branch and its child: `gt create --insert`
 
-### Beads (Issue Tracker)
-> If the repo states it uses Beads, or has the .beads dir
-
-Git-backed issue tracker for AI agents. Issues live in `.beads/issues.jsonl`.
-
-```bash
-# Core workflow
-bd create "Issue title"                    # Create issue (returns ID like proj-a1b2)
-bd create "Title" --description "Details"  # With description
-bd create "Subtask" --parent proj-xxx      # Create subtask under epic
-bd create "Epic" --type epic --priority P0 # Specify type/priority
-bd list                                    # Show all issues
-bd ready                                   # Show unblocked work (start here!)
-bd show <id>                               # View issue details + deps
-bd update <id> --status in-progress
-bd close <id>                              # Mark done
-bd sync                                    # Push/pull with git, fix conflicts
-
-# Dependencies (positional args, not flags!)
-bd dep add <issue> <depends-on> -t blocks  # issue is blocked by depends-on
-bd dep add proj-xxx.3 proj-xxx.1           # Example: .3 blocked by .1
-bd blocked                                 # Show blocked issues
-
-# Other useful
-bd search "query"             # Text search
-bd comment <id> "note"        # Add comment
-bd prime                      # AI context dump for planning
-```
-Always commit .beads/ when updating work. For merge conflicts in `.beads/`, use `bd sync` to resolve - don't manually fix JSONL.
-
-**Subtask IDs**: Children get `.N` suffix (e.g., `proj-4a1.1`, `proj-4a1.2`).
-
-**Worktrees**: Daemon broken w/ worktrees (shared `.beads` DB, wrong branch commits). Use:
-```bash
-export BEADS_NO_DAEMON=1  # or --no-daemon per cmd
-bd sync                   # manual sync & commit required (no auto-commit/push)
-```
-- ONLY use `bd` commands to modify beads in the main branch. For worktrees, use `git` commands only.
-- when issue is being worked on in worktree set status to in progress and only close it after merge to main
-
 
 
 
@@ -272,7 +232,6 @@ Keep successful execution paths at the left margin. Handle errors with early ret
 - always use `rg` for search over `grep`
   - `grep` can be allowed for simple filtering in a chain of pipelined commands
 </edit_guidelines>
-- commit after beads get updated
 
 ## Background Agents (Task tool with run_in_background)
 
