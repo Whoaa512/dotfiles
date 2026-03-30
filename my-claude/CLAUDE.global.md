@@ -17,6 +17,16 @@
     - then spawn code critic agent to review
     - repeat until all work is complete
   - after the work loop completes have a final reviewer asses the output, if a game spawn game designer, if an app spawn product owner, or user may request specific final reviewer agent
+- when I ask you to do a tdd loop (test-driven dev loop):
+  - loop:
+    - spawn super-coder agent #1 to write failing tests for the next piece of functionality
+    - spawn super-coder agent #2 to implement code that makes the failing tests pass
+    - spawn code-critic agent to review both tests and implementation
+    - repeat until all functionality is complete and tests green
+  - after the work loop completes, spawn parallel final reviewers:
+    - product-owner (completeness, user value)
+    - grug-architect (simplicity, maintainability)
+  - synthesize both reviews into final report
 - when I ask you to do a plan loop (N iterations, M agents):
   - defaults: N=2 iterations, M=3 agents
   - fan out: spawn M parallel agents with different lenses, pick from:
