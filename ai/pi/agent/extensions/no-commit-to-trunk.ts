@@ -8,7 +8,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 
 const PROTECTED_BRANCHES = ["main", "master"];
 const COMMIT_PATTERNS = [/\bgit\s+commit\b/, /\bgt\s+(create|modify)\b/];
@@ -41,11 +41,11 @@ function resolveEffectiveCwd(command: string, cwd: string): string {
 	if (!cdMatch) {
 		const gitCFlag = command.match(/\bgit\s+-C\s+(\S+)/);
 		if (gitCFlag) {
-			return join(cwd, gitCFlag[1]);
+			return resolve(cwd, gitCFlag[1]);
 		}
 		return cwd;
 	}
-	return join(cwd, cdMatch[1]);
+	return resolve(cwd, cdMatch[1]);
 }
 
 
