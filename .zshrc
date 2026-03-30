@@ -285,7 +285,7 @@ if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then
   eval "$(ssh-agent -s -t 28800)" >/dev/null
 fi
 
-export EDITOR="code"
+export EDITOR="code -w"
 if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
   export EDITOR="vim"
   export VISUAL="vim"

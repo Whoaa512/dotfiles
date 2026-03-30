@@ -130,13 +130,13 @@ export default function (pi: ExtensionAPI) {
 		const provider: AutocompleteProvider & {
 			getForceFileSuggestions: AutocompleteProvider["getSuggestions"];
 		} = {
-			getSuggestions(lines, cursorLine, cursorCol) {
+			getSuggestions(lines, cursorLine, cursorCol, options) {
 				const currentLine = lines[cursorLine] || "";
 				const textBeforeCursor = currentLine.slice(0, cursorCol);
 				const atPrefix = extractAtPrefix(textBeforeCursor);
 
 				if (!atPrefix) {
-					return builtIn?.getSuggestions(lines, cursorLine, cursorCol) ?? null;
+					return builtIn?.getSuggestions(lines, cursorLine, cursorCol, options) ?? null;
 				}
 
 				const rawQuery = atPrefix.slice(1);
@@ -145,7 +145,7 @@ export default function (pi: ExtensionAPI) {
 				const fzfQuery = scoped?.query ?? rawQuery;
 
 				if (!fzfQuery) {
-					return builtIn?.getSuggestions(lines, cursorLine, cursorCol) ?? null;
+					return builtIn?.getSuggestions(lines, cursorLine, cursorCol, options) ?? null;
 				}
 
 				const paths = fdFzf(fdBaseDir, fzfQuery, fdPath!, fzfPath!);
