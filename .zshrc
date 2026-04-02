@@ -285,12 +285,13 @@ if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then
   eval "$(ssh-agent -s -t 28800)" >/dev/null
 fi
 
-export EDITOR="code -w"
+export EDITOR="code"
+export GIT_EDITOR="$EDITOR -w"
 if [[ -n "$SSH_CONNECTION" || -n "$SSH_CLIENT" || -n "$SSH_TTY" ]]; then
   export EDITOR="vim"
   export VISUAL="vim"
+  export GIT_EDITOR="vim"
 fi
-export GIT_EDITOR="$EDITOR"
 
 # Added by Windsurf
 # export PATH="$HOME/.codeium/windsurf/bin:$PATH"
