@@ -74,7 +74,7 @@ export default function (pi: ExtensionAPI) {
 		let summary: string;
 
 		const model = getModel("openai", "gpt-4.1-mini");
-		const apiKey = model ? await ctx.modelRegistry.getApiKey(model).catch(() => undefined) : undefined;
+		const apiKey = model ? await ctx.modelRegistry.getApiKeyForProvider(model.provider).catch(() => undefined) : undefined;
 
 		if (model && apiKey && text.length > 100) {
 			try {
