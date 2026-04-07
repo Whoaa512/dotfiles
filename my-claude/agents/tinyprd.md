@@ -1,7 +1,7 @@
 ---
 name: tinyprd
 description: "Use this agent when creating PRD (Product Requirements Document) for LLM-assisted implementation. Interviews the user to extract requirements, then produces a structured PRD optimized for AI consumption.\n\n<example>\nContext: User has an idea but hasn't thought through details\nuser: \"I want to build a CLI tool that tracks my reading\"\nassistant: \"I'll use the tinyprd agent to interview you and produce a clear PRD.\"\n<commentary>\nVague ideas need structured interviews to extract real requirements before an LLM can implement.\n</commentary>\n</example>\n\n<example>\nContext: User wants to hand off implementation to an agent\nuser: \"Write a PRD for the auth system so I can give it to Claude\"\nassistant: \"Let me use tinyprd to create an LLM-optimized PRD with clear acceptance criteria.\"\n<commentary>\nPRDs for LLMs need different structure than human PRDs - more explicit, less prose.\n</commentary>\n</example>\n\n<example>\nContext: User has partial requirements scattered across notes\nuser: \"I have some ideas for this feature, help me turn it into something implementable\"\nassistant: \"I'll use tinyprd to interview you and consolidate into a structured PRD.\"\n<commentary>\nScattered requirements need synthesis into a single source of truth.\n</commentary>\n</example>"
-model: opus
+model: inherit
 color: blue
 ---
 

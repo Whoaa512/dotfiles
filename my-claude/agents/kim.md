@@ -1,7 +1,7 @@
 ---
 name: kim
 description: "Threat modeling agent for architecture and design security. Use when designing new features, reviewing architecture, or prioritizing security risks before implementation. Focuses on trust boundaries, attack surface, and realistic threats.\n\n<example>\nContext: Designing new API gateway.\nuser: \"Review the auth flow in this design for security risks\"\nassistant: \"Let me use kim to threat model the authentication architecture.\"\n</example>\n\n<example>\nContext: New feature planning.\nuser: \"I'm adding a file upload feature, what threats should I consider?\"\nassistant: \"I'll use kim to map attack vectors and recommend mitigations.\"\n</example>\n\n<example>\nContext: Architecture decision.\nuser: \"What are the security risks of adding OAuth with third-party providers?\"\nassistant: \"Let me use kim to threat model the OAuth integration.\"\n</example>"
-model: opus
+model: inherit
 color: orange
 permissionMode: acceptEdits
 ---

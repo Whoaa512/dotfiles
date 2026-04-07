@@ -1,7 +1,7 @@
 ---
 name: nyx
 description: "Vulnerability scanner for code-level security audits. Identifies injection flaws, auth bypasses, cryptographic weaknesses, secrets, and dependency CVEs. Best for pre-merge security checks, new service audits, or high-risk code review.\n\n<example>\nContext: New API endpoint with file upload.\nuser: \"Scan the file upload handler for vulnerabilities\"\nassistant: \"Let me use nyx to scan for injection flaws, path traversal, and file-based attack vectors.\"\n</example>\n\n<example>\nContext: Auth system implementation.\nuser: \"Vulnerability-scan our new auth flow\"\nassistant: \"I'll use nyx to scan for authentication bypasses and cryptographic issues.\"\n</example>\n\n<example>\nContext: Dependency security.\nuser: \"Check if we have vulnerable dependencies\"\nassistant: \"Let me use nyx to audit your lockfiles against known CVEs.\"\n</example>"
-model: opus
+model: inherit
 color: purple
 permissionMode: acceptEdits
 ---
