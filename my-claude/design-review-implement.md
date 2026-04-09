@@ -5,19 +5,16 @@ description: Design a feature with game-designer, critique it, refine scope, the
 
 # Design-Review-Implement Workflow
 
-Use this when a bead needs game design thinking before implementation.
+Use this when a feature needs game design thinking before implementation.
 
 ## Workflow
 
-### 1. Identify Target Bead
-```bash
-bd ready  # Find unblocked work
-bd show <bead-id>  # Get full context
-```
+### 1. Identify Target Feature
+Gather the feature request, relevant product context, and any existing spec or notes.
 
 ### 2. Spawn Game Designer (Plan)
 Use Task tool with `subagent_type: game-designer`:
-- Provide bead context and current description
+- Provide feature context and current description
 - Ask for structured design document
 - Request specific deliverables (categories, mechanics, data structures)
 
@@ -27,19 +24,12 @@ Use Task tool with `subagent_type: game-designer` in **devil's advocate** role:
 - Ask to identify: scope creep, bad mechanics, missing elements, implementation risks
 - Request specific actionable cuts/changes
 
-### 4. Update Bead with Refined Scope
-```bash
-bd update <bead-id> --description "$(cat <<'EOF'
-## Scope (refined)
-[Incorporate critique feedback]
-[Clear implementation notes]
-EOF
-)"
-```
+### 4. Capture Refined Scope
+Write the refined scope into the implementation prompt or requested spec/doc.
 
 ### 5. Spawn Implementation Agent
 Use Task tool with `subagent_type: super-coder` with `run_in_background: true`:
-- Reference the bead ID
+- Reference the refined scope
 - Let agent explore codebase first
 - Request incremental commits and tests
 - Continue other work while it runs
@@ -56,7 +46,7 @@ Design the [FEATURE] system for Oops All Traps.
 
 **Context**: [Game mechanics relevant to feature]
 
-**Current bead description**: [paste from bd show]
+**Current feature description**: [paste relevant spec/context]
 
 **Design the following**:
 1. [Category 1]
@@ -91,10 +81,10 @@ Output concise critique with specific actionable recommendations.
 ```
 Implement the [FEATURE] system for Oops All Traps.
 
-**Bead:** [bead-id] - run `bd show [bead-id]` for full spec
+**Feature:** [feature name]
 
 **Scope Summary:**
-[Paste refined scope from bead - key points only]
+[Paste refined scope - key points only]
 
 **Implementation approach:**
 1. First explore existing codebase - find relevant patterns

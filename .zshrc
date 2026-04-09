@@ -277,8 +277,6 @@ if [ -x "$(command -v mise)" ]; then
   }
 fi
 
-# bd
-# [ -x "$(command -v bd)" ] && eval "$(bd completion zsh)"
 
 # SSH agent with 8hr key cache (Linux only - macOS uses keychain)
 if [[ "$(uname)" == "Linux" && -z "$SSH_AUTH_SOCK" ]]; then

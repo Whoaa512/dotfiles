@@ -4,9 +4,8 @@ Run isolated tasks in parallel using git worktrees and sub-agents.
 
 ## Phase 1: Find Tasks
 
-1. Run `bd ready` to see unblocked work
-2. If $ARGUMENTS provided, filter to tasks matching that focus area
-3. Identify 2-8 tasks that are:
+1. Use $ARGUMENTS or the current repo context to identify candidate tasks.
+2. Identify 2-8 tasks that are:
    - Isolated (minimal overlap with each other)
    - Self-contained (can be done independently)
    - Quick wins preferred unless user specifies otherwise
@@ -17,7 +16,7 @@ Run isolated tasks in parallel using git worktrees and sub-agents.
 Spawn one sub-agent per task **all in parallel**. Each agent runs its own complete pipeline:
 
 ```
-Work on issue <bead-id>: <title>
+Work on task: <title>
 
 You own the full lifecycle: implement → validate → fix → repeat until done.
 
@@ -61,7 +60,6 @@ Once all pipelines succeed, ask user to confirm merge. Then:
    ```
 2. Remove worktrees: `git worktree remove .worktrees/<name>`
 3. Delete branches: `git branch -d feat/<branch>`
-4. Close beads: `bd close <id>`
-5. Kill any remaining tmux sessions
+4. Kill any remaining tmux sessions
 
 Report final summary of merged features.

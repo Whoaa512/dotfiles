@@ -26,8 +26,8 @@ Tasks requiring manual action or real-world work.
 
 ## Rules
 
-1. Keep separate from code TODOs and beads
+1. Keep separate from code TODOs
 2. Use checkboxes for trackability
 3. Group by urgency/category
 4. Claude should create/update this file when encountering manual blockers
-5. Don't mix with automated tasks - those go in beads
+5. Don't mix with automated tasks

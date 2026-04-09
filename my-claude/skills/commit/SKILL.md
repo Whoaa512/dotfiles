@@ -19,7 +19,7 @@ Create a git commit. Files argument: "$ARGUMENTS"
 
 2. Staging:
    - If files specified in argument, stage only those: `git add <files>`
-   - If nothing specified and nothing staged, stage relevant changes (skip .beads/, generated files)
+   - If nothing specified and nothing staged, stage relevant changes (skip generated files)
    - Always include thoughts/ if it has changes: `git add thoughts/`
    - If already staged, use existing staging
 

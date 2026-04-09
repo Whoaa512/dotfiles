@@ -13,4 +13,3 @@ use loop of:
 
 then game designer sub agent to playtest and give feedback
 
-document beads as needed with beads tracker agent
