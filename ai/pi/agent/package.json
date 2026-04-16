@@ -1,0 +1,11 @@
+{
+  "name": "cj-pi-extensions",
+  "version": "1.0.0",
+  "private": true,
+  "pi": {
+    "extensions": ["extensions/*.ts"],
+    "skills": ["skills"],
+    "prompts": ["prompts"],
+    "agents": ["agents"]
+  }
+}
