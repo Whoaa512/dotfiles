@@ -1,0 +1,8 @@
+{
+  "name": "cj-my-claude",
+  "version": "1.0.0",
+  "private": true,
+  "pi": {
+    "agents": ["agents"]
+  }
+}
