@@ -24,6 +24,15 @@ function doIt() {
 		mv ~/.zshrc ~/.zshrc.old
 	fi
 	ln -s $localSource ~/.zshrc
+
+	# Ghostty config
+	mkdir -p ~/.config/ghostty
+	local ghosttySource="$(cd "$(dirname "${0:A}")" && pwd)/init/ghostty-config"
+	if [ -f ~/.config/ghostty/config ] && [ ! -L ~/.config/ghostty/config ]; then
+		mv ~/.config/ghostty/config ~/.config/ghostty/config.old
+	fi
+	ln -sf $ghosttySource ~/.config/ghostty/config
+
 	source ~/.zshrc
 }
 
