@@ -60,7 +60,7 @@
 
 ### shorthand
 - yz|yzp: yes please
-- intme: interview me to fill in gaps. if it can be answered by reading code do that first
+- intme: interview me to fill in gaps. Explore the codebase first to answer what you can, then ask remaining questions one at a time, providing your recommended answer for each. Walk down each branch of the decision tree, resolving dependencies between decisions.
 - tcb: copy to my clipboard
 - council: council loop (spawn review council)
 
