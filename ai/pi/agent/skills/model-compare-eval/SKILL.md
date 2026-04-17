@@ -29,30 +29,43 @@ Ask the user (use `questionnaire` if >1 unknown):
 3. **Repo/project** the comparison happens against (if codebase-related).
 4. **Expected artifact type**: HTML report / markdown / code diff / text only.
 
-### Step 2: Set up worktrees
+### Step 2: Spawn worktrees via supacode CLI
 
-Supacode worktrees must be created via the UI (no CLI create today). Instruct the user:
+See `@/Users/cj_winslow/work/cj/ai/pi/skills/supacode-cli/SKILL.md` for full CLI reference.
 
-> Create a supacode worktree for each model off the same base branch. Name them `<task>-<model>`, e.g. `defrag-opus-4.7`. Pick the matching model in each worktree's pi session.
+Fork one worktree per model from the same base ref:
 
-Then verify:
+```bash
+REPO="$SUPACODE_REPO_ID"
+BASE="main"  # or whatever base ref
+TASK="defrag"  # short task name
+
+for model in opus-4.6 opus-4.7 gpt-5.4 crest-alpha-v2; do
+  supacode repo worktree-new -r "$REPO" --branch "${TASK}-${model}" --base "$BASE"
+done
+```
+
+Verify all worktrees exist on the same commit:
 
 ```bash
 supacode worktree list
-ls /Users/cj_winslow/.supacode/repos/<repo>/
-```
-
-Confirm one worktree per model exists, all on the same commit:
-
-```bash
-for d in /Users/cj_winslow/.supacode/repos/<repo>/<task>-*; do
+for d in /Users/cj_winslow/.supacode/repos/<repo>/${TASK}-*; do
   echo "=== $(basename $d)"; (cd "$d" && git log --oneline -1)
 done
 ```
 
 ### Step 3: Run the prompt in each worktree
 
-Tell user to paste the same prompt into each worktree's pi session. Wait for completion.
+Instruct the user to:
+1. Open each worktree in supacode
+2. Pick the matching model in the pi session (one model per worktree)
+3. Paste the **exact same prompt** into each
+
+Optionally spawn a pi tab per worktree with the prompt pre-queued:
+
+```bash
+supacode tab new -w "$WT" -i "pi -p '<prompt>'"
+```
 
 Remind them: if follow-up prompts are needed (e.g. "now make it an html report"), use the **same** follow-up text in every worktree — prompt count matters for the comparison.
 
@@ -133,6 +146,17 @@ Report back with:
 - Location of zip
 - Short verdict (3-5 bullets)
 - List of gaps found in the models themselves (routing errors, slowness, extra prompts)
+
+### Step 8: Cleanup (optional)
+
+Archive (reversible) or delete (destructive) the worktrees:
+
+```bash
+for d in /Users/cj_winslow/.supacode/repos/<repo>/${TASK}-*; do
+  WT=$(basename "$d")
+  supacode worktree archive -w "$WT"
+done
+```
 
 ## Important rules
 
