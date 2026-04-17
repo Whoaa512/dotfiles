@@ -294,3 +294,6 @@ wait $CODEX_PID
 - **Kill and re-prompt > hand-coding** when truly stuck (no output 5+ min).
 - **Right-size thinking.** Don't use `high` for a one-liner.
 - For parallel independent subtasks, launch multiple background Codex processes.
+
+## Supacode Orchestration
+> See supacode-cli skill (`ai/pi/skills/supacode-cli/SKILL.md`) for forking worktrees and spawning sibling agents via the `supacode` CLI.
