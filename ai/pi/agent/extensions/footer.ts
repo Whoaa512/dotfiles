@@ -120,10 +120,37 @@ function formatGitStatus(status: GitStatus, theme: any): string {
 	return parts.join(" ");
 }
 
+function formatRelative(ts: number): string {
+	const diff = Math.max(0, Date.now() - ts);
+	const s = Math.floor(diff / 1000);
+	if (s < 60) return `${s}s ago`;
+	const m = Math.floor(s / 60);
+	if (m < 60) return `${m}m ago`;
+	const h = Math.floor(m / 60);
+	if (h < 24) return `${h}h ago`;
+	const d = Math.floor(h / 24);
+	return `${d}d ago`;
+}
+
+function formatClock(ts: number): string {
+	const d = new Date(ts);
+	return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+}
+
 export default function (pi: ExtensionAPI) {
 	let refreshFn: (() => void) | null = null;
+	let lastUserTs: number | null = null;
+	let lastAssistantTs: number | null = null;
 
 	pi.on("tool_execution_end", async () => {
+		refreshFn?.();
+	});
+
+	pi.on("message_end", async (event) => {
+		const msg: any = event.message;
+		const ts = typeof msg?.timestamp === "number" ? msg.timestamp : Date.now();
+		if (msg?.role === "user") lastUserTs = ts;
+		else if (msg?.role === "assistant") lastAssistantTs = ts;
 		refreshFn?.();
 	});
 
@@ -191,8 +218,13 @@ export default function (pi: ExtensionAPI) {
 					const available = width - firstLineWidth - gap;
 
 					if (available > 0) {
-						const fullLabel = host ? `${user}@${host} | ${id}` : id;
-						const idOnly = id;
+						const tsParts: string[] = [];
+						if (lastUserTs) tsParts.push(`u ${formatRelative(lastUserTs)} (${formatClock(lastUserTs)})`);
+						if (lastAssistantTs) tsParts.push(`a ${formatRelative(lastAssistantTs)} (${formatClock(lastAssistantTs)})`);
+						const tsStr = tsParts.join(" · ");
+						const base = host ? `${user}@${host} | ${id}` : id;
+						const fullLabel = tsStr ? `${tsStr} | ${base}` : base;
+						const idOnly = tsStr ? `${tsStr} | ${id}` : id;
 						const text = visibleWidth(fullLabel) <= available ? fullLabel : idOnly;
 						const truncated = text.length > available ? text.slice(-(available)) : text;
 						const label = theme.fg("dim", truncated);
