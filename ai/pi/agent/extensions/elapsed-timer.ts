@@ -233,17 +233,23 @@ export default function (pi: ExtensionAPI) {
 		const time = theme.fg("dim", ` ${formatElapsed(elapsed)}`);
 		ctx.ui.setStatus(STATUS_KEY, theme.fg("dim", "●") + time);
 
-		// Classify whether input is needed
+		// Classify async — don't block agent_end. A slow/hanging classify call
+		// would otherwise stall the extension runner and keep the spinner up.
 		const text = getLastAssistantText(ctx);
 		const cleaned = text ? stripMarkdown(text) : "";
-		const needsInput = cleaned ? await classifyNeedsInput(cleaned) : false;
+		if (!cleaned) {
+			const icon = theme.fg("success", "✓");
+			ctx.ui.setStatus(STATUS_KEY, icon + time);
+			setTabTitle(ctx, `✓ ${formatElapsed(elapsed)}`);
+			return;
+		}
 
-		const icon = needsInput
-			? theme.fg("warning", "❓")
-			: theme.fg("success", "✓");
-		ctx.ui.setStatus(STATUS_KEY, icon + time);
-		const titleIcon = needsInput ? "❓" : "✓";
-		setTabTitle(ctx, `${titleIcon} ${formatElapsed(elapsed)}`);
+		void classifyNeedsInput(cleaned).then((needsInput) => {
+			const icon = needsInput ? theme.fg("warning", "❓") : theme.fg("success", "✓");
+			ctx.ui.setStatus(STATUS_KEY, icon + time);
+			const titleIcon = needsInput ? "❓" : "✓";
+			setTabTitle(ctx, `${titleIcon} ${formatElapsed(elapsed)}`);
+		});
 	});
 
 	pi.on("tool_execution_start", async (event) => {
