@@ -463,6 +463,28 @@
                 ]
             }
         },
+        "recipe-extractor": {
+            "type": "domain",
+            "enforcement": "suggest",
+            "priority": "high",
+            "description": "Extract recipes from YouTube cooking videos into clean markdown notes",
+            "promptTriggers": {
+                "keywords": [
+                    "extract recipes",
+                    "get recipes",
+                    "recipes from video",
+                    "cooking video",
+                    "recipe video",
+                    "what recipes",
+                    "recipe from youtube"
+                ],
+                "intentPatterns": [
+                    "(extract|get|pull|grab).*?recipe.*?(from|video|youtube)",
+                    "recipe.*?(from|in).*?(video|youtube)",
+                    "(cooking|recipe).*?video.*?(extract|get|save)"
+                ]
+            }
+        },
         "morph-apply": {
             "type": "domain",
             "enforcement": "suggest",
