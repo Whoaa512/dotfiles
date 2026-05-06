@@ -7,7 +7,6 @@
  */
 
 import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
-import type { AutocompleteProvider } from "@mariozechner/pi-tui";
 import { spawnSync } from "node:child_process";
 import { basename, join } from "node:path";
 import { statSync } from "node:fs";
@@ -124,19 +123,16 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	function setupProvider(ctx: ExtensionContext) {
-		const builtIn = ctx.ui.getAutocompleteProvider();
 		const basePath = ctx.cwd;
 
-		const provider: AutocompleteProvider & {
-			getForceFileSuggestions: AutocompleteProvider["getSuggestions"];
-		} = {
-			getSuggestions(lines, cursorLine, cursorCol, options) {
+		ctx.ui.addAutocompleteProvider((builtIn) => ({
+			async getSuggestions(lines, cursorLine, cursorCol, options) {
 				const currentLine = lines[cursorLine] || "";
 				const textBeforeCursor = currentLine.slice(0, cursorCol);
 				const atPrefix = extractAtPrefix(textBeforeCursor);
 
 				if (!atPrefix) {
-					return builtIn?.getSuggestions(lines, cursorLine, cursorCol, options) ?? null;
+					return builtIn.getSuggestions(lines, cursorLine, cursorCol, options);
 				}
 
 				const rawQuery = atPrefix.slice(1);
@@ -145,7 +141,7 @@ export default function (pi: ExtensionAPI) {
 				const fzfQuery = scoped?.query ?? rawQuery;
 
 				if (!fzfQuery) {
-					return builtIn?.getSuggestions(lines, cursorLine, cursorCol, options) ?? null;
+					return builtIn.getSuggestions(lines, cursorLine, cursorCol, options);
 				}
 
 				const paths = fdFzf(fdBaseDir, fzfQuery, fdPath!, fzfPath!);
@@ -166,28 +162,8 @@ export default function (pi: ExtensionAPI) {
 			},
 
 			applyCompletion(lines, cursorLine, cursorCol, item, prefix) {
-				if (builtIn) {
-					return builtIn.applyCompletion(lines, cursorLine, cursorCol, item, prefix);
-				}
-				const currentLine = lines[cursorLine] || "";
-				const beforePrefix = currentLine.slice(0, cursorCol - prefix.length);
-				const afterCursor = currentLine.slice(cursorCol);
-				const isDirectory = item.label.endsWith("/");
-				const suffix = isDirectory ? "" : " ";
-				const newLine = `${beforePrefix}${item.value}${suffix}${afterCursor}`;
-				const newLines = [...lines];
-				newLines[cursorLine] = newLine;
-				return { lines: newLines, cursorLine, cursorCol: beforePrefix.length + item.value.length + suffix.length };
+				return builtIn.applyCompletion(lines, cursorLine, cursorCol, item, prefix);
 			},
-
-			getForceFileSuggestions(lines, cursorLine, cursorCol) {
-				if (builtIn && "getForceFileSuggestions" in builtIn) {
-					return (builtIn as any).getForceFileSuggestions(lines, cursorLine, cursorCol);
-				}
-				return null;
-			},
-		};
-
-		ctx.ui.setAutocompleteProvider(provider);
+		}));
 	}
 }
