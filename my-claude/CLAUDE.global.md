@@ -16,6 +16,8 @@
     - spawn codex CLI to implement the ask, 1 thing at a time
     - then spawn code critic agent to review
     - repeat until all work is complete
+  - each agent writes a **structured handoff** on completion: what done, what undone, commands run + exit codes, issues found
+  - after implementation, run **QA validator**: if web app, use `devtools` to spawn app, snap, click, fill forms, verify flows end-to-end
   - after the work loop completes have a final reviewer asses the output, if a game spawn game designer, if an app spawn product owner, or user may request specific final reviewer agent
 - when I ask you to do a tdd loop (test-driven dev loop):
   - loop:
@@ -23,6 +25,8 @@
     - spawn super-coder agent #2 to implement code that makes the failing tests pass
     - spawn code-critic agent to review both tests and implementation
     - repeat until all functionality is complete and tests green
+  - each agent writes a **structured handoff**: what done, what undone, commands + exit codes, issues
+  - after implementation, run **QA validator** if applicable (use `devtools` for web apps)
   - after the work loop completes, spawn parallel final reviewers:
     - product-owner (completeness, user value)
     - grug-architect (simplicity, maintainability)
@@ -43,6 +47,10 @@
     - no UNCONFIRMED items remain
     - implementation steps are concrete & sequenceable
   - final output: single plan doc with dissenting notes if any
+  - plan MUST include a **validation contract**: list of pass/fail assertions defining "done" *before* any code is written
+    - each feature/phase maps to one or more assertions
+    - sum of all features must cover every assertion
+    - these assertions drive the QA step, not tests written after implementation
 - when I ask you to do a council loop (review council):
   - fan out: spawn agents in parallel, each with a review lens:
     - product-owner (completeness, user value alignment)
@@ -56,6 +64,27 @@
     - concerns (with severity: blocker/major/minor)
     - recommendations (prioritized)
   - output: single review doc, dissenting notes preserved
+- when I ask you to do a mission loop (long-running autonomous execution):
+  - phase 1 — scope: interview user (askuserquestion) to clarify goal, requirements, constraints
+  - phase 2 — plan: produce plan with features, milestones, and **validation contract** (pass/fail assertions before code)
+  - phase 3 — execute serially: one feature at a time, each via super-coder agent
+    - worker gets clean context, reads spec, implements, commits
+    - on completion writes **structured handoff**: done/undone/commands+exit codes/issues/procedure compliance
+    - next worker inherits clean slate via git
+  - phase 4 — validate at each milestone:
+    - scrutiny: lint, typecheck, tests, spawn code-critic per feature
+    - QA: if web app, use `devtools` to spawn app, interact, verify flows end-to-end
+    - validators have NOT seen the code — adversarial by design
+  - phase 5 — self-heal: if validation fails, scope corrective work, loop back to execute
+  - repeat phases 3-5 until all milestones complete and all validation contract assertions pass
+  - final output: summary of what was built, test coverage, any open issues
+
+### Model-Per-Role Guidance
+- **planning/orchestration**: use opus or high-thinking models (slow reasoning = better plans)
+- **implementation**: use sonnet or codex (fast code fluency)
+- **validation/review**: consider different model or provider to avoid training-data bias
+- right-size per role; don't use opus for mechanical edits, don't use haiku for architecture
+
 - when asked to interview me about something, use the askuserquestion tool
 - **Verify before declaring done.** If you claim X works / is fixed / passes, prove it: run the test, read the actual logs, diff the actual files, hit the actual endpoint. Do not pattern-match from the diff. If you can't verify, say so explicitly.
 - **When proposing a fix, explain WHY it's optimal.** Default output: the fix + 1-2 sentences on why this approach over alternatives, and whether it leaves the codebase better than we found it. Don't wait to be asked.
@@ -67,6 +96,7 @@
 - intme: interview me to fill in gaps. Explore the codebase first to answer what you can, then ask remaining questions one at a time, providing your recommended answer for each. Walk down each branch of the decision tree, resolving dependencies between decisions.
 - tcb: copy to my clipboard
 - council: council loop (spawn review council)
+- mission: mission loop (long-running autonomous execution)
 
 
 ### Language specifics
