@@ -1,7 +1,19 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@mariozechner/pi-tui";
 import { execSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import { hostname } from "node:os";
+import { join } from "node:path";
+
+function isGitDisabled(): boolean {
+	try {
+		const settingsPath = join(process.env.HOME || "~", ".pi", "agent", "settings.json");
+		const settings = JSON.parse(readFileSync(settingsPath, "utf8"));
+		return settings?.footer?.disableGit === true;
+	} catch {
+		return false;
+	}
+}
 
 interface GitStatus {
 	branch: string | null;
@@ -163,16 +175,20 @@ export default function (pi: ExtensionAPI) {
 		const user = process.env.USER || process.env.LOGNAME || "";
 		const host = isSSH ? hostname() : null;
 
-		let cachedGitStatus: GitStatus | null | undefined = undefined;
+		const gitDisabled = isGitDisabled();
+		let cachedGitStatus: GitStatus | null | undefined = gitDisabled ? null : undefined;
 		let gitStatusTimer: ReturnType<typeof setInterval> | null = null;
 
 		function refreshGitStatus() {
+			if (gitDisabled) return;
 			cachedGitStatus = getGitStatus();
 		}
 
 		refreshGitStatus();
 		refreshFn = refreshGitStatus;
-		gitStatusTimer = setInterval(refreshGitStatus, 5000);
+		if (!gitDisabled) {
+			gitStatusTimer = setInterval(refreshGitStatus, 5000);
+		}
 
 		ctx.ui.setFooter((tui, theme, footerData) => {
 			const unsub = footerData.onBranchChange(() => {
