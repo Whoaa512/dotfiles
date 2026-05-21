@@ -57,6 +57,10 @@
     - recommendations (prioritized)
   - output: single review doc, dissenting notes preserved
 - when asked to interview me about something, use the askuserquestion tool
+- **Verify before declaring done.** If you claim X works / is fixed / passes, prove it: run the test, read the actual logs, diff the actual files, hit the actual endpoint. Do not pattern-match from the diff. If you can't verify, say so explicitly.
+- **When proposing a fix, explain WHY it's optimal.** Default output: the fix + 1-2 sentences on why this approach over alternatives, and whether it leaves the codebase better than we found it. Don't wait to be asked.
+- **Graphite stack fixes default to `gt absorb`.** When fixing review feedback or follow-ups in a stack, place the fix in the correct existing branch via `gt absorb` (or `gt modify --commit -m "..."` if absorb can't infer). Only create a fresh branch if the fix is genuinely new scope.
+- **PR descriptions document test/deploy steps.** After verifying a fix, update the PR body with the steps taken and links (deploy URLs, dashboards, related threads, CI jobs). Do this without being asked once verification finishes.
 
 ### shorthand
 - yz|yzp: yes please
