@@ -204,12 +204,16 @@ export default function (pi: ExtensionAPI) {
 		const theme = ctx.ui.theme;
 
 		const update = () => {
-			const elapsed = getElapsed();
-			const spinner = theme.fg("accent", pausedAt ? "◷" : "●");
-			const time = theme.fg("dim", ` ${formatElapsed(elapsed)}`);
-			ctx.ui.setStatus(STATUS_KEY, spinner + time);
-			const icon = pausedAt ? "◷" : "⏳";
-			setTabTitle(ctx, `${icon} ${formatElapsed(elapsed)}`);
+			try {
+				const elapsed = getElapsed();
+				const spinner = theme.fg("accent", pausedAt ? "◷" : "●");
+				const time = theme.fg("dim", ` ${formatElapsed(elapsed)}`);
+				ctx.ui.setStatus(STATUS_KEY, spinner + time);
+				const icon = pausedAt ? "◷" : "⏳";
+				setTabTitle(ctx, `${icon} ${formatElapsed(elapsed)}`);
+			} catch {
+				stopTimer();
+			}
 		};
 
 		update();
@@ -245,10 +249,12 @@ export default function (pi: ExtensionAPI) {
 		}
 
 		void classifyNeedsInput(cleaned).then((needsInput) => {
-			const icon = needsInput ? theme.fg("warning", "❓") : theme.fg("success", "✓");
-			ctx.ui.setStatus(STATUS_KEY, icon + time);
-			const titleIcon = needsInput ? "❓" : "✓";
-			setTabTitle(ctx, `${titleIcon} ${formatElapsed(elapsed)}`);
+			try {
+				const icon = needsInput ? theme.fg("warning", "❓") : theme.fg("success", "✓");
+				ctx.ui.setStatus(STATUS_KEY, icon + time);
+				const titleIcon = needsInput ? "❓" : "✓";
+				setTabTitle(ctx, `${titleIcon} ${formatElapsed(elapsed)}`);
+			} catch {}
 		});
 	});
 
