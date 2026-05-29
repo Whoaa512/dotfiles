@@ -27,11 +27,22 @@ function sendToSupacode(payload: string) {
 	client.end(payload);
 }
 
-function setBusy(active: boolean) {
+// New protocol: JSON event envelope. `surface_id` scopes the event app-side;
+// `agent` must be a valid SkillAgent rawValue ("pi"); `pid` drives the
+// liveness sweep + record creation. Activity events (busy/idle) only mutate
+// an existing record, so session_start must fire first to create it.
+function sendEvent(eventName: string) {
 	const env = supacodeEnv();
 	if (!env) return;
 
-	sendToSupacode(`${env.worktreeID} ${env.tabID} ${env.surfaceID} ${active ? "1" : "0"}\n`);
+	const envelope = {
+		event: eventName,
+		v: 1,
+		agent: "pi",
+		surface_id: env.surfaceID,
+		pid: process.pid,
+	};
+	sendToSupacode(`${JSON.stringify(envelope)}\n`);
 }
 
 function sendNotification(title: string, body: string) {
@@ -96,12 +107,16 @@ function summarize(text: string): string {
 }
 
 export default function (pi: ExtensionAPI) {
+	// Extension load = agent process running. Pi has no SessionStart hook,
+	// so fire it ourselves to create the presence record busy/idle mutate.
+	sendEvent("session_start");
+
 	pi.on("agent_start", async () => {
-		setBusy(true);
+		sendEvent("busy");
 	});
 
 	pi.on("agent_end", async (event, ctx) => {
-		setBusy(false);
+		sendEvent("idle");
 
 		const text = lastAssistantTextFromMessages((event as any).messages) ?? lastAssistantTextFromSession(ctx);
 		if (!text) return;
@@ -110,6 +125,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.on("session_shutdown", async () => {
-		setBusy(false);
+		sendEvent("session_end");
+		sendEvent("idle");
 	});
 }
