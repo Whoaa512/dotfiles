@@ -1,5 +1,5 @@
 import net from "node:net";
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 type SupacodeEnv = {
 	socketPath: string;

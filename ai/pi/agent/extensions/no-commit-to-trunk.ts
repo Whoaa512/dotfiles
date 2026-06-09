@@ -5,7 +5,7 @@
  * Exceptions: add regex patterns (one per line) to ~/.pi/trunk-commit-allow.txt
  */
 
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { execSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { join, resolve } from "node:path";

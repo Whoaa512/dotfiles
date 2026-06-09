@@ -6,7 +6,7 @@
  * Handles large repos without the 5000-file cap.
  */
 
-import type { ExtensionAPI, ExtensionContext } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 import { spawnSync } from "node:child_process";
 import { basename, join } from "node:path";
 import { statSync } from "node:fs";

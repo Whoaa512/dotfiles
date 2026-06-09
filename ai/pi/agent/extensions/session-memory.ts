@@ -1,5 +1,5 @@
-import { complete, getModel } from "@mariozechner/pi-ai";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import { complete, getModel } from "@earendil-works/pi-ai";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { existsSync, mkdirSync, appendFileSync } from "fs";
 import { join, basename } from "path";
 
