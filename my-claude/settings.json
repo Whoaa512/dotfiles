@@ -387,13 +387,9 @@
     "gopls-lsp@claude-plugins-official": true
   },
   "sandbox": {
-    "filesystem": {
-      "allowedPaths": [
-        "/private/tmp/tmux-*"
-      ]
-    }
+    "filesystem": {}
   },
   "alwaysThinkingEnabled": true,
-  "skipDangerousModePermissionPrompt": true,
-  "effortLevel": "medium"
+  "effortLevel": "medium",
+  "skipDangerousModePermissionPrompt": true
 }

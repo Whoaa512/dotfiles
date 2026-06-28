@@ -623,7 +623,7 @@ function ah (){
 function ar (){
   claude -r "$@"
 }
-function ay (){ claude --dangerously-skip-permissions "$@" }
+function ay (){ claude --dangerously-skip-permissions --model "opus[1m]" "$@" }
 alias ccsummarize='summarize --model cli/claude/opus --max-output-tokens 10k '
 alias xrg='xargs rg '
 alias x='xargs '
