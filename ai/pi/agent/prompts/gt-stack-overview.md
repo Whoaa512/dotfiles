@@ -4,6 +4,8 @@ description: Overview of Graphite stack with branch summaries, PR status, and co
 
 <task>
 Analyze the current Graphite stack and display an overview table with branch details.
+
+Additional context: $@
 </task>
 
 <instructions>
