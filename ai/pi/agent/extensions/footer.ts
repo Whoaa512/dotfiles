@@ -153,6 +153,8 @@ export default function (pi: ExtensionAPI) {
 	let refreshFn: (() => void) | null = null;
 	let lastUserTs: number | null = null;
 	let lastAssistantTs: number | null = null;
+	let userCount = 0;
+	let assistantCount = 0;
 
 	pi.on("tool_execution_end", async () => {
 		refreshFn?.();
@@ -161,12 +163,35 @@ export default function (pi: ExtensionAPI) {
 	pi.on("message_end", async (event) => {
 		const msg: any = event.message;
 		const ts = typeof msg?.timestamp === "number" ? msg.timestamp : Date.now();
-		if (msg?.role === "user") lastUserTs = ts;
-		else if (msg?.role === "assistant") lastAssistantTs = ts;
+		if (msg?.role === "user") {
+			lastUserTs = ts;
+			userCount++;
+		} else if (msg?.role === "assistant") {
+			lastAssistantTs = ts;
+			assistantCount++;
+		}
 		refreshFn?.();
 	});
 
 	pi.on("session_start", async (_event, ctx) => {
+		try {
+			const { messages } = ctx.sessionManager.buildSessionContext();
+			userCount = 0;
+			assistantCount = 0;
+			lastUserTs = null;
+			lastAssistantTs = null;
+			for (const msg of messages as any[]) {
+				const ts = typeof msg?.timestamp === "number" ? msg.timestamp : null;
+				if (msg?.role === "user") {
+					userCount++;
+					if (ts) lastUserTs = ts;
+				} else if (msg?.role === "assistant") {
+					assistantCount++;
+					if (ts) lastAssistantTs = ts;
+				}
+			}
+		} catch {}
+
 		const sessionFile = ctx.sessionManager.getSessionFile();
 		const filename = sessionFile?.split("/").pop()?.replace(".jsonl", "") ?? "ephemeral";
 		const id = filename.includes("_") ? filename.split("_").slice(1).join("_") : filename;
@@ -235,8 +260,8 @@ export default function (pi: ExtensionAPI) {
 
 					if (available > 0) {
 						const tsParts: string[] = [];
-						if (lastUserTs) tsParts.push(`u ${formatRelative(lastUserTs)} (${formatClock(lastUserTs)})`);
-						if (lastAssistantTs) tsParts.push(`a ${formatRelative(lastAssistantTs)} (${formatClock(lastAssistantTs)})`);
+						if (lastUserTs) tsParts.push(`u×${userCount} ${formatRelative(lastUserTs)} (${formatClock(lastUserTs)})`);
+						if (lastAssistantTs) tsParts.push(`a×${assistantCount} ${formatRelative(lastAssistantTs)} (${formatClock(lastAssistantTs)})`);
 						const tsStr = tsParts.join(" · ");
 						const base = host ? `${user}@${host} | ${id}` : id;
 						const fullLabel = tsStr ? `${tsStr} | ${base}` : base;
