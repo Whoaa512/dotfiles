@@ -208,7 +208,7 @@
       "Read(/Users/cjw/.ssh/**)"
     ]
   },
-  "model": "opus",
+  "model": "fable",
   "hooks": {
     "PostToolUse": [
       {
@@ -390,6 +390,6 @@
     "filesystem": {}
   },
   "alwaysThinkingEnabled": true,
-  "effortLevel": "medium",
+  "effortLevel": "low",
   "skipDangerousModePermissionPrompt": true
 }
