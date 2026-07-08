@@ -19,21 +19,24 @@ Personal Claude Code config, version controlled.
 └── CLAUDE.global.md # Global instructions
 ```
 
-## Fresh Mac Setup
+## Fresh Mac / Existing Machine Setup
 
-Run from the parent `cj` repo:
-
-```sh
-mise run claude:init
-```
-
-Or directly:
+Use the unified AI bootstrap (idempotent — safe to re-run):
 
 ```sh
-~/code/cj/bin/init-claude-dotfiles
+~/code/dotfiles/bootstrap-ai.sh
 ```
 
-This creates symlinks from `~/.claude/` to this repo.
+This clones the `~/code/*` pi dependencies, symlinks `~/.pi`, and runs the
+claude<->pi parity sync (`~/work/cj/bin/sync-claude-pi-parity.sh`) which creates
+the `~/.claude/` symlinks (agents, commands, skills, hooks, CLAUDE.md) from this
+repo and `~/work/cj/ai`.
+
+To re-sync symlinks only (no cloning), run the parity script directly:
+
+```sh
+~/work/cj/bin/sync-claude-pi-parity.sh
+```
 
 ### Git Tracking for ~/.claude
 
