@@ -126,7 +126,8 @@ function refreshUsageInBackground() {
     if (Date.now() - statSync(marker).mtimeMs < TTL_MS) return;
   } catch {}
   try { require("node:fs").writeFileSync(marker, ""); } catch {}
-  const cmd = `curl -sS -f --max-time 5 "https://api.anthropic.com/api/oauth/usage" -H "Authorization: Bearer $(cat ${TOKEN_FILE})" -H "anthropic-beta: oauth-2025-04-20" -H "Content-Type: application/json" -H "User-Agent: claude-code/2.1.59" > "${USAGE_CACHE}.tmp" && mv "${USAGE_CACHE}.tmp" "${USAGE_CACHE}"`;
+  const authErr = join(CACHE_DIR, "usage-api.auth-error");
+  const cmd = `code=$(curl -sS -o "${USAGE_CACHE}.tmp" -w '%{http_code}' --max-time 5 "https://api.anthropic.com/api/oauth/usage" -H "Authorization: Bearer $(cat ${TOKEN_FILE})" -H "anthropic-beta: oauth-2025-04-20" -H "Content-Type: application/json" -H "User-Agent: claude-code/2.1.59"); if [ "$code" = "200" ]; then mv "${USAGE_CACHE}.tmp" "${USAGE_CACHE}"; rm -f "${authErr}"; elif [ "$code" = "401" ] || [ "$code" = "403" ]; then touch "${authErr}"; rm -f "${USAGE_CACHE}.tmp"; else rm -f "${USAGE_CACHE}.tmp"; fi`;
   const child = spawn("bash", ["-c", cmd], { detached: true, stdio: "ignore" });
   child.unref();
 }
@@ -140,6 +141,9 @@ function usageSegment(): string {
     cached = JSON.parse(readFileSync(USAGE_CACHE, "utf8"));
   } catch {}
   if (stale) refreshUsageInBackground();
+  if (existsSync(join(CACHE_DIR, "usage-api.auth-error"))) {
+    return red("usage: token expired → run ~/code/cj/scripts/claude-oauth-token.ts");
+  }
   const fh = cached?.five_hour;
   if (!fh || fh.utilization == null) return "";
 
