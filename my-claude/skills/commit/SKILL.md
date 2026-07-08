@@ -1,12 +1,12 @@
 ---
-description: Use a Haiku sub-agent to create a git commit.
+description: Use a Sonnet sub-agent to create a git commit.
 ---
 
 Arguments: $ARGUMENTS (optional - files to stage/commit)
 
 ## Instructions
 
-Spawn a Task subagent with `subagent_type: "general-purpose"` and `model: "haiku"` with this prompt:
+Spawn a Task subagent with `subagent_type: "general-purpose"` and `model: "sonnet"` with this prompt:
 
 ```
 Create a git commit. Files argument: "$ARGUMENTS"

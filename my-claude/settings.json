@@ -27,7 +27,6 @@
       "Skill(commit)",
       "Bash(codesign:*)",
       "Bash(yt-dlp:*)",
-      "Skill(continuity_ledger)",
       "Bash(go build:*)",
       "Bash(go test:*)",
       "Bash(go vet:*)",
@@ -145,9 +144,6 @@
       "Bash(npm run test:*)",
       "Bash(npm test:*)",
       "Bash(orimg:*)",
-      "SlashCommand(/cdt-see)",
-      "SlashCommand(/cdt-see-ask)",
-      "SlashCommand(/cdt-console)",
       "mcp__devtools__list_pages",
       "mcp__devtools__select_page",
       "mcp__devtools__close_page",
@@ -212,25 +208,6 @@
   "hooks": {
     "PostToolUse": [
       {
-        "matcher": "WebSearch|WebFetch",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "detect-llm-injection",
-            "timeout": 5
-          }
-        ]
-      },
-      {
-        "matcher": "Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/handoff-index.sh"
-          }
-        ]
-      },
-      {
         "matcher": "Edit|MultiEdit|Write|Bash",
         "hooks": [
           {
@@ -260,15 +237,6 @@
             "command": "claude-tool-review"
           }
         ]
-      },
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
-          }
-        ]
       }
     ],
     "Stop": [
@@ -278,14 +246,6 @@
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/play-notification.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
           }
         ]
       }
@@ -301,77 +261,12 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/pre-compact-continuity.sh"
-          }
-        ]
-      }
-    ],
-    "SessionStart": [
-      {
-        "matcher": "resume|compact|clear",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/session-start-continuity.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/skill-activation-prompt.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
-          }
-        ]
-      }
-    ],
-    "SubagentStop": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/subagent-stop-continuity.sh"
-          }
-        ]
-      }
-    ],
     "SessionEnd": [
       {
         "hooks": [
           {
             "type": "command",
             "command": "$HOME/.claude/hooks/session-end-cleanup.sh"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "curl -s -X POST http://localhost:8765/hook -H 'Content-Type: application/json' -d \"$(cat)\" > /dev/null 2>&1 &"
           }
         ]
       }
