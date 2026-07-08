@@ -38,8 +38,17 @@ info "Cloning ~/code AI dependencies"
 mkdir -p "$CODE"
 clone_if_missing pi-mono "git@github.com:Whoaa512/pi-mono.git"
 clone_if_missing pi-btw  "https://github.com/dbachelder/pi-btw"
-# quintinshaw-pi-dynamic-workflows has no upstream remote — must be copied by hand.
-clone_if_missing quintinshaw-pi-dynamic-workflows ""
+
+# pi-dynamic-workflows: our fork (branch cj-main) with upstream tracking.
+DW="$CODE/quintinshaw-pi-dynamic-workflows"
+if [ -d "$DW/.git" ]; then
+    echo "ok:   quintinshaw-pi-dynamic-workflows (present)"
+else
+    info "cloning quintinshaw-pi-dynamic-workflows (fork)"
+    git clone -o fork -b cj-main "https://github.com/Whoaa512/pi-dynamic-workflows.git" "$DW"
+    git -C "$DW" remote add upstream "https://github.com/QuintinShaw/pi-dynamic-workflows.git"
+    git -C "$DW" fetch upstream
+fi
 
 # Git-pinned pi packages (pi-review, pi-rollback, pi-autoresearch, pi-design-deck)
 # are fetched by `pi update` from the SHAs in settings.json — no action needed here.
