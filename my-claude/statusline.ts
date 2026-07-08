@@ -133,6 +133,7 @@ function refreshUsageInBackground() {
 }
 
 function usageSegment(): string {
+  if (process.env.CLAUDE_CODE_STATUS_LINE_NO_USAGE === "true") return "";
   let cached: any = null;
   let stale = true;
   try {
