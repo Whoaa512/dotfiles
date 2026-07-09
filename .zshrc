@@ -298,3 +298,9 @@ fi
 
 # OpenClaw Completion
 #[ -f ~/.openclaw/completions/openclaw.zsh ] && source "~/.openclaw/completions/openclaw.zsh"
+
+# >>> grok installer >>>
+# grok binary is symlinked into ~/bin (already on PATH); only completions needed
+fpath=(~/.grok/completions/zsh $fpath)
+autoload -Uz compinit && compinit -C
+# <<< grok installer <<<
