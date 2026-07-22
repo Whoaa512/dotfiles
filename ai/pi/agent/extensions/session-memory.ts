@@ -1,9 +1,119 @@
-import { complete, getModel } from "@earendil-works/pi-ai";
+import { complete, completeSimple, getModel } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { existsSync, mkdirSync, appendFileSync } from "fs";
 import { join, basename } from "path";
 
 const MEMORY_DIR = join(process.env.HOME ?? "", "work/cj-private/ai-memory/sessions");
+const LEDGER_DIR = join(process.env.HOME ?? "", "work/cj-private/ai-memory/ledgers");
+const TRIAGE_SENTINEL = "[triage:ledger-written]";
+
+const CORRECTION_CATEGORIES = [
+	"wrong-branch",
+	"unverified-claim",
+	"scope-creep",
+	"over-engineering",
+	"lazy-work",
+	"wrong-source-of-truth",
+	"style-voice",
+	"tool-misuse",
+	"other",
+] as const;
+
+type LedgerExtraction = {
+	corrections?: { category?: string; note?: string }[];
+	findings?: { finding?: string; verdict?: string; evidence?: string }[];
+};
+
+function parseExtraction(raw: string): LedgerExtraction | undefined {
+	const match = raw.match(/\{[\s\S]*\}/);
+	if (!match) return undefined;
+	try {
+		return JSON.parse(match[0]) as LedgerExtraction;
+	} catch {
+		return undefined;
+	}
+}
+
+type ModelRegistryLike = {
+	find: (provider: string, modelId: string) => Parameters<typeof completeSimple>[0] | undefined;
+	getApiKeyForProvider: (p: string) => Promise<string | undefined>;
+};
+
+async function extractLedgerEntries(
+	ctx: { modelRegistry: ModelRegistryLike },
+	project: string,
+	text: string,
+): Promise<void> {
+	const model = ctx.modelRegistry.find("openai-codex", "gpt-5.6-luna");
+	if (!model) return;
+	const apiKey = await ctx.modelRegistry.getApiKeyForProvider(model.provider).catch(() => undefined);
+	if (!apiKey) return;
+
+	const skipFindings = text.includes(TRIAGE_SENTINEL);
+
+	const response = await completeSimple(
+		model,
+		{
+			messages: [
+				{
+					role: "user" as const,
+					content: [
+						{
+							type: "text" as const,
+							text: [
+								"Analyze this AI coding-agent session transcript. Extract two things:",
+								"",
+								"1. CORRECTIONS: moments where the USER corrected the agent's behavior or approach",
+								"   (wrong branch/stack placement, claiming done without verifying, scope creep,",
+								"   over-engineering, lazy/shallow work, editing the wrong source of truth,",
+								"   voice/style rejections, misusing a tool). Only genuine steering corrections \u2014",
+								"   NOT design decisions, preferences stated up front, or normal iteration.",
+								`   category must be one of: ${CORRECTION_CATEGORIES.join(" | ")}`,
+								skipFindings
+									? "2. FINDINGS: skip \u2014 return an empty array (already recorded by /triage)."
+									: '2. FINDINGS: verdicts on review findings \u2014 anywhere a finding/issue from a review was adjudicated ("is this legit?", "do you concur?"). verdict must be one of: confirmed | disproven | pre-existing | speculative. evidence = the concrete reason.',
+								"",
+								'Output ONLY JSON: {"corrections": [{"category": "...", "note": "..."}], "findings": [{"finding": "...", "verdict": "...", "evidence": "..."}]}',
+								"Empty arrays when nothing qualifies. Be conservative: prefer empty over speculative entries.",
+								"",
+								"<conversation>",
+								text.slice(0, 60000),
+								"</conversation>",
+							].join("\n"),
+						},
+					],
+					timestamp: Date.now(),
+				},
+			],
+		},
+		{ apiKey, reasoning: "high" },
+	);
+
+	const raw = response.content
+		.filter((c): c is { type: "text"; text: string } => c.type === "text")
+		.map((c) => c.text)
+		.join("\n");
+	const extraction = parseExtraction(raw);
+	if (!extraction) return;
+
+	if (!existsSync(LEDGER_DIR)) mkdirSync(LEDGER_DIR, { recursive: true });
+	const ts = new Date().toISOString();
+
+	for (const c of extraction.corrections ?? []) {
+		if (!c?.note) continue;
+		const category = CORRECTION_CATEGORIES.includes(c.category as (typeof CORRECTION_CATEGORIES)[number])
+			? c.category
+			: "other";
+		appendFileSync(join(LEDGER_DIR, "corrections.jsonl"), JSON.stringify({ ts, project, category, note: c.note }) + "\n");
+	}
+	for (const f of extraction.findings ?? []) {
+		if (!f?.finding || !f?.verdict) continue;
+		appendFileSync(
+			join(LEDGER_DIR, "findings.jsonl"),
+			JSON.stringify({ ts, project, source: "session-extract", finding: f.finding, verdict: f.verdict, evidence: f.evidence ?? "" }) + "\n",
+		);
+	}
+}
 
 type ContentBlock = { type?: string; text?: string; name?: string; arguments?: Record<string, unknown> };
 type SessionEntry = { type: string; message?: { role?: string; content?: unknown } };
@@ -123,5 +233,9 @@ export default function (pi: ExtensionAPI) {
 		const entry = `${header}## ${time} | ${project}\n${summary}\n\n`;
 
 		appendFileSync(filePath, entry);
+
+		if (text.length > 200) {
+			await extractLedgerEntries(ctx, project, text).catch(() => {});
+		}
 	});
 }
