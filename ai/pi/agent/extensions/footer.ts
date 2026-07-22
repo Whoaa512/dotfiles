@@ -1,9 +1,21 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { execSync } from "node:child_process";
-import { readFileSync } from "node:fs";
+import { readFileSync, statSync } from "node:fs";
 import { hostname } from "node:os";
 import { join } from "node:path";
+
+const LAST_MINE_FILE = join(process.env.HOME || "~", "work/cj-private/ai-memory/ledgers/.last-mine");
+const MINE_DUE_DAYS = 30;
+
+function mineDue(): boolean {
+	try {
+		const mtime = statSync(LAST_MINE_FILE).mtimeMs;
+		return Date.now() - mtime > MINE_DUE_DAYS * 24 * 60 * 60 * 1000;
+	} catch {
+		return true;
+	}
+}
 
 function isGitDisabled(): boolean {
 	try {
@@ -209,6 +221,11 @@ export default function (pi: ExtensionAPI) {
 			cachedGitStatus = getGitStatus();
 		}
 
+		let mineDueCached = mineDue();
+		const mineTimer = setInterval(() => {
+			mineDueCached = mineDue();
+		}, 60 * 60 * 1000);
+
 		refreshGitStatus();
 		refreshFn = refreshGitStatus;
 		if (!gitDisabled) {
@@ -225,6 +242,7 @@ export default function (pi: ExtensionAPI) {
 				dispose: () => {
 					unsub();
 					if (gitStatusTimer) clearInterval(gitStatusTimer);
+					clearInterval(mineTimer);
 				},
 				invalidate() {},
 				render(width: number): string[] {
@@ -248,7 +266,8 @@ export default function (pi: ExtensionAPI) {
 
 						const gitStr = formatGitStatus(cachedGitStatus, theme);
 						const pwdStr = theme.fg("dim", pwd);
-						const combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
+						let combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
+						if (mineDueCached) combined += ` ${theme.fg("warning", "⛏ /mine due")}`;
 						lines[0] = truncateToWidth(combined, width, theme.fg("dim", "..."));
 					}
 
