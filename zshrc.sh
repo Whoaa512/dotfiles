@@ -113,3 +113,8 @@ ZSH_THEME_GIT_PROMPT_CHANGED="%{$fg[blue]%}✚"
 ZSH_THEME_GIT_PROMPT_REMOTE=""
 ZSH_THEME_GIT_PROMPT_UNTRACKED="…"
 ZSH_THEME_GIT_PROMPT_CLEAN="%{$fg_bold[green]%}✔"
+
+# Warn if bootstrap-ai.sh needs a run (AI skill symlinks missing or broken)
+if [[ ! -e ~/.pi/agent/skills/i-have-adhd/SKILL.md || ! -e ~/.claude/skills/i-have-adhd/SKILL.md ]]; then
+  echo "[dotfiles] AI config incomplete — run ${MY_DOTFILES:-~/dotfiles}/bootstrap-ai.sh"
+fi

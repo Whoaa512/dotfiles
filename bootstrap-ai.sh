@@ -49,6 +49,8 @@ else
     git -C "$DW" remote add upstream "https://github.com/QuintinShaw/pi-dynamic-workflows.git"
     git -C "$DW" fetch upstream
 fi
+# i-have-adhd skill, symlinked from my-claude/skills and ai/pi/agent/skills
+clone_if_missing i-have-adhd "git@github.com:ayghri/i-have-adhd.git"
 
 # Git-pinned pi packages (pi-review, pi-rollback, pi-autoresearch, pi-design-deck)
 # are fetched by `pi update` from the SHAs in settings.json — no action needed here.

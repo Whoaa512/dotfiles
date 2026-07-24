@@ -107,7 +107,7 @@ done
 
 echo ""
 echo "=== Skills ==="
-for s in asana debate gdoc graphite gt-pr-align; do
+for s in asana debate gdoc graphite gt-pr-align i-have-adhd; do
     link_file "$SOURCE_DIR/agent/skills/$s/SKILL.md" "$TARGET_DIR/agent/skills/$s/SKILL.md"
 done
 
