@@ -36,17 +36,22 @@ mkdir -p "$TARGET_DIR/agent/"{agents,extensions/{plan-mode,subagent},prompts,ski
 
 echo "=== Top-level ==="
 link_file "$SOURCE_DIR/.gitignore"     "$TARGET_DIR/.gitignore"
-link_file "$SOURCE_DIR/CLAUDE.md"      "$TARGET_DIR/CLAUDE.md"
 link_file "$SOURCE_DIR/auto-commit.sh" "$TARGET_DIR/auto-commit.sh"
 
-# AGENTS.md -> CLAUDE.md alias
-if [ ! -L "$TARGET_DIR/AGENTS.md" ] || [ "$(readlink "$TARGET_DIR/AGENTS.md")" != "CLAUDE.md" ]; then
-    rm -f "$TARGET_DIR/AGENTS.md"
-    ln -s CLAUDE.md "$TARGET_DIR/AGENTS.md"
-    echo "link: AGENTS.md -> CLAUDE.md"
+# Global instructions. Work machines layer Airbnb-only rules on top of the
+# portable core via an @-import; personal machines get the core directly.
+# Both pi and Claude Code read ~/.claude/CLAUDE.md, and pi dedupes by real path,
+# so one link serves both agents.
+WORK_CONTEXT="$HOME/work/cj/ai/CLAUDE.work.md"
+CORE_CONTEXT="$MY_CLAUDE_DIR/CLAUDE.core.md"
+if [ -f "$WORK_CONTEXT" ]; then
+    CONTEXT_BASE="$WORK_CONTEXT"
 else
-    echo "ok:   AGENTS.md"
+    CONTEXT_BASE="$CORE_CONTEXT"
 fi
+mkdir -p "$HOME/.claude"
+link_file "$CONTEXT_BASE" "$HOME/.claude/CLAUDE.md"
+echo "      global context base: ${CONTEXT_BASE/#$HOME/~}"
 
 echo ""
 echo "=== Settings ==="

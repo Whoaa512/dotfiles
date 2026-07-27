@@ -77,10 +77,14 @@ cat <<'NOTES'
   * pi packages:    run `pi update` to fetch git-pinned packages
                     (pi-review, pi-rollback, pi-autoresearch, pi-design-deck)
 
+  Global instructions layer automatically — no manual step:
+  * portable core:  my-claude/CLAUDE.core.md  (this repo, public)
+  * work delta:     ~/work/cj/ai/CLAUDE.work.md, which @-imports the core
+  * init-pi-dotfiles.sh links ~/.claude/CLAUDE.md to the work file when the
+    work repo is present, otherwise straight to the core. Personal machines
+    get a working setup with no dangling links.
+
   Airbnb-only (need ~/work/cj private repo + corp access):
   * work skills/commands live in ~/work/cj/ai — clone that repo first
-  * CLAUDE.md / AGENTS.md symlink to ~/work/cj/ai/CLAUDE.home.md
-  * on a purely personal machine those links dangle; point them at a
-    portable CLAUDE.md instead if you want a work-free setup
 
 NOTES
