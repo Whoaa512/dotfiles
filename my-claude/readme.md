@@ -16,7 +16,7 @@ Personal Claude Code config, version controlled.
 │   └── prune-projects.sh # Cleanup old project caches
 ├── settings.json    # Claude Code settings
 ├── statusline.sh    # Status line script
-└── CLAUDE.global.md # Global instructions
+└── CLAUDE.core.md # Portable global instructions (work delta @-imports this)
 ```
 
 ## Fresh Mac / Existing Machine Setup
