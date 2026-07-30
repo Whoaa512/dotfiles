@@ -25,6 +25,7 @@ After the user reads the doc, remind them of the rule: **don't send the PR for r
 
 ## Format
 - Single self-contained HTML file (inline CSS + JS). One long page, section headers, table of contents, basic responsive styling.
+- **Dark mode by default**: dark background (~#14161a), light text, `color-scheme: dark`, muted borders, desaturated accent colors. All figures, diagrams, quiz widgets, and diff highlighting must use the dark palette (e.g. added lines = dark green bg with light green text, not GitHub-light colors).
 - Save outside the repo: `/tmp/YYYY-MM-DD-explain-<slug>.html`, then `open` it.
 - Write with the clarity and flow of Martin Kleppmann — engaging, classic style, smooth transitions.
 - Diagrams: pick a small family of diagram styles reused throughout (simplified UI mock, system/dataflow diagram with example data). Simple HTML/CSS designs — never ASCII art.
