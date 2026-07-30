@@ -537,6 +537,7 @@ fi
 
 if [[ $(command -v fd) ]] || [[ $(command -v fdfind) ]]; then
   alias fdp='fd -p'
+  alias fdall='fd --no-ignore --no-hidden'
 fi
 
 if [[ $(command -v rg) ]]; then
