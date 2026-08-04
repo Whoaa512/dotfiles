@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# papercut - log small frictions agents hit during work.
+# Destination priority:
+#   1. ~/.config/papercut/redirects (lines: <path-prefix>=<dir>) -> <dir>/<repo-name>.md
+#   2. inside a git repo -> <git-root>/PAPERCUTS.md
+#   3. otherwise -> ~/papercuts.md
+set -euo pipefail
+
+msg="$*"
+if [ -z "$msg" ]; then
+  echo "usage: papercut <one or two sentences: what you were doing + what got in the way>" >&2
+  exit 1
+fi
+
+root=$(git rev-parse --show-toplevel 2>/dev/null || true)
+file=""
+conf="$HOME/.config/papercut/redirects"
+
+if [ -n "$root" ] && [ -f "$conf" ]; then
+  while IFS='=' read -r prefix dir; do
+    [ -z "$prefix" ] && continue
+    case "$prefix" in \#*) continue ;; esac
+    case "$root/" in "$prefix"/*|"$prefix") file="$dir/$(basename "$root").md" ;; esac
+  done < "$conf"
+fi
+
+if [ -z "$file" ]; then
+  if [ -n "$root" ]; then
+    file="$root/PAPERCUTS.md"
+  else
+    file="$HOME/papercuts.md"
+  fi
+fi
+
+mkdir -p "$(dirname "$file")"
+agent="${PAPERCUT_AGENT:-${PI_MODEL:-${ANTHROPIC_MODEL:-agent}}}"
+printf -- '- **%s** — %s — %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$agent" "$msg" >> "$file"
+echo "papercut logged: $file"

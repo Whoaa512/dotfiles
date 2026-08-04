@@ -177,6 +177,9 @@ git worktree remove .worktrees/feature-x              # cleanup
 - Attach to check logs: `tmux attach -t <name>`
 - Kill when done: `tmux kill-session -t <name>`
 
+## Log Papercuts
+When you hit a small friction while working — a tool call that missed and had to be retried, a confusing or undocumented setup step, a flaky command, a stale cache, a misleading error, a non-obvious gotcha — log it: `papercut "one or two sentences: what you were doing + what got in the way"` (guess at cause/fix is a bonus). Do this proactively, in the moment, even though none of these are blocking — logged together they show where the repo needs sanding down. Don't log it for user mistakes or your own reasoning errors; only tooling/env/docs friction. Routing is automatic (repo-local `PAPERCUTS.md`, or redirect dir via `~/.config/papercut/redirects`). Never fix papercuts unprompted; cj will periodically ask to sweep the file.
+
 ## Available CLI Tools
 - Use `fd` instead of `find` for file discovery:
   - `fd -e java -e kt SomeName projects/foo` (find files by name and extension)
