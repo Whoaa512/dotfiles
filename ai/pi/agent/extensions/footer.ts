@@ -1,9 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 import { execSync } from "node:child_process";
-import { readFileSync, statSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { hostname } from "node:os";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const LAST_MINE_FILE = join(process.env.HOME || "~", "work/cj-private/ai-memory/ledgers/.last-mine");
 const MINE_DUE_DAYS = 30;
@@ -14,6 +14,37 @@ function mineDue(): boolean {
 		return Date.now() - mtime > MINE_DUE_DAYS * 24 * 60 * 60 * 1000;
 	} catch {
 		return true;
+	}
+}
+
+function getPapercutsFile(): string {
+	const home = process.env.HOME || "~";
+	let root: string | null = null;
+	try {
+		root = execSync("git rev-parse --show-toplevel 2>/dev/null", { encoding: "utf8", timeout: 1000 }).trim() || null;
+	} catch {}
+	if (!root) return join(home, "papercuts.md");
+
+	const conf = join(home, ".config", "papercut", "redirects");
+	try {
+		for (const line of readFileSync(conf, "utf8").split("\n")) {
+			if (!line || line.startsWith("#") || !line.includes("=")) continue;
+			const [prefix, dir] = line.split("=", 2) as [string, string];
+			if (root === prefix || root.startsWith(`${prefix}/`)) {
+				return join(dir, `${basename(root)}.md`);
+			}
+		}
+	} catch {}
+	return join(root, "PAPERCUTS.md");
+}
+
+function countPapercuts(): number {
+	try {
+		const file = getPapercutsFile();
+		if (!existsSync(file)) return 0;
+		return readFileSync(file, "utf8").split("\n").filter((l) => l.startsWith("- ")).length;
+	} catch {
+		return 0;
 	}
 }
 
@@ -216,7 +247,10 @@ export default function (pi: ExtensionAPI) {
 		let cachedGitStatus: GitStatus | null | undefined = gitDisabled ? null : undefined;
 		let gitStatusTimer: ReturnType<typeof setInterval> | null = null;
 
+		let papercutCount = 0;
+
 		function refreshGitStatus() {
+			papercutCount = countPapercuts();
 			if (gitDisabled) return;
 			cachedGitStatus = getGitStatus();
 		}
@@ -267,6 +301,7 @@ export default function (pi: ExtensionAPI) {
 						const gitStr = formatGitStatus(cachedGitStatus, theme);
 						const pwdStr = theme.fg("dim", pwd);
 						let combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
+						if (papercutCount > 0) combined += ` ${theme.fg("muted", `✂${papercutCount}`)}`;
 						if (mineDueCached) combined += ` ${theme.fg("warning", "⛏ /mine due")}`;
 						lines[0] = truncateToWidth(combined, width, theme.fg("dim", "..."));
 					}
