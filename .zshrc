@@ -297,4 +297,4 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # OpenClaw Completion
-[ -f ~/.openclaw/completions/openclaw.zsh ] && source "~/.openclaw/completions/openclaw.zsh"
+#[ -f ~/.openclaw/completions/openclaw.zsh ] && source "~/.openclaw/completions/openclaw.zsh"
