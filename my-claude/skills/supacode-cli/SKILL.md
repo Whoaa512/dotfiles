@@ -81,7 +81,8 @@ supacode open                     # Same as above.
 ### Worktree
 
 ```
-supacode worktree list [-f]                          # List worktree IDs (-f = focused only).
+supacode worktree list [-f] [--status <status>] [--not-archived] [--with-status]  # List worktree IDs (-f = focused only).
+supacode worktree status [-w <id>]                  # Read status/archived/focused for one worktree.
 supacode worktree focus [-w <id>]                   # Focus worktree.
 supacode worktree run [-w <id>] [-c <uuid>]         # Run script (default: primary run-kind; -c for a specific UUID).
 supacode worktree stop [-w <id>] [-c <uuid>]        # Stop script (default: all run-kind; -c for a specific UUID).
@@ -91,15 +92,17 @@ supacode worktree unarchive [-w <id>]               # Unarchive worktree.
 supacode worktree delete [-w <id>]                  # Delete worktree.
 supacode worktree pin [-w <id>]                     # Pin worktree.
 supacode worktree unpin [-w <id>]                   # Unpin worktree.
+supacode worktree appearance [-w <id>] [--title <title>] [--color <value>]  # Read stored title/tint overrides; flags update them (empty title or color none clears).
 ```
 
 ### Tab
 
 ```
-supacode tab list [-w <id>] [-f]                              # List tab UUIDs in worktree (-f = focused only).
-supacode tab focus [-w <id>] [-t <id>]                      # Focus tab.
-supacode tab new [-w <id>] [-i <cmd>] [-n <uuid>]           # Create new tab (prints UUID to stdout).
-supacode tab close [-w <id>] [-t <id>]                      # Close tab.
+supacode tab list [-w <id>] [-f]                                     # List tab UUIDs in worktree (-f = focused only).
+supacode tab focus [-w <id>] [-t <id>]                               # Focus tab.
+supacode tab new [-w <id>] [-i <cmd>] [-n <uuid>] [--title <title>]  # Create named tab (prints UUID to stdout).
+supacode tab rename [-w <id>] [-t <id>] --title <title>              # Rename tab (empty title clears override; script tabs are locked).
+supacode tab close [-w <id>] [-t <id>]                               # Close tab.
 ```
 
 ### Surface
@@ -139,8 +142,10 @@ supacode socket                      # List active socket paths.
 | `--worktree` | `-w` | `$SUPACODE_WORKTREE_ID` | Worktree ID. |
 | `--tab` | `-t` | `$SUPACODE_TAB_ID` | Tab UUID. |
 | `--surface` | `-s` | `$SUPACODE_SURFACE_ID` | Surface UUID. |
-| `--script` | `-c` | — | Script UUID (for `worktree run`/`stop`). |
+| `--script` | `-c` | - | Script UUID (for `worktree run`/`stop`). |
+| `--title` | - | - | Tab title for `tab new`/`rename`, or sidebar title for `worktree appearance`; pass an empty string to clear. |
+| `--color` | - | - | Sidebar tint override; pass `none` to clear. |
 | `--repo` | `-r` | `$SUPACODE_REPO_ID` | Repository ID. |
-| `--input` | `-i` | — | Command to run in the terminal. |
+| `--input` | `-i` | - | Command to run in the terminal. |
 | `--direction` | `-d` | `horizontal` | Split direction (`horizontal`/`h` or `vertical`/`v`). |
 | `--id` | `-n` | random | UUID for new tab/surface. |
