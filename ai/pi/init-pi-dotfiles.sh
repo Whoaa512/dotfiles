@@ -32,7 +32,7 @@ link_file() {
     echo "link: ${target#$TARGET_DIR/}"
 }
 
-mkdir -p "$TARGET_DIR/agent/"{agents,extensions/{plan-mode,subagent},prompts,skills/{asana,debate,gdoc,graphite,gt-pr-align},scripts,sessions}
+mkdir -p "$TARGET_DIR/agent/"{agents,extensions/{plan-mode,subagent},prompts,skills,scripts,sessions}
 
 echo "=== Top-level ==="
 link_file "$SOURCE_DIR/.gitignore"     "$TARGET_DIR/.gitignore"
@@ -107,8 +107,9 @@ done
 
 echo ""
 echo "=== Skills ==="
-for s in asana debate gdoc graphite gt-pr-align i-have-adhd; do
-    link_file "$SOURCE_DIR/agent/skills/$s/SKILL.md" "$TARGET_DIR/agent/skills/$s/SKILL.md"
+for d in "$SOURCE_DIR/agent/skills/"*/; do
+    s=$(basename "$d")
+    link_file "${d%/}/SKILL.md" "$TARGET_DIR/agent/skills/$s/SKILL.md"
 done
 
 echo ""
