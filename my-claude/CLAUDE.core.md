@@ -87,6 +87,20 @@
     - concerns (with severity: blocker/major/minor)
     - recommendations (prioritized)
   - output: single review doc, dissenting notes preserved
+- when I ask you to do a review triage loop (rtloop), also triggered by "rt loop it" / "review triage fix":
+  - default shape is serial: review → triage → implement, one agent per stage
+  - stage 1 — review: spawn code-critic to review the target (branch/commits/PR) using the ship-check rubric
+    - output: verdict (SHIP/FIX FIRST/RETHINK), score, severity-ranked findings (P0-P3) each with confidence + `file:line`
+    - optional fan-out ("rtloop with N reviewers" or "fan the review"): spawn N reviewers in parallel, different models/providers to avoid shared blind spots; pass ALL raw findings to triage un-deduplicated — triage owns dedup
+    - only the review stage fans out by default; triage is always one adjudicating agent
+  - stage 2 — triage: verify every finding against actual source (use the /triage adversarial-corroboration flow: two verifiers per finding, one adversarial, adjudicate disagreements)
+    - verdict per finding: confirmed / disproven / pre-existing / speculative
+    - a finding survives ONLY with reproducible code-path evidence; consensus alone is not truth
+    - confirmed findings get a recommended fix + severity; everything else dies with one line why
+  - stage 3 — implement: spawn super-coder to fix confirmed findings, atomic commit per finding, run lint+tests
+    - optional fan-out: if confirmed findings are file-disjoint, triage may partition them across parallel implementation agents (worktrees if needed); otherwise one serial agent
+    - each agent writes a **structured handoff**: done/undone, commands + exit codes, issues
+  - loop: re-run a light review pass on the fix commits; exit when verdict is SHIP or only disproven/speculative findings remain
 - when I ask you to do a mission loop (long-running autonomous execution):
   - phase 1 — scope: interview user (askuserquestion) to clarify goal, requirements, constraints
   - phase 2 — plan: produce plan with features, milestones, and **validation contract** (pass/fail assertions before code)
@@ -113,6 +127,7 @@
 - intme: interview me to fill in gaps. Explore the codebase first to answer what you can, then ask remaining questions one at a time, providing your recommended answer for each. Walk down each branch of the decision tree, resolving dependencies between decisions.
 - tcb: copy to my clipboard
 - council: council loop (spawn review council)
+- rtloop: review triage loop (review → triage → implement)
 - mission: mission loop (long-running autonomous execution)
 
 ### Language specifics
