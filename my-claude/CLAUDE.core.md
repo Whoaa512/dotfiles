@@ -14,6 +14,7 @@
 - Don't forget to run the linter before committing too
 - When writing commit messages, Focus on why. if you don't know why, ask the user
 - If Git is in a weird state, check the reflog to see what why
+- **Never discard uncommitted work.** Before any `git reset --hard`, `checkout -- .`, `restore`, `clean`, `stash drop`, or branch delete: run `git status`, and if the tree is dirty, `git stash push -u -m "<why>"` first (or ask). Default to `git reset --soft` / `--mixed` — `--hard` needs a clean tree or explicit ok. Untracked ≠ safe: `-u` matters.
 - in rebase, make sure to set GIT_EDITOR to avoid opening users editor
 - when asked to interview me about something, use the askuserquestion tool
 - **Verify before declaring done.** If you claim X works / is fixed / passes, prove it: run the test, read the actual logs, diff the actual files, hit the actual endpoint. Do not pattern-match from the diff. If you can't verify, say so explicitly. (recurring correction: "did you actually verify it?", "bruv, did you actually read & compare X vs Y?")
