@@ -59,19 +59,51 @@ function getLastAssistantText(ctx: ExtensionContext): string | null {
 	return null;
 }
 
-function stripMarkdown(text: string): string {
-	return text
-		.replace(/```[\s\S]*?```/g, "")
-		.replace(/`[^`]+`/g, "")
-		.replace(/^#{1,6}\s+/gm, "")
-		.replace(/\*\*([^*]+)\*\*/g, "$1")
-		.replace(/\*([^*]+)\*/g, "$1")
-		.replace(/__([^_]+)__/g, "$1")
-		.replace(/_([^_]+)_/g, "$1")
-		.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
-		.replace(/^[-*+]\s+/gm, "")
-		.replace(/^\d+\.\s+/gm, "")
-		.replace(/^>\s+/gm, "")
+const DROP = "\u0000";
+
+function stripTableLine(line: string): string {
+	const trimmed = line.trim();
+	if (!trimmed.startsWith("|")) return line;
+	if (/^\|?[\s:|-]+\|?$/.test(trimmed)) return DROP;
+	return trimmed
+		.replace(/^\|/, "")
+		.replace(/\|$/, "")
+		.split("|")
+		.map((c) => c.trim())
+		.filter(Boolean)
+		.join(", ");
+}
+
+export function stripMarkdown(text: string): string {
+	const blocks = text
+		.replace(/```[\s\S]*?```/g, DROP)
+		.replace(/^[ \t]*([-*_])(?:[ \t]*\1){2,}[ \t]*$/gm, DROP)
+		.split("\n")
+		.map(stripTableLine)
+		.filter((l) => l.trim() !== DROP)
+		.join("\n");
+
+	const inline = blocks
+		.replace(/^[ \t]*#{1,6}[ \t]+/gm, "")
+		.replace(/^[ \t]*>[ \t]?/gm, "")
+		.replace(/^[ \t]*[-*+][ \t]+/gm, "")
+		.replace(/^[ \t]*\d+\.[ \t]+/gm, "")
+		.replace(/!\[([^\]]*)\]\([^)]*\)/g, "$1")
+		.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
+		.replace(/<https?:\/\/[^>\s]+>/g, "")
+		.replace(/https?:\/\/[^\s<>()]+/g, "")
+		.replace(/<\/?[a-zA-Z][^<>]*>/g, "")
+		.replace(/`([^`\n]+)`/g, "$1")
+		.replace(/~~([^~]+)~~/g, "")
+		.replace(/\*\*([^*\n]+)\*\*/g, "$1")
+		.replace(/\*([^*\n]+)\*/g, "$1")
+		.replace(/(^|[^\w])__([^_\n]+)__(?=[^\w]|$)/gm, "$1$2")
+		.replace(/(^|[^\w])_([^_\n]+)_(?=[^\w]|$)/gm, "$1$2");
+
+	return inline
+		.split("\n")
+		.map((l) => l.replace(/[ \t]+/g, " ").trim())
+		.join("\n")
 		.replace(/\n{3,}/g, "\n\n")
 		.trim();
 }
