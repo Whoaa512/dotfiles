@@ -278,7 +278,7 @@ export default function (pi: ExtensionAPI) {
 	});
 
 	pi.registerCommand("speak", {
-		description: "Read the last assistant response aloud via naturalreader",
+		description: "Read the last assistant response aloud via tts (Azure gpt-4o-mini-tts, voice: coral)",
 		handler: async (_args, ctx) => {
 			if (speakingProcess) {
 				killSpeaking(ctx.ui);
@@ -304,9 +304,9 @@ export default function (pi: ExtensionAPI) {
 
 			ctx.ui.setStatus("tts", "🔊 Speaking...");
 
-			const child = spawn("naturalreader", [
-				"speak", "--file", tmpFile
-			], { stdio: ["ignore", "pipe", "pipe"] });
+			const child = spawn("tts", ["--voice", "coral", "--file", tmpFile], {
+				stdio: ["ignore", "pipe", "pipe"],
+			});
 
 			speakingProcess = child;
 
@@ -319,7 +319,7 @@ export default function (pi: ExtensionAPI) {
 					speakingTmpFile = null;
 					ctx.ui.setStatus("tts", undefined);
 					if (code !== 0 && stderr) {
-						ctx.ui.notify(`naturalreader exited ${code}: ${stderr.slice(0, 200)}`, "error");
+						ctx.ui.notify(`tts exited ${code}: ${stderr.slice(0, 200)}`, "error");
 					}
 				}
 				try { unlinkSync(tmpFile); } catch {}
@@ -330,7 +330,7 @@ export default function (pi: ExtensionAPI) {
 					speakingProcess = null;
 					speakingTmpFile = null;
 					ctx.ui.setStatus("tts", undefined);
-					ctx.ui.notify(`naturalreader failed: ${err.message}`, "error");
+					ctx.ui.notify(`tts failed: ${err.message}`, "error");
 				}
 				try { unlinkSync(tmpFile); } catch {}
 			});
