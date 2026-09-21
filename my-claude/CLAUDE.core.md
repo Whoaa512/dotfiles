@@ -39,7 +39,7 @@
     - then spawn code critic agent to review
     - repeat until all work is complete
   - each agent writes a **structured handoff** on completion: what done, what undone, commands run + exit codes, issues found
-  - after implementation, run **QA validator**: if web app, use `devtools` to spawn app, snap, click, fill forms, verify flows end-to-end
+  - after implementation, run **QA validator**: if web app, use `playwright-cli` to spawn app, snap, click, fill forms, verify flows end-to-end
   - after the work loop completes have a final reviewer asses the output, if a game spawn game designer, if an app spawn product owner, or user may request specific final reviewer agent
   - codex CLI is a fine substitute for super-coder on mechanical, well-bounded edits
 - when I ask you to do a tdd loop (test-driven dev loop), also triggered by "tdd loop it" / "tdd loop fix":
@@ -50,7 +50,7 @@
     - repeat until all functionality is complete and tests green
   - use the tdd skill in red-green-refactor mode, one thing at a time
   - each agent writes a **structured handoff**: what done, what undone, commands + exit codes, issues
-  - after implementation, run **QA validator** if applicable (use `devtools` for web apps)
+  - after implementation, run **QA validator** if applicable (use `playwright-cli` for web apps)
   - after the work loop completes, spawn parallel final reviewers:
     - product-owner (completeness, user value)
     - grug-architect (simplicity, maintainability)
@@ -111,7 +111,7 @@
     - next worker inherits clean slate via git
   - phase 4 — validate at each milestone:
     - scrutiny: lint, typecheck, tests, spawn code-critic per feature
-    - QA: if web app, use `devtools` to spawn app, interact, verify flows end-to-end
+    - QA: if web app, use `playwright-cli` to spawn app, interact, verify flows end-to-end
     - validators have NOT seen the code — adversarial by design
   - phase 5 — self-heal: if validation fails, scope corrective work, loop back to execute
   - repeat phases 3-5 until all milestones complete and all validation contract assertions pass
@@ -237,32 +237,11 @@ When you hit a small friction while working — a tool call that missed and had 
   - `gchurn 50` - analyze last 50 commits
   - `gchurn -n 20 -k 10` - last 20 commits, top 10 files
   - Shows: commits per file, lines +/-, current line count
-- `devtools` Chrome DevTools CLI (lighter than MCP on context):
-  - `devtools pages` - list open pages
-  - `devtools go <url>` - navigate
-  - `devtools snap` - accessibility snapshot
-  - `devtools screenshot [path]` - capture
-  - `devtools click/hover/fill <uid>` - interact with elements
-  - `devtools eval <script>` - run JS
-  - `devtools console/network [idx]` - inspect logs/requests
-  - Use `--json` for structured output, `-s <id>` to target specific session
-  - **Sessions for concurrent testing** (CRITICAL for parallel worktree testing):
-    ```bash
-    # Create isolated session (each worktree/port needs its own)
-    devtools session new --name wt-5181 --json  # returns {"id":"abc123",...}
-
-    # Use session for ALL commands (-s flag)
-    devtools -s abc123 pages new --url http://localhost:5181
-    devtools -s abc123 snap
-    devtools -s abc123 click 1_6
-
-    # Cleanup when done
-    devtools session destroy --id abc123
-
-    # List active sessions
-    devtools session list
-    ```
-  - **NEVER kill the daemon** (`pgrep devtools | xargs kill`) - destroys all sessions
+- `playwright-cli` browser automation for QA (Microsoft, low-token). `playwright-cli --help` is the doc.
+  - `playwright-cli open http://localhost:5181` → `snapshot` → `click e12` / `fill e7 "x"` → `screenshot` → `console` / `requests`
+  - snapshots written to `.playwright-cli/*.yml`; read only when needed. `snapshot --depth=3` or `find "Submit"` to trim
+  - **isolation per worktree/port**: `export PLAYWRIGHT_CLI_SESSION=wt-<port>` (or `-s=wt-<port>`). One browser per session
+  - `playwright-cli list` / `close-all`; `show` for dashboard of all sessions. Headless default; `open --headed` to watch
 - `sg` (ast-grep) Structural code search/lint/rewrite using ASTs:
   - `sg run -p 'console.log($$$)' -l typescript` - find pattern
   - `sg run -p 'var $X = $Y' -r 'const $X = $Y' -l js` - rewrite
