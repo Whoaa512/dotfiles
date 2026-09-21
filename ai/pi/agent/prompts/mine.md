@@ -10,7 +10,7 @@ Run a mining pass over my agent-usage data and propose promotions. Mode: "$@" (e
 2. `~/work/cj-private/ai-memory/ledgers/findings.jsonl` — review-finding verdicts
 3. `~/work/cj-private/ai-memory/ledgers/friction.jsonl` — deterministic wheel-spin signals (edit-thrash, reread-churn, bash-flail, repeated-command, dead-subagents). Recurring friction in the same repo/file → propose a CLAUDE.md rule, skill fix, or pi harness fix (repeated-command may be legit test iteration — judge from the sample).
 4. `~/work/cj-private/ai-memory/sessions/*.md` — last 30 days of session summaries
-5. `~/.pi/agent/prompt-history.json` — recent raw prompts
+5. Raw user prompts since the last mine: extract from `~/.pi/agent/sessions/*/*.jsonl` (file names start with the ISO date) with a small python script; `~/.pi/agent/prompt-history.json` is stale (pi writes per-project `~/.pi/agent/prompt-history/*.json` now, no timestamps)
 
 **Deep mode (adds):**
 6. Full session transcripts in `~/.pi/agent/sessions/*/*.jsonl` from the last 60 days. Too large to read directly — write a python script to extract user prompts/tool stats per session, then fan out subagents per month/chunk to analyze the corpora.
