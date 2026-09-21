@@ -206,8 +206,11 @@ When you hit a small friction while working — a tool call that missed and had 
   - `rg -l "pattern" path` (list files with matches only)
   - `rg "^package.*pattern"` (anchor to line start)
   - `rg "class.*pattern|interface.*pattern"` (multiple patterns with OR)
+  - gotcha: `-I` = no filename, `--files-without-match` = invert `-l`. `-h` is help, `-L` is follow-symlinks
 - Use `tree` for directory structure viewing
 - `gh` for querying Github
+  - search endpoints: `gh api -X GET search/... -f q=...` (`-f` without `-X GET` sends POST, misleading error)
+  - PR/review bodies with code fences: write to a file, `--body-file`. Never nest heredocs inside `$()`, bash eats backticks
 - `uv` for python things (see `uv --help`)
 - `xan` CSV magician - successor to `BurntSushi/xsv`
 - `bk` buildkite CLI tool - **prefer `bk api` over Buildkite MCP tools** to reduce context token usage

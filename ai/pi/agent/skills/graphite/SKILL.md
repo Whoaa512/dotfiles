@@ -38,6 +38,12 @@ gt fold                              # Merge branch into parent
 gt create --insert                   # Insert new branch between current and child
 ```
 
+Gotchas:
+- `gt absorb -d` first; then `gt absorb --force` to apply (`--no-interactive` alone stays dry-run)
+- `gt branch create -m` silently drops the commit; stage + `gt create -m` instead
+- `gt log --stack` fails on untracked branches; `gt track` first or use plain git
+- Repo guards that block committing on master match the command text, incl. `gt create --help`; branch off first
+
 ### Sync & Submit
 ```bash
 gt sync                              # Rebase stack on trunk
