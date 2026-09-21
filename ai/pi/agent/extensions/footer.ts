@@ -286,14 +286,14 @@ export default function (pi: ExtensionAPI) {
 					// Replace the first line (pwd line) with git-status-enriched version
 					// The default footer's first line is: dim(pwd (branch))
 					// We want: dim(pwd) + colored git status
-					if (cachedGitStatus) {
+					{
 						let pwd = process.cwd();
 						const home = process.env.HOME || process.env.USERPROFILE;
 						if (home && pwd.startsWith(home)) {
 							pwd = `~${pwd.slice(home.length)}`;
 						}
 
-						const gitStr = formatGitStatus(cachedGitStatus, theme);
+						const gitStr = cachedGitStatus ? formatGitStatus(cachedGitStatus, theme) : "";
 						const pwdStr = theme.fg("dim", pwd);
 						let combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
 						if (papercutCount > 0) combined += ` ${theme.fg("muted", `✂${papercutCount}`)}`;
