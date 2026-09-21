@@ -269,6 +269,7 @@ fi
 # Mise
 if [ -x "$(command -v mise)" ]; then
   eval "$(mise activate zsh --shims)"
+  export BASH_ENV="$HOME/code/dotfiles/shell/bashenv.sh"
   mise() {
     unfunction mise
     eval "$(command mise activate zsh)"
