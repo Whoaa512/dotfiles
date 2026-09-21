@@ -293,7 +293,11 @@ export default function (pi: ExtensionAPI) {
 							pwd = `~${pwd.slice(home.length)}`;
 						}
 
-						const gitStr = cachedGitStatus ? formatGitStatus(cachedGitStatus, theme) : "";
+						let gitStr = cachedGitStatus ? formatGitStatus(cachedGitStatus, theme) : "";
+						if (!gitStr) {
+							const branch = footerData.getGitBranch();
+							if (branch) gitStr = theme.fg("success", `\uF126 ${branch}`);
+						}
 						const pwdStr = theme.fg("dim", pwd);
 						let combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
 						if (papercutCount > 0) combined += ` ${theme.fg("muted", `✂${papercutCount}`)}`;
