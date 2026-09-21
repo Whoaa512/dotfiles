@@ -1,5 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import { isDestructive, resolveEffectiveCwd } from "../extensions/no-discard-dirty-tree";
+import {
+	isDestructive,
+	resolveEffectiveCwd,
+} from "../extensions/no-discard-dirty-tree";
 
 const blocked = [
 	"git reset --hard",
@@ -45,12 +48,21 @@ const allowed = [
 ];
 
 describe("isDestructive", () => {
-	for (const c of blocked) test(`blocks: ${c}`, () => expect(isDestructive(c)).toBe(true));
-	for (const c of allowed) test(`allows: ${c}`, () => expect(isDestructive(c)).toBe(false));
+	for (const c of blocked)
+		test(`blocks: ${c}`, () => expect(isDestructive(c)).toBe(true));
+	for (const c of allowed)
+		test(`allows: ${c}`, () => expect(isDestructive(c)).toBe(false));
 });
 
 describe("resolveEffectiveCwd", () => {
-	test("cd prefix", () => expect(resolveEffectiveCwd("cd /tmp/x && git reset --hard", "/home")).toBe("/tmp/x"));
-	test("-C flag", () => expect(resolveEffectiveCwd("git -C /tmp/y reset --hard", "/home")).toBe("/tmp/y"));
-	test("plain", () => expect(resolveEffectiveCwd("git reset --hard", "/home")).toBe("/home"));
+	test("cd prefix", () =>
+		expect(resolveEffectiveCwd("cd /tmp/x && git reset --hard", "/home")).toBe(
+			"/tmp/x",
+		));
+	test("-C flag", () =>
+		expect(resolveEffectiveCwd("git -C /tmp/y reset --hard", "/home")).toBe(
+			"/tmp/y",
+		));
+	test("plain", () =>
+		expect(resolveEffectiveCwd("git reset --hard", "/home")).toBe("/home"));
 });

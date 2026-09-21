@@ -9,12 +9,13 @@
  * Escape hatch: prefix the command with `# ok-discard` once the user has explicitly agreed.
  */
 
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { execSync } from "node:child_process";
 import { resolve } from "node:path";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const OVERRIDE = /^\s*#\s*ok-discard\b/;
-const PRESERVES_FIRST = /\bgit\b[^|;&]*\b(?:stash(?:\s+push|\s+save)?\s*(?:-|&&|;|$)|commit\b)/;
+const PRESERVES_FIRST =
+	/\bgit\b[^|;&]*\b(?:stash(?:\s+push|\s+save)?\s*(?:-|&&|;|$)|commit\b)/;
 
 export const DESTRUCTIVE_PATTERNS: RegExp[] = [
 	/\bgit\b[^|;&]*\breset\s+(?:[^|;&]*\s)?--(?:hard|merge)\b/,
@@ -41,7 +42,11 @@ export function resolveEffectiveCwd(command: string, cwd: string): string {
 
 function dirtyEntries(cwd: string): string[] {
 	try {
-		const out = execSync("git status --porcelain --untracked-files=all", { cwd, encoding: "utf-8", stdio: ["ignore", "pipe", "ignore"] });
+		const out = execSync("git status --porcelain --untracked-files=all", {
+			cwd,
+			encoding: "utf-8",
+			stdio: ["ignore", "pipe", "ignore"],
+		});
 		return out.split("\n").filter(Boolean);
 	} catch {
 		return [];
