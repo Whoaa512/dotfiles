@@ -200,6 +200,7 @@ When you hit a small friction while working — a tool call that missed and had 
 - Use `fd` instead of `find` for file discovery:
   - `fd -e java -e kt SomeName projects/foo` (find files by name and extension)
   - `fd -t f pattern path` (files only)
+- Never `read` lockfiles or generated files (`package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`, `Cargo.lock`, `go.sum`, `*.min.js`, `dist/`). `rg` them for the one line you need. Same for any file you've already read this session: re-read only the changed range with offset/limit.
 - Use `rg` (ripgrep) for content search:
   - `rg -t java -t kotlin "pattern" path` (search by file type)
   - `rg -l "pattern" path` (list files with matches only)
