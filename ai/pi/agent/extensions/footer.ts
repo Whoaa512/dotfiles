@@ -293,11 +293,6 @@ export default function (pi: ExtensionAPI) {
 							pwd = `~${pwd.slice(home.length)}`;
 						}
 
-						const sessionName = ctx.sessionManager.getSessionName();
-						if (sessionName) {
-							pwd = `${pwd} • ${sessionName}`;
-						}
-
 						const gitStr = formatGitStatus(cachedGitStatus, theme);
 						const pwdStr = theme.fg("dim", pwd);
 						let combined = gitStr ? `${pwdStr} ${gitStr}` : pwdStr;
@@ -325,6 +320,17 @@ export default function (pi: ExtensionAPI) {
 						const label = theme.fg("dim", truncated);
 						const pad = " ".repeat(available - visibleWidth(label));
 						lines[0] = firstLine + " ".repeat(gap) + pad + label;
+					}
+
+					// Session name right-aligned on row 3 (under model/effort)
+					const sessionName = ctx.sessionManager.getSessionName();
+					if (sessionName) {
+						const left = lines[2] ?? "";
+						const room = width - visibleWidth(left) - 2;
+						if (room > 0) {
+							const name = truncateToWidth(sessionName, room, "…");
+							lines[2] = left + " ".repeat(width - visibleWidth(left) - visibleWidth(name)) + theme.fg("dim", name);
+						}
 					}
 
 					return lines;
