@@ -242,6 +242,9 @@ When you hit a small friction while working — a tool call that missed and had 
   - snapshots written to `.playwright-cli/*.yml`; read only when needed. `snapshot --depth=3` or `find "Submit"` to trim
   - **isolation per worktree/port**: `export PLAYWRIGHT_CLI_SESSION=wt-<port>` (or `-s=wt-<port>`). One browser per session
   - `playwright-cli list` / `close-all`; `show` for dashboard of all sessions. Headless default; `open --headed` to watch
+  - logged-in sites (Slack, internal SSO): `--persistent` crashes Chrome, so attach to a real one instead:
+    `tmux new -d -s chrome-cdp '/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --remote-debugging-port=9333 --user-data-dir=$HOME/chrome-debug-profile'`
+    then `playwright-cli -s=slack attach --cdp=http://localhost:9333`. Port 9222 is taken. Slack a11y `snapshot` truncates; use `screenshot`
 - `sg` (ast-grep) Structural code search/lint/rewrite using ASTs:
   - `sg run -p 'console.log($$$)' -l typescript` - find pattern
   - `sg run -p 'var $X = $Y' -r 'const $X = $Y' -l js` - rewrite
