@@ -1,4 +1,4 @@
-import { complete, completeSimple, getModel } from "@earendil-works/pi-ai";
+import { completeSimple } from "@earendil-works/pi-ai";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { existsSync, mkdirSync, appendFileSync } from "fs";
 import { join, basename } from "path";
@@ -244,12 +244,12 @@ export default function (pi: ExtensionAPI) {
 
 		let summary: string;
 
-		const model = getModel("openai", "gpt-4.1-mini");
+		const model = ctx.modelRegistry.find("openai-codex", "gpt-5.6-luna");
 		const apiKey = model ? await ctx.modelRegistry.getApiKeyForProvider(model.provider).catch(() => undefined) : undefined;
 
 		if (model && apiKey && text.length > 100) {
 			try {
-				const response = await complete(
+				const response = await completeSimple(
 					model,
 					{
 						messages: [
@@ -283,8 +283,8 @@ export default function (pi: ExtensionAPI) {
 					.map((c) => c.text)
 					.join("\n")
 					.trim();
-			} catch {
-				summary = `${messageCount} messages, ${toolCount} tool calls`;
+			} catch (err) {
+				summary = `${messageCount} messages, ${toolCount} tool calls (summary failed: ${err instanceof Error ? err.message : String(err)})`;
 			}
 		} else {
 			summary = `${messageCount} messages, ${toolCount} tool calls`;
