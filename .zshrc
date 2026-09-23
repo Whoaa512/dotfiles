@@ -44,6 +44,14 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 fpath=(~/.zsh/completion $fpath)
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
+# CLI completions cached once; 'source <(x completion zsh)' per shell cost ~10s. rm ~/.zsh/completion/_<tool> after upgrading it
+[[ -d ~/.zsh/completion ]] || mkdir -p ~/.zsh/completion
+for _c in airtool airchat yak yk gt asana; do
+  [[ -s ~/.zsh/completion/_$_c ]] && continue
+  (( $+commands[$_c] )) && $_c completion zsh >| ~/.zsh/completion/_$_c 2>/dev/null
+done
+unset _c
+
 
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
