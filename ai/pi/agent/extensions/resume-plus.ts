@@ -256,7 +256,7 @@ function search(sessions: SessEntry[], query: string, scope: Scope, titles: Reco
 // ---------- title generation ----------
 
 function getTitleModel(pi: ExtensionAPI): { provider: string; id: string } | null {
-	const settings = pi.getSettings("resume-plus");
+	const settings = pi.getExtensionSettings("resume-plus");
 	const raw = settings?.titleModel;
 	if (typeof raw !== "string" || !raw.includes("/")) return null;
 	const idx = raw.indexOf("/");
