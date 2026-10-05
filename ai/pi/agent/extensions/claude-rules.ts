@@ -68,19 +68,10 @@ export default function claudeRulesExtension(pi: ExtensionAPI) {
 
 		const rulesList = ruleFiles.map((f) => `- .claude/rules/${f}`).join("\n");
 
-		return {
-			systemPrompt:
-				event.systemPrompt +
-				`
-
-## Project Rules
-
-The following project rules are available in .claude/rules/:
+		event.systemPromptOptions.sections.project_rules = `The following project rules are available in .claude/rules/:
 
 ${rulesList}
 
-When working on tasks related to these rules, use the read tool to load the relevant rule files for guidance.
-`,
-		};
+When working on tasks related to these rules, use the read tool to load the relevant rule files for guidance.`;
 	});
 }

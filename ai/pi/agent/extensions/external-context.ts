@@ -1,13 +1,14 @@
 /**
- * External Context Extension (supplemental)
+ * External Context Extension
  *
- * Upstream pi now natively loads AGENTS.md/CLAUDE.md from ~/.claude/,
- * ~/.pi/agent/, and ancestor directories. This extension supplements
- * that by loading files upstream doesn't cover:
+ * Adds Claude Code style context files to pi's native context files, so they
+ * render as <project_instructions> inside <project_context>:
  *
- * 1. .local.md variants (AGENTS.local.md, CLAUDE.local.md) from ~/.claude/
- * 2. .claude/ subdirectories in project ancestors
- *    (e.g., ~/code/my-project/.claude/AGENTS.local.md)
+ * 1. ~/.claude/{AGENTS,AGENTS.local,CLAUDE,CLAUDE.local}.md, before pi's own files
+ * 2. the same filenames in .claude/ subdirectories of cwd ancestors, after pi's own files
+ *
+ * Files are deduped by real path, and `@path` imports are expanded in every
+ * context file, including the ones pi loaded itself.
  */
 
 import * as fs from "node:fs";
@@ -15,87 +16,148 @@ import * as os from "node:os";
 import * as path from "node:path";
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-const LOCAL_FILENAMES = ["AGENTS.local.md", "CLAUDE.local.md"];
-const ALL_CLAUDE_SUBDIR_FILENAMES = ["AGENTS.md", "AGENTS.local.md", "CLAUDE.md", "CLAUDE.local.md"];
+export type ContextFile = { path: string; content: string };
 
-function tryRead(filePath: string): { path: string; content: string } | null {
+const FILENAMES = ["AGENTS.md", "AGENTS.local.md", "CLAUDE.md", "CLAUDE.local.md"];
+
+/** Max number of `@import` hops followed from a context file, matching Claude Code. */
+const MAX_IMPORT_DEPTH = 5;
+
+/** `@` followed by a whitespace-free token containing a path separator. */
+const IMPORT_PATTERN = /(^|\s)@(?=[^\s]*\/)([^\s]+)/g;
+
+/** Inline code spans, captured so they can be skipped during expansion. */
+const INLINE_CODE_PATTERN = /(`+[^`]*`+)/;
+
+function realPath(filePath: string): string {
 	try {
-		if (!fs.existsSync(filePath)) return null;
-		return { path: filePath, content: fs.readFileSync(filePath, "utf-8") };
+		return fs.realpathSync(filePath);
 	} catch {
-		return null;
+		return filePath;
 	}
 }
 
-function loadSupplementalContextFiles(cwd: string): Array<{ path: string; content: string }> {
-	const files: Array<{ path: string; content: string }> = [];
-	const seenPaths = new Set<string>();
-
-	const addFile = (file: { path: string; content: string }) => {
-		if (seenPaths.has(file.path)) return;
-		files.push(file);
-		seenPaths.add(file.path);
-	};
-
-	const claudeDir = path.join(os.homedir(), ".claude");
-	for (const filename of LOCAL_FILENAMES) {
-		const f = tryRead(path.join(claudeDir, filename));
-		if (f) addFile(f);
+function readFile(filePath: string): string | undefined {
+	try {
+		if (!fs.statSync(filePath).isFile()) return undefined;
+		return fs.readFileSync(filePath, "utf-8");
+	} catch {
+		return undefined;
 	}
+}
 
-	let currentDir = cwd;
-	const root = path.resolve("/");
-	const ancestorFiles: Array<{ path: string; content: string }> = [];
-
-	while (true) {
-		const subdir = path.join(currentDir, ".claude");
-		for (const filename of ALL_CLAUDE_SUBDIR_FILENAMES) {
-			const f = tryRead(path.join(subdir, filename));
-			if (f && !seenPaths.has(f.path)) {
-				ancestorFiles.unshift(f);
-				seenPaths.add(f.path);
-			}
-		}
-
-		if (currentDir === root) break;
-		const parentDir = path.dirname(currentDir);
-		if (parentDir === currentDir) break;
-		currentDir = parentDir;
+function readContextDir(dir: string): ContextFile[] {
+	const files: ContextFile[] = [];
+	for (const filename of FILENAMES) {
+		const filePath = path.join(dir, filename);
+		const content = readFile(filePath);
+		if (content !== undefined) files.push({ path: filePath, content });
 	}
-
-	files.push(...ancestorFiles);
 	return files;
 }
 
-export default function externalContextExtension(pi: ExtensionAPI) {
-	let contextFiles: Array<{ path: string; content: string }> = [];
+function resolveImport(reference: string, containingDir: string, home: string): string {
+	if (reference.startsWith("~/")) return path.join(home, reference.slice(2));
+	return path.resolve(containingDir, reference);
+}
 
-	pi.on("session_start", async (_event, ctx) => {
-		contextFiles = loadSupplementalContextFiles(ctx.cwd);
-		if (contextFiles.length > 0 && ctx.hasUI) {
-			ctx.ui.notify(`Loaded ${contextFiles.length} supplemental context file(s)`, "info");
-		}
+export function expandContextImports(
+	content: string,
+	containingDir: string,
+	home: string,
+	chain: Set<string>,
+	depth = 0,
+): string {
+	if (depth >= MAX_IMPORT_DEPTH) return content;
+
+	const expandText = (text: string) =>
+		text.replace(IMPORT_PATTERN, (match, prefix: string, reference: string) => {
+			if (reference.includes("://")) return match;
+
+			const importPath = resolveImport(reference, containingDir, home);
+			const importRealPath = realPath(importPath);
+			if (chain.has(importRealPath)) return match;
+
+			// Prose and scoped package names look like imports (`@typescript/native-preview`,
+			// "the @/some/dir directory"). Only a real file is an import; anything else stays literal.
+			const imported = readFile(importPath);
+			if (imported === undefined) return match;
+
+			const nestedChain = new Set(chain).add(importRealPath);
+			return prefix + expandContextImports(imported, path.dirname(importPath), home, nestedChain, depth + 1);
+		});
+
+	let fenceMarker: string | undefined;
+	return content
+		.split("\n")
+		.map((line) => {
+			const fence = line.trimStart().match(/^(```+|~~~+)/);
+			if (fence) {
+				const marker = fence[1][0];
+				if (!fenceMarker) fenceMarker = marker;
+				else if (fenceMarker === marker) fenceMarker = undefined;
+				return line;
+			}
+			if (fenceMarker) return line;
+			return line
+				.split(INLINE_CODE_PATTERN)
+				.map((segment, index) => (index % 2 === 1 ? segment : expandText(segment)))
+				.join("");
+		})
+		.join("\n");
+}
+
+function loadAncestorClaudeFiles(cwd: string): ContextFile[] {
+	const files: ContextFile[] = [];
+	let dir = path.resolve(cwd);
+	while (true) {
+		files.unshift(...readContextDir(path.join(dir, ".claude")));
+		const parent = path.dirname(dir);
+		if (parent === dir) return files;
+		dir = parent;
+	}
+}
+
+/**
+ * ~/.claude files, then pi's own context files, then ancestor .claude/ files.
+ * Deduped by real path (first wins), with `@path` imports expanded in all of them.
+ */
+export function mergeContextFiles(native: ContextFile[], cwd: string, home: string = os.homedir()): ContextFile[] {
+	const candidates = [...readContextDir(path.join(home, ".claude")), ...native, ...loadAncestorClaudeFiles(cwd)];
+	const seen = new Set<string>();
+	const merged: ContextFile[] = [];
+	for (const file of candidates) {
+		const fileRealPath = realPath(file.path);
+		if (seen.has(fileRealPath)) continue;
+		seen.add(fileRealPath);
+		merged.push({
+			path: file.path,
+			content: expandContextImports(file.content, path.dirname(fileRealPath), home, new Set([fileRealPath])),
+		});
+	}
+	return merged;
+}
+
+export function contextFilesDisabled(argv: string[] = process.argv): boolean {
+	return argv.includes("--no-context-files") || argv.includes("-nc");
+}
+
+export default function externalContextExtension(pi: ExtensionAPI) {
+	if (contextFilesDisabled()) return;
+
+	let notified = false;
+	pi.on("session_start", async () => {
+		notified = false;
 	});
 
-	pi.on("before_agent_start", async (event) => {
-		if (contextFiles.length === 0) return;
+	pi.on("before_agent_start", async (event, ctx) => {
+		const options = event.systemPromptOptions;
+		const nativeCount = options.contextFiles.length;
+		options.contextFiles = mergeContextFiles(options.contextFiles, ctx.cwd);
 
-		const contextSection = contextFiles
-			.map((f) => {
-				const relativePath = f.path.startsWith(os.homedir()) ? `~${f.path.slice(os.homedir().length)}` : f.path;
-				return `## ${relativePath}\n\n${f.content}`;
-			})
-			.join("\n\n");
-
-		return {
-			systemPrompt:
-				event.systemPrompt +
-				`
-
-# External Context
-
-${contextSection}
-`,
-		};
+		const added = options.contextFiles.length - nativeCount;
+		if (notified || added <= 0 || !ctx.hasUI) return;
+		notified = true;
+		ctx.ui.notify(`Loaded ${added} external context file(s)`, "info");
 	});
 }
