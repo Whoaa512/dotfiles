@@ -1,6 +1,7 @@
 ---
 name: visual-explainer
-description: Create beautiful visual explainers: self-contained HTML/CSS/JS diagrams, charts, scrollytelling pages, concept maps, or data narratives. Use when asked to visualize, explain visually, make a beautiful explainer, create a diagram/report/dashboard, plot data, graph this, or turn a concept/process/system into a visual artifact.
+description: >-
+  Create beautiful visual explainers: self-contained HTML/CSS/JS diagrams, charts, scrollytelling pages, concept maps, or data narratives. Use when asked to visualize, explain visually, make a beautiful explainer, create a diagram/report/dashboard, plot data, graph this, or turn a concept/process/system into a visual artifact.
 ---
 
 # Visual Explainer
