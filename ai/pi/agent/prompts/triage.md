@@ -41,5 +41,5 @@ return { ok: true, results };
 ## After the workflow returns
 
 1. Present a verdict table: finding | verdict | evidence. Confirmed findings get a recommended fix; everything else gets one line on why it dies.
-2. Append each verdict to `~/work/cj-private/ai-memory/ledgers/findings.jsonl` as `{"ts": "<iso>", "project": "<basename cwd>", "source": "triage", "finding": "...", "verdict": "...", "evidence": "..."}` (one line each, `>>`).
+2. Append each verdict to `~/work/cj-private/ai-memory/ledgers/findings.jsonl` as `{"ts": "<iso>", "project": "<basename cwd>", "source": "triage", "finding": "...", "verdict": "...", "evidence": "...", "reviewer": "<model id | svc-airchat-review | human:<name> | self:<main model> | unknown>"}` (one line each, `>>`). `reviewer` = who produced the finding (subagent `model:`, reviewer A/B label, bot author, "sol said" relay).
 3. Print exactly this sentinel on its own line so the session extractor skips these: `[triage:ledger-written]`

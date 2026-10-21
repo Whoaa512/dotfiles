@@ -14,6 +14,7 @@ type Job = {
 	isNewFile: boolean;
 	ledgerDir: string;
 	model: string;
+	mainModel?: string;
 	skipFindings: boolean;
 	categories: string[];
 };
@@ -68,9 +69,9 @@ const raw = ask(
 		`   category must be one of: ${job.categories.join(" | ")}`,
 		job.skipFindings
 			? "2. FINDINGS: skip \u2014 return an empty array (already recorded by /triage)."
-			: '2. FINDINGS: verdicts on review findings \u2014 anywhere a finding/issue from a review was adjudicated ("is this legit?", "do you concur?"). verdict must be one of: confirmed | disproven | pre-existing | speculative. evidence = the concrete reason.',
+			: '2. FINDINGS: verdicts on review findings \u2014 anywhere a finding/issue from a review was adjudicated ("is this legit?", "do you concur?"). verdict must be one of: confirmed | disproven | pre-existing | speculative. evidence = the concrete reason. reviewer = who produced the finding: a model id (e.g. "openai-codex/gpt-6.1-sol", "anthropic/claude-fable-5-1"), a bot ("svc-airchat-review"), a person ("human:<name>"), or "self" when the main-thread assistant raised it. Infer from subagent `model:` options, "reviewer A/B" labels, bot comment authors, or relays like "sol said" / "astra says". Use "unknown" if not inferable.',
 		"",
-		'Output ONLY JSON: {"corrections": [{"category": "...", "note": "..."}], "findings": [{"finding": "...", "verdict": "...", "evidence": "..."}]}',
+		'Output ONLY JSON: {"corrections": [{"category": "...", "note": "..."}], "findings": [{"finding": "...", "verdict": "...", "evidence": "...", "reviewer": "..."}]}',
 		"Empty arrays when nothing qualifies. Be conservative: prefer empty over speculative entries.",
 		"",
 		"<conversation>",
@@ -81,7 +82,7 @@ const raw = ask(
 );
 const match = raw?.match(/\{[\s\S]*\}/);
 if (!match) process.exit(0);
-let extraction: { corrections?: { category?: string; note?: string }[]; findings?: { finding?: string; verdict?: string; evidence?: string }[] };
+let extraction: { corrections?: { category?: string; note?: string }[]; findings?: { finding?: string; verdict?: string; evidence?: string; reviewer?: string }[] };
 try {
 	extraction = JSON.parse(match[0]);
 } catch {
@@ -95,10 +96,25 @@ for (const c of extraction.corrections ?? []) {
 	const category = job.categories.includes(c.category ?? "") ? c.category : "other";
 	appendFileSync(join(job.ledgerDir, "corrections.jsonl"), JSON.stringify({ ts, project: job.project, category, note: c.note }) + "\n");
 }
+function resolveReviewer(raw: string | undefined): string {
+	const r = raw?.trim();
+	if (!r) return "unknown";
+	if (r === "self") return `self:${job.mainModel ?? "unknown"}`;
+	return r;
+}
+
 for (const f of extraction.findings ?? []) {
 	if (!f?.finding || !f?.verdict) continue;
 	appendFileSync(
 		join(job.ledgerDir, "findings.jsonl"),
-		JSON.stringify({ ts, project: job.project, source: "session-extract", finding: f.finding, verdict: f.verdict, evidence: f.evidence ?? "" }) + "\n",
+		JSON.stringify({
+			ts,
+			project: job.project,
+			source: "session-extract",
+			finding: f.finding,
+			verdict: f.verdict,
+			evidence: f.evidence ?? "",
+			reviewer: resolveReviewer(f.reviewer),
+		}) + "\n",
 	);
 }

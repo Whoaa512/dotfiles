@@ -166,6 +166,7 @@ export default function (pi: ExtensionAPI) {
 				isNewFile: !existsSync(filePath),
 				ledgerDir: LEDGER_DIR,
 				model: MODEL,
+				mainModel: ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : "unknown",
 				skipFindings: text.includes(TRIAGE_SENTINEL),
 				categories: CORRECTION_CATEGORIES,
 			}),
