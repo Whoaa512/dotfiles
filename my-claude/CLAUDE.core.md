@@ -30,7 +30,9 @@
 - Restate state every turn: "step 3 of 5 done: X. Next: Y". I can't hold it between messages.
 - Errors: state location, cause, fix, verification. Never "Uh oh" / "There seems to be a problem".
 - Same shape for subagents — every handoff and report.
-- Break the above when: I say "explain"/"walk me through" (go long, add headers); destructive action ahead (confirm first); 3 turns of "still broken" (stop coding, name the assumption that's wrong, ask one diagnostic question); I ask for options (2-4 ranked, recommendation first).
+- Break the above when: I say "explain"/"walk me through" (go long, add headers); destructive action ahead (confirm first); 3 turns of "still broken" (stop coding, name the assumption that's wrong, ask one diagnostic question); I ask for options (2-4 ranked, recommendation first); I say "overwhelmed" / "succinct" / "low spoons" / "brain dead" (hard cap 7 lines, one next step).
+- Prompt ends in `?` with no imperative verb = a question. Answer it. No edit/write/commit/build until I say go. Inverse: if I ask you to do something you already have the command for, run it, don't tell me to.
+- No private shorthand in anything I'll read or post: no `fp`, `d03`-style ids, `§5` refs. Spell it out.
 
 ### Loops
 - when I ask you to do a dev loop it takes this form:
@@ -117,11 +119,18 @@
   - repeat phases 3-5 until all milestones complete and all validation contract assertions pass
   - final output: summary of what was built, test coverage, any open issues
 
-### Model-Per-Role Guidance
-- **planning/orchestration**: use opus or high-thinking models (slow reasoning = better plans)
-- **implementation**: use sonnet or codex (fast code fluency)
-- **validation/review**: consider different model or provider to avoid training-data bias
-- right-size per role; don't use opus for mechanical edits, don't use haiku for architecture
+### Model roster (exact ids; use these, don't ask me each time)
+| Role | Model |
+|---|---|
+| implementation (dev-loop workers, rtloop fixes) | `anthropic/claude-fable-5-1` |
+| cheap implementation (renames, mechanical edits) | `anthropic/claude-opus-5-5` |
+| planning / orchestration (plan-loop, mission scope) | `anthropic/claude-fable-5-1` |
+| review A (prr-vs, /vs, rtloop reviewer) | `openai-codex/gpt-6.1-sol` |
+| review B | `anthropic/claude-fable-5-1` |
+| monitor / scout (poll loops, inventory, classifiers) | `anthropic/claude-haiku-5-5` |
+
+- Review A and B must stay on different families. Roster is revisited each `/mine` pass using the `reviewer` field in findings.jsonl (confirmed vs disproven rate per model).
+- gpt models are review-only unless I say otherwise.
 
 ### shorthand
 - yz|yzp: yes/yes please
