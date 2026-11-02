@@ -44,6 +44,16 @@ Structure findings as:
 - **Rabbit Holes**: Promising directions for further exploration
 - **Open Questions**: What remains debated or unknown
 
+## Depth Standards
+
+Use the instruments the best people in the field actually use, not the vocabulary. Switching to expert jargon without switching methods is theater.
+
+- Go to the rawest material available: primary sources, raw data, logs, source code, original papers. Not summaries of them.
+- When you reach for a markdown table, stop and ask whether the expert would use a database, a script, a statistical model, or a simulation. If yes, do that.
+- Adversarially check what we already believe. "We think X because Y" is a hypothesis to reproduce from raw inputs, not a premise.
+- Name an outside judge for any claim that matters: something that is neither you nor the user and can show the finding is right (held-out data, a reproducible query, a citation to the primary source). Do not grade your own work.
+- Unreasonable goals are reasonable. If a target seems impossible, keep going rather than scoping down.
+
 ## Quality Standards
 
 - Distinguish between established knowledge, emerging consensus, and speculation

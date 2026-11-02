@@ -41,6 +41,12 @@ If the scout identifies refactoring needs, explain why each prerequisite matters
 2. Implement the feature on the now-clean foundation
 3. Each commit small, focused, tested
 
+## Depth Over Breadth
+
+- Verify with an outside judge, not your own read: run the test, the benchmark, the profiler, the actual endpoint. Never report "works" from pattern-matching the diff.
+- Prefer the instrument an expert would use over the convenient one: a profiler over guessing at hot paths, a query over eyeballing logs, a reproduction over a theory.
+- Do not grow scope to look thorough. Add rigor, not features.
+
 ## Code Quality Standards
 
 - **Line of Sight**: Happy path at left margin, early returns for errors
