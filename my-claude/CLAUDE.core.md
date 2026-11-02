@@ -59,6 +59,7 @@
   - synthesize both reviews into final report
 - when I ask you to do a plan loop (N iterations, M agents):
   - defaults: N=2 iterations, M=3 agents
+  - assemble the crew before fan out: restate the task as verbs, not nouns ("a PR review" → "convince a busy human a change is safe in 5 min"). Pick lenses from the verbs. The list below is the default roster, not a cap: add an ad-hoc field if the verbs call for one (SRE, forensic accountant, journalist, short seller). Agents DO what that field does (its methods, tools, raw inputs); they never write in-character
   - fan out: spawn M parallel agents with different lenses, pick from:
     - grug-architect (simplicity, architecture)
     - code-critic (complexity, risks)
@@ -77,6 +78,7 @@
     - each feature/phase maps to one or more assertions
     - sum of all features must cover every assertion
     - these assertions drive the QA step, not tests written after implementation
+    - every assertion needs an **outside judge**: something runnable that is neither the model nor me (test, benchmark, metric query, playwright flow, replay on historical data). "critic agent agrees" is not an assertion
 - when I ask you to do a council loop (review council):
   - fan out: spawn agents in parallel, each with a review lens:
     - product-owner (completeness, user value alignment)
@@ -105,7 +107,7 @@
     - each agent writes a **structured handoff**: done/undone, commands + exit codes, issues
   - loop: re-run a light review pass on the fix commits; exit when verdict is SHIP or only disproven/speculative findings remain
 - when I ask you to do a mission loop (long-running autonomous execution):
-  - phase 1 — scope: interview user (askuserquestion) to clarify goal, requirements, constraints
+  - phase 1 — scope: interview user (askuserquestion) to clarify goal, requirements, constraints. First question is always altitude: what should be true a month after this ships, what happens next. If the answer is a durable state ("stays crash-free") not a one-off, scope the tooling/access that lets an agent own that state
   - phase 2 — plan: produce plan with features, milestones, and **validation contract** (pass/fail assertions before code)
   - phase 3 — execute serially: one feature at a time, each via super-coder agent
     - worker gets clean context, reads spec, implements, commits
@@ -134,7 +136,8 @@
 
 ### shorthand
 - yz|yzp: yes/yes please
-- intme: interview me to fill in gaps. Explore the codebase first to answer what you can, then ask remaining questions one at a time, providing your recommended answer for each. Walk down each branch of the decision tree, resolving dependencies between decisions.
+- intme: interview me to fill in gaps. Explore the codebase first to answer what you can, then ask remaining questions one at a time, providing your recommended answer for each. Walk down each branch of the decision tree, resolving dependencies between decisions. Open with altitude: what should be true a month after this ships / what happens next.
+- dnb: deeper not bigger. Run the deeper-not-bigger skill on the task before executing.
 - tcb: copy to my clipboard
 - council: council loop (spawn review council)
 - rtloop: review triage loop (review → triage → implement)
