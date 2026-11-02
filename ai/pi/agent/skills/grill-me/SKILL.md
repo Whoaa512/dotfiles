@@ -7,4 +7,6 @@ Interview me relentlessly about every aspect of this plan until we reach a share
 
 Ask the questions one at a time.
 
+Open with altitude: what should be true a month after this ships, and what happens next? If the answer is a durable state rather than a one-off deliverable, grill on what tooling or access would let an agent own that state without being re-prompted.
+
 If a question can be answered by exploring the codebase, explore the codebase instead.
