@@ -1,11 +1,25 @@
 import { expect, test } from "bun:test";
-import { dedupe, editDistance, recencyBoost, scoreText, searchSession, tokenize } from "./pi-search.ts";
+import {
+	dedupe,
+	editDistance,
+	parseAge,
+	recencyBoost,
+	renderSession,
+	scoreText,
+	searchSession,
+	shortSessionId,
+	tokenize,
+} from "./pi-search.ts";
 
 const relevance = (query: string, text: string) => scoreText(tokenize(query), text)?.relevance ?? 0;
 const line = (role: string, text: string, timestamp = "2026-01-01T00:00:00Z") =>
 	JSON.stringify({ type: "message", timestamp, message: { role, content: [{ type: "text", text }] } });
 const session = (...lines: string[]) => [JSON.stringify({ type: "session", cwd: "/repo" }), ...lines].join("\n");
 const NOW = Date.parse("2026-01-02T00:00:00Z");
+const flaky = (roles = ["user"], since?: number) => ({ terms: ["flaky"], roles, now: NOW, halfLifeDays: 30, since });
+const FILE = "/s/2026-01-01T00-00-00-000Z_01a1ad07-e2cb-77d9-9e64-84681cb5ba30.jsonl";
+const entry = (id: string, role: string, text: string) =>
+	JSON.stringify({ type: "message", id, timestamp: "2026-01-01T00:00:00Z", message: { role, content: [{ type: "text", text }] } });
 
 test("edit distance counts transposition as one edit", () => {
 	expect(editDistance("recieve", "receive", 2)).toBe(1);
@@ -37,27 +51,80 @@ test("recency boost decays by half-life to a floor", () => {
 
 test("recency breaks ties between equal matches", () => {
 	const search = (ts: string) =>
-		searchSession("f", session(line("user", "flaky migration", ts)), ["flaky"], ["user"], NOW, 30);
+		searchSession("f", session(line("user", "flaky migration", ts)), flaky());
 	expect(search("2026-01-01T00:00:00Z")!.score).toBeGreaterThan(search("2024-01-01T00:00:00Z")!.score);
 });
 
 test("assistant messages only searched when requested", () => {
 	const raw = session(line("assistant", "flaky migration"));
-	expect(searchSession("f", raw, ["flaky"], ["user"], NOW, 30)).toBeNull();
-	expect(searchSession("f", raw, ["flaky"], ["user", "assistant"], NOW, 30)?.cwd).toBe("/repo");
+	expect(searchSession("f", raw, flaky())).toBeNull();
+	expect(searchSession("f", raw, flaky(["user", "assistant"]))?.cwd).toBe("/repo");
 });
 
 test("role marker inside another message's text is not a false match", () => {
 	const raw = session(line("toolResult", 'output "role":"user" flaky'));
-	expect(searchSession("f", raw, ["flaky"], ["user"], NOW, 30)).toBeNull();
+	expect(searchSession("f", raw, flaky())).toBeNull();
 });
 
 test("tolerates a partially written last line", () => {
 	const raw = `${session(line("user", "flaky migration"))}\n{"type":"message","message":{"role":"user","cont`;
-	expect(searchSession("f", raw, ["flaky"], ["user"], NOW, 30)?.text).toBe("flaky migration");
+	expect(searchSession("f", raw, flaky())?.text).toBe("flaky migration");
 });
 
 test("dedupes forked copies of a message", () => {
 	const hit = { messageTimestamp: 1, text: "same" } as any;
 	expect(dedupe([hit, { ...hit }, { ...hit, text: "other" }])).toHaveLength(2);
+});
+
+test("since drops older messages but keeps newer ones in the same session", () => {
+	const raw = session(line("user", "flaky old", "2025-01-01T00:00:00Z"), line("user", "flaky new", "2026-01-01T00:00:00Z"));
+	expect(searchSession("f", raw, flaky(["user"], parseAge("14d", NOW)))?.text).toBe("flaky new");
+	expect(searchSession("f", raw, flaky(["user"], NOW))).toBeNull();
+});
+
+test("parseAge rejects garbage", () => {
+	expect(parseAge("2w", NOW)).toBe(parseAge("14d", NOW));
+	expect(() => parseAge("soon", NOW)).toThrow("bad age");
+});
+
+test("hit carries the message id", () => {
+	expect(searchSession("f", session(entry("m1", "user", "flaky")), flaky())?.messageId).toBe("m1");
+});
+
+test("short id keeps the full uuidv7 timestamp", () => {
+	expect(shortSessionId(FILE)).toBe("01a1ad07-e2cb");
+});
+
+const convo = session(
+	entry("m1", "user", "one"),
+	entry("t1", "toolResult", "HUGE TOOL OUTPUT"),
+	entry("m2", "assistant", "two"),
+	entry("m3", "user", "three"),
+	entry("m4", "assistant", "four"),
+);
+const show = (opts: { at?: string; context?: number; maxChars?: number }) =>
+	renderSession(FILE, convo, { context: 1, maxChars: 600, now: NOW, ...opts });
+
+test("show centers on --at, marks it, and omits tool output", () => {
+	const out = show({ at: "m3" });
+	expect(out).toContain("messages 2-4 of 4");
+	expect(out).toContain(">> [m3 user");
+	expect(out).not.toContain("one");
+	expect(out).not.toContain("HUGE");
+});
+
+test("show without --at starts at the session start", () => {
+	expect(show({})).toContain("messages 1-3 of 4");
+});
+
+test("show errors on unknown message", () => {
+	expect(() => show({ at: "nope" })).toThrow("nope");
+});
+
+test("show truncates but gives the target more room, 0 disables", () => {
+	const long = session(entry("a", "user", "x".repeat(50)), entry("b", "user", "y".repeat(50)));
+	const out = renderSession(FILE, long, { at: "b", context: 1, maxChars: 20, now: NOW });
+	expect(out).toContain(`${"x".repeat(20)}…[+30 chars`);
+	expect(out).toContain("y".repeat(50));
+	expect(renderSession(FILE, long, { context: 1, maxChars: 0, now: NOW })).not.toContain("…[+");
 });

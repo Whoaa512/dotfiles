@@ -8,26 +8,41 @@ const TEMP_DIR_PREFIX = /^--(private-tmp|tmp|var-folders)/;
 const MIN_COVERAGE = 0.6;
 const RECENCY_FLOOR = 0.5;
 const LINE_HEAD_CHARS = 200;
+const SHORT_ID_CHARS = 13; // through the uuidv7 millisecond timestamp
 const STOPWORDS = new Set(
 	"a an and are as at be but by can could did do for from had has have how i if in is it its me my of on or our so that the then this to u was we were what when where which with would you".split(
 		" ",
 	),
 );
+const SESSION_REF = /^[0-9a-f]{8}[0-9a-f-]*$|\.jsonl$/;
 const USAGE = `usage: pi-search [options] <query...>
+       pi-search show <session-id> [--at MESSAGE] [-C N] [--max N]
 
 Fuzzy search pi sessions. Tolerates typos, partial words, and missing words.
+Skips the session it is run from ($PI_SESSION_ID).
 
   -a, --assistant     also search assistant messages
   -n, --limit N       sessions to show (default 10)
   -c, --cwd TEXT      only sessions whose cwd contains TEXT
+      --since AGE     only messages newer than AGE, e.g. 12h, 14d, 2w
       --half-life D   days until recency boost halves (default 30)
       --all           include sessions from temp dirs (smoke tests etc)
+      --agent         compact TSV, one hit per line, for agents
       --json          machine-readable output
-  -h, --help          show this`;
+  -h, --help          show this
+
+show prints a session's user/assistant text without tool output:
+
+      --at MESSAGE    center on this message id (default: session start)
+  -C, --context N     messages either side (default 3)
+      --max N         chars per message, 3x for --at, 0 = no limit (default 600)`;
 
 export type Match = { relevance: number; start: number; end: number };
+export type SearchOptions = { terms: string[]; roles: string[]; now: number; halfLifeDays: number; since?: number };
+export type ShowOptions = { at?: string; context: number; maxChars: number; now: number };
 type Hit = {
 	file: string;
+	messageId: string;
 	cwd: string;
 	name?: string;
 	role: string;
@@ -170,15 +185,7 @@ function parseLine(line: string): any {
 }
 
 /** Most session bytes are tool output, so peek at each line's head and parse only wanted roles. */
-export function searchSession(
-	file: string,
-	raw: string,
-	terms: string[],
-	roles: string[],
-	now: number,
-	halfLifeDays: number,
-): Hit | null {
-	let best: Hit | null = null;
+function* messageEntries(raw: string, roles: string[]): Generator<any> {
 	const markers = roles.map((role) => `"role":"${role}"`);
 	for (let start = 0, end = 0; start < raw.length; start = end + 1) {
 		end = raw.indexOf("\n", start);
@@ -187,24 +194,76 @@ export function searchSession(
 		if (!markers.some((marker) => head.includes(marker))) continue;
 
 		const entry = parseLine(raw.slice(start, end));
-		if (entry?.type !== "message" || !roles.includes(entry.message?.role)) continue;
-		const text = messageText(entry.message.content);
-		const match = scoreText(terms, text);
-		if (!match) continue;
-		const timestamp = Date.parse(entry.timestamp);
-		const score = match.relevance * recencyBoost(now - timestamp, halfLifeDays);
-		if (best && score <= best.score) continue;
-		const role = entry.message.role;
-		best = { file, cwd: "", role, text, timestamp, messageTimestamp: entry.message.timestamp, score, match };
+		if (entry?.type === "message" && roles.includes(entry.message?.role)) yield entry;
 	}
-	if (!best) return null;
-
-	best.cwd = parseLine(raw.slice(0, raw.indexOf("\n")))?.cwd ?? "";
-	const nameIndex = raw.lastIndexOf('"type":"session_info"');
-	if (nameIndex !== -1) best.name = parseLine(lineAround(raw, nameIndex))?.name;
-	return best;
 }
 
+function readMeta(raw: string): { cwd: string; name?: string } {
+	const cwd = parseLine(raw.slice(0, raw.indexOf("\n")))?.cwd ?? "";
+	const nameIndex = raw.lastIndexOf('"type":"session_info"');
+	return { cwd, name: nameIndex === -1 ? undefined : parseLine(lineAround(raw, nameIndex))?.name };
+}
+
+export function searchSession(file: string, raw: string, opts: SearchOptions): Hit | null {
+	let best: Hit | null = null;
+	for (const entry of messageEntries(raw, opts.roles)) {
+		const timestamp = Date.parse(entry.timestamp);
+		if (opts.since && timestamp < opts.since) continue;
+		const text = messageText(entry.message.content);
+		const match = scoreText(opts.terms, text);
+		if (!match) continue;
+		const score = match.relevance * recencyBoost(opts.now - timestamp, opts.halfLifeDays);
+		if (best && score <= best.score) continue;
+		best = {
+			file,
+			messageId: entry.id,
+			cwd: "",
+			role: entry.message.role,
+			text,
+			timestamp,
+			messageTimestamp: entry.message.timestamp,
+			score,
+			match,
+		};
+	}
+	return best && { ...best, ...readMeta(raw) };
+}
+
+export function parseAge(age: string, now: number): number {
+	const parsed = age.match(/^(\d+)([hdw])$/);
+	if (!parsed) throw new Error(`bad age "${age}", expected e.g. 12h, 14d, 2w`);
+	const unitMs = { h: 3_600_000, d: 86_400_000, w: 604_800_000 }[parsed[2] as "h" | "d" | "w"];
+	return now - Number(parsed[1]) * unitMs;
+}
+
+export function shortSessionId(file: string): string {
+	return basename(file, ".jsonl").split("_").pop()!.slice(0, SHORT_ID_CHARS);
+}
+
+function truncate(text: string, maxChars: number): string {
+	if (maxChars === 0 || text.length <= maxChars) return text;
+	return `${text.slice(0, maxChars)}…[+${text.length - maxChars} chars, raise --max]`;
+}
+
+export function renderSession(file: string, raw: string, opts: ShowOptions): string {
+	const rows = [...messageEntries(raw, ["user", "assistant"])]
+		.map((entry) => ({ entry, text: messageText(entry.message.content).trim() }))
+		.filter((row) => row.text);
+	const target = opts.at ? rows.findIndex((row) => row.entry.id === opts.at) : 0;
+	if (target === -1) throw new Error(`no user/assistant text message with id ${opts.at}`);
+
+	const from = Math.max(0, target - opts.context);
+	const to = Math.min(rows.length, opts.at ? target + opts.context + 1 : opts.context * 2 + 1);
+	const { cwd, name } = readMeta(raw);
+	const header = `${shortSessionId(file)}  ${cwd.replace(homedir(), "~")}${name ? `  ${name}` : ""}  messages ${from + 1}-${to} of ${rows.length}`;
+	const body = rows.slice(from, to).map(({ entry, text }, i) => {
+		const isTarget = Boolean(opts.at) && from + i === target;
+		const age = formatAge(opts.now - Date.parse(entry.timestamp));
+		const limit = isTarget ? opts.maxChars * 3 : opts.maxChars;
+		return `${isTarget ? ">> " : ""}[${entry.id} ${entry.message.role} ${age}]\n${truncate(text, limit)}`;
+	});
+	return [header, ...body].join("\n\n");
+}
 /** Forked sessions copy their parent's messages; show each message once. */
 export function dedupe(hits: Hit[]): Hit[] {
 	const seen = new Set<string>();
@@ -218,12 +277,23 @@ export function dedupe(hits: Hit[]): Hit[] {
 
 async function listSessionFiles(includeTemp: boolean): Promise<string[]> {
 	const glob = new Bun.Glob("*/*.jsonl");
+	const currentSession = process.env.PI_SESSION_ID;
 	const files: string[] = [];
 	for await (const path of glob.scan({ cwd: SESSIONS_DIR, onlyFiles: true })) {
 		if (!includeTemp && TEMP_DIR_PREFIX.test(basename(dirname(path)))) continue;
+		if (currentSession && path.includes(currentSession)) continue;
 		files.push(join(SESSIONS_DIR, path));
 	}
 	return files;
+}
+
+async function findSessionFile(id: string): Promise<string> {
+	if (id.endsWith(".jsonl")) return id;
+	const glob = new Bun.Glob(`*/*_${id}*.jsonl`);
+	const matches = await Array.fromAsync(glob.scan({ cwd: SESSIONS_DIR, onlyFiles: true }));
+	if (matches.length === 0) throw new Error(`no session matching ${id}`);
+	if (matches.length > 1) throw new Error(`${matches.length} sessions match ${id}, use a longer id`);
+	return join(SESSIONS_DIR, matches[0]);
 }
 
 function formatAge(ms: number): string {
@@ -233,14 +303,14 @@ function formatAge(ms: number): string {
 	return hours >= 1 ? `${hours}h ago` : "just now";
 }
 
-function snippet(hit: Hit, width = 160): string {
+function snippet(hit: Hit, color: boolean, width = 160): string {
 	const { start, end } = hit.match;
 	const from = Math.max(0, start - 40);
 	const to = Math.min(hit.text.length, from + width);
 	const highlightEnd = Math.min(end, to);
 	const clean = (s: string) => s.replace(/\s+/g, " ");
 	const matched = clean(hit.text.slice(start, highlightEnd));
-	const highlighted = process.stdout.isTTY ? `\x1b[1;33m${matched}\x1b[0m` : matched;
+	const highlighted = color ? `\x1b[1;33m${matched}\x1b[0m` : matched;
 	const body = clean(hit.text.slice(from, start)) + highlighted + clean(hit.text.slice(highlightEnd, to));
 	return `${from > 0 ? "…" : ""}${body}${to < hit.text.length ? "…" : ""}`;
 }
@@ -249,12 +319,26 @@ function printHit(hit: Hit, rank: number, now: number) {
 	const cwd = hit.cwd.replace(homedir(), "~");
 	const name = hit.name ? `  ${hit.name}` : "";
 	console.log(`${rank}. ${formatAge(now - hit.timestamp)}  ${cwd}${name}`);
-	console.log(`   ${hit.role === "assistant" ? "[assistant] " : ""}${snippet(hit)}`);
+	console.log(`   ${hit.role === "assistant" ? "[assistant] " : ""}${snippet(hit, Boolean(process.stdout.isTTY))}`);
 	console.log(`   cd ${cwd} && pi --session ${hit.file}\n`);
 }
 
+function agentRow(hit: Hit, now: number): string {
+	const clean = (s: string) => s.replace(/\s+/g, " ");
+	return [
+		shortSessionId(hit.file),
+		hit.messageId,
+		formatAge(now - hit.timestamp),
+		hit.cwd.replace(homedir(), "~"),
+		hit.score.toFixed(2),
+		hit.role,
+		clean(hit.name ?? "-"),
+		snippet(hit, false, 200),
+	].join("\t");
+}
+
 function parseArgs(argv: string[]) {
-	const opts = { assistant: false, limit: 10, cwd: "", halfLife: 30, all: false, json: false, help: false };
+	const opts = { assistant: false, limit: 10, cwd: "", halfLife: 30, all: false, json: false, agent: false, help: false, since: "", at: "", context: 3, maxChars: 600 };
 	const query: string[] = [];
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
@@ -264,31 +348,52 @@ function parseArgs(argv: string[]) {
 		else if (arg === "--half-life") opts.halfLife = Number(argv[++i]);
 		else if (arg === "--all") opts.all = true;
 		else if (arg === "--json") opts.json = true;
+		else if (arg === "--agent") opts.agent = true;
+		else if (arg === "--since") opts.since = argv[++i] ?? "";
+		else if (arg === "--at") opts.at = argv[++i] ?? "";
+		else if (arg === "-C" || arg === "--context") opts.context = Number(argv[++i]);
+		else if (arg === "--max") opts.maxChars = Number(argv[++i]);
 		else if (arg === "-h" || arg === "--help") opts.help = true;
 		else if (arg.startsWith("-")) throw new Error(`unknown flag: ${arg}`);
 		else query.push(arg);
 	}
 	if (!(opts.limit > 0)) throw new Error("--limit must be a positive number");
 	if (!(opts.halfLife > 0)) throw new Error("--half-life must be a positive number");
-	return { opts, query: query.join(" ") };
+	if (!(opts.context >= 0)) throw new Error("--context must be a non-negative number");
+	if (!(opts.maxChars >= 0)) throw new Error("--max must be a non-negative number");
+	return { opts, query };
 }
 
 async function main() {
 	const { opts, query } = parseArgs(process.argv.slice(2));
-	const terms = tokenize(query);
+	const now = Date.now();
+	if (query[0] === "show" && query.length === 2 && SESSION_REF.test(query[1])) {
+		const file = await findSessionFile(query[1]);
+		const raw = await Bun.file(file).text();
+		console.log(renderSession(file, raw, { at: opts.at, context: opts.context, maxChars: opts.maxChars, now }));
+		return;
+	}
+
+	const terms = tokenize(query.join(" "));
 	if (opts.help || terms.length === 0) {
 		console.log(USAGE);
 		process.exit(opts.help ? 0 : 1);
 	}
 
 	const roles = opts.assistant ? ["user", "assistant"] : ["user"];
-	const now = Date.now();
+	const since = opts.since ? parseAge(opts.since, now) : undefined;
 	const queue = await listSessionFiles(opts.all);
 	const hits: Hit[] = [];
 
 	const worker = async () => {
 		for (let file = queue.pop(); file; file = queue.pop()) {
-			const hit = searchSession(file, await Bun.file(file).text(), terms, roles, now, opts.halfLife);
+			const hit = searchSession(file, await Bun.file(file).text(), {
+				terms,
+				roles,
+				now,
+				halfLifeDays: opts.halfLife,
+				since,
+			});
 			if (hit && hit.cwd.includes(opts.cwd)) hits.push(hit);
 		}
 	};
@@ -296,7 +401,9 @@ async function main() {
 
 	const top = dedupe(hits.sort((a, b) => b.score - a.score)).slice(0, opts.limit);
 	if (opts.json) {
-		const rows = top.map(({ file, cwd, name, role, timestamp, score, text, match }) => ({
+		const rows = top.map(({ file, messageId, cwd, name, role, timestamp, score, text, match }) => ({
+			session: shortSessionId(file),
+			message: messageId,
 			file,
 			cwd,
 			name,
@@ -306,6 +413,11 @@ async function main() {
 			excerpt: text.slice(Math.max(0, match.start - 80), match.end + 80),
 		}));
 		console.log(JSON.stringify(rows, null, 2));
+		return;
+	}
+	if (opts.agent && top.length > 0) {
+		console.log("session\tmessage\tage\tcwd\tscore\trole\ttitle\tsnippet");
+		for (const hit of top) console.log(agentRow(hit, now));
 		return;
 	}
 	if (top.length === 0) {
