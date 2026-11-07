@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import {
 	dedupe,
 	editDistance,
+	exactMatch,
 	parseAge,
 	recencyBoost,
 	renderSession,
@@ -127,4 +128,18 @@ test("show truncates but gives the target more room, 0 disables", () => {
 	expect(out).toContain(`${"x".repeat(20)}…[+30 chars`);
 	expect(out).toContain("y".repeat(50));
 	expect(renderSession(FILE, long, { context: 1, maxChars: 0, now: NOW })).not.toContain("…[+");
+});
+
+test("exact matches a literal substring, ignoring case", () => {
+	expect(exactMatch("EDITOR=vim", "try editor=VIM crontab")).toMatchObject({ start: 4, end: 14 });
+	expect(exactMatch("rotate token", "rotate the token")).toBeNull();
+});
+
+test("exact search has no typo tolerance and ranks purely by recency", () => {
+	const opts = { terms: [], roles: ["user"], now: NOW, halfLifeDays: 30, exact: "flaky" };
+	expect(searchSession("f", session(line("user", "flakey")), opts)).toBeNull();
+	const raw = (ts: string) => session(line("user", "flaky", ts));
+	expect(searchSession("f", raw("2026-01-01T00:00:00Z"), opts)!.score).toBeGreaterThan(
+		searchSession("f", raw("2024-01-01T00:00:00Z"), opts)!.score,
+	);
 });

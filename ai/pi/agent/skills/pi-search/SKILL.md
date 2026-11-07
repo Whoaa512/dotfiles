@@ -26,6 +26,7 @@ If `pi-search` isn't on PATH: `~/code/dotfiles/bin/pi-search.ts`.
 
 ## Narrowing
 
+- `-e` literal substring, ignoring case. Use for commands, ids, error text, URLs. Multi-word queries must match verbatim
 - `--since 14d` hard cutoff for "last week" style asks (`12h`, `14d`, `2w`)
 - `-c TEXT` only sessions whose cwd contains TEXT, e.g. `-c ergo`
 - `--half-life D` lower = favor recent harder. Raise it for old memories

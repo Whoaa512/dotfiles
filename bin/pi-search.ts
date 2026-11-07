@@ -22,6 +22,7 @@ Fuzzy search pi sessions. Tolerates typos, partial words, and missing words.
 Skips the session it is run from ($PI_SESSION_ID).
 
   -a, --assistant     also search assistant messages
+  -e, --exact         literal substring match, ignoring case; ranked by recency
   -n, --limit N       sessions to show (default 10)
   -c, --cwd TEXT      only sessions whose cwd contains TEXT
       --since AGE     only messages newer than AGE, e.g. 12h, 14d, 2w
@@ -38,7 +39,7 @@ show prints a session's user/assistant text without tool output:
       --max N         chars per message, 3x for --at, 0 = no limit (default 600)`;
 
 export type Match = { relevance: number; start: number; end: number };
-export type SearchOptions = { terms: string[]; roles: string[]; now: number; halfLifeDays: number; since?: number };
+export type SearchOptions = { terms: string[]; roles: string[]; now: number; halfLifeDays: number; since?: number; exact?: string };
 export type ShowOptions = { at?: string; context: number; maxChars: number; now: number };
 type Hit = {
 	file: string;
@@ -156,6 +157,12 @@ function tightestWindow(
 	return best;
 }
 
+export function exactMatch(needle: string, text: string): Match | null {
+	const start = text.toLowerCase().indexOf(needle.toLowerCase());
+	if (start === -1) return null;
+	return { relevance: 1, start, end: start + needle.length };
+}
+
 export function recencyBoost(ageMs: number, halfLifeDays: number): number {
 	const ageDays = Math.max(0, ageMs) / 86_400_000;
 	return RECENCY_FLOOR + (1 - RECENCY_FLOOR) * 0.5 ** (ageDays / halfLifeDays);
@@ -210,7 +217,7 @@ export function searchSession(file: string, raw: string, opts: SearchOptions): H
 		const timestamp = Date.parse(entry.timestamp);
 		if (opts.since && timestamp < opts.since) continue;
 		const text = messageText(entry.message.content);
-		const match = scoreText(opts.terms, text);
+		const match = opts.exact ? exactMatch(opts.exact, text) : scoreText(opts.terms, text);
 		if (!match) continue;
 		const score = match.relevance * recencyBoost(opts.now - timestamp, opts.halfLifeDays);
 		if (best && score <= best.score) continue;
@@ -338,7 +345,7 @@ function agentRow(hit: Hit, now: number): string {
 }
 
 function parseArgs(argv: string[]) {
-	const opts = { assistant: false, limit: 10, cwd: "", halfLife: 30, all: false, json: false, agent: false, help: false, since: "", at: "", context: 3, maxChars: 600 };
+	const opts = { assistant: false, limit: 10, cwd: "", halfLife: 30, all: false, json: false, agent: false, exact: false, help: false, since: "", at: "", context: 3, maxChars: 600 };
 	const query: string[] = [];
 	for (let i = 0; i < argv.length; i++) {
 		const arg = argv[i];
@@ -349,6 +356,7 @@ function parseArgs(argv: string[]) {
 		else if (arg === "--all") opts.all = true;
 		else if (arg === "--json") opts.json = true;
 		else if (arg === "--agent") opts.agent = true;
+		else if (arg === "-e" || arg === "--exact") opts.exact = true;
 		else if (arg === "--since") opts.since = argv[++i] ?? "";
 		else if (arg === "--at") opts.at = argv[++i] ?? "";
 		else if (arg === "-C" || arg === "--context") opts.context = Number(argv[++i]);
@@ -375,7 +383,8 @@ async function main() {
 	}
 
 	const terms = tokenize(query.join(" "));
-	if (opts.help || terms.length === 0) {
+	const exact = opts.exact ? query.join(" ") : undefined;
+	if (opts.help || (terms.length === 0 && !exact)) {
 		console.log(USAGE);
 		process.exit(opts.help ? 0 : 1);
 	}
@@ -389,6 +398,7 @@ async function main() {
 		for (let file = queue.pop(); file; file = queue.pop()) {
 			const hit = searchSession(file, await Bun.file(file).text(), {
 				terms,
+				exact,
 				roles,
 				now,
 				halfLifeDays: opts.halfLife,
