@@ -118,6 +118,7 @@ export default function (pi: ExtensionAPI) {
 	const notified = new Set<string>();
 
 	pi.on("before_agent_start", (event, ctx) => {
+		if (event.messageType !== "user") return;
 		const routes = routePrompt(event.prompt);
 		if (routes.length === 0) {
 			delete event.systemPromptOptions.sections.skill_router;
