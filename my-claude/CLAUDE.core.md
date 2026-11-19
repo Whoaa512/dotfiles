@@ -124,11 +124,11 @@
 ### Model roster (exact ids; use these, don't ask me each time)
 | Role | Model |
 |---|---|
-| implementation (dev-loop workers, rtloop fixes) | `anthropic/claude-fable-5-1` |
+| implementation (dev-loop workers, rtloop fixes) | `anthropic/claude-fable-5-2` |
 | cheap implementation (renames, mechanical edits) | `anthropic/claude-opus-5-5` |
-| planning / orchestration (plan-loop, mission scope) | `anthropic/claude-fable-5-1` |
+| planning / orchestration (plan-loop, mission scope) | `anthropic/claude-fable-5-2` |
 | review A (prr-vs, /vs, rtloop reviewer) | `openai-codex/gpt-6.1-sol` |
-| review B | `anthropic/claude-fable-5-1` |
+| review B | `anthropic/claude-fable-5-2` |
 | monitor / scout (poll loops, inventory, classifiers) | `anthropic/claude-haiku-5-5` |
 
 - Review A and B must stay on different families. Roster is revisited each `/mine` pass using the `reviewer` field in findings.jsonl (confirmed vs disproven rate per model).

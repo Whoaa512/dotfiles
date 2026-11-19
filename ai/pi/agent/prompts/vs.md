@@ -10,7 +10,7 @@ You are the judge, not a third answerer. Do not form your own answer first.
 2. Spawn two subagents in parallel with the `subagent` tool, `agent: "code-critic"` for
    code/alert/design questions or `agent: "deep-research"` for factual ones. Models from the
    roster in CLAUDE.md: review A `openai-codex/gpt-6.1-sol`, review B
-   `anthropic/claude-fable-5-1`. Task: "Answer the question in /tmp/vs-<slug>.md. State
+   `anthropic/claude-fable-5-2`. Task: "Answer the question in /tmp/vs-<slug>.md. State
    verdict first, then evidence with file:line / URLs, then confidence 0-1 and what would
    change your mind. Do not edit files." Neither sees the other's output.
 3. Adjudicate: for every claim only one side made, or where they disagree, open the actual

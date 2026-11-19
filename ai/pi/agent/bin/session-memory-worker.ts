@@ -69,7 +69,7 @@ const raw = ask(
 		`   category must be one of: ${job.categories.join(" | ")}`,
 		job.skipFindings
 			? "2. FINDINGS: skip \u2014 return an empty array (already recorded by /triage)."
-			: '2. FINDINGS: verdicts on review findings \u2014 anywhere a finding/issue from a review was adjudicated ("is this legit?", "do you concur?"). verdict must be one of: confirmed | disproven | pre-existing | speculative. evidence = the concrete reason. reviewer = who produced the finding: a model id (e.g. "openai-codex/gpt-6.1-sol", "anthropic/claude-fable-5-1"), a bot ("svc-airchat-review"), a person ("human:<name>"), or "self" when the main-thread assistant raised it. Infer from subagent `model:` options, "reviewer A/B" labels, bot comment authors, or relays like "sol said" / "astra says". Use "unknown" if not inferable.',
+			: '2. FINDINGS: verdicts on review findings \u2014 anywhere a finding/issue from a review was adjudicated ("is this legit?", "do you concur?"). verdict must be one of: confirmed | disproven | pre-existing | speculative. evidence = the concrete reason. reviewer = who produced the finding: a model id (e.g. "openai-codex/gpt-6.1-sol", "anthropic/claude-fable-5-2"), a bot ("svc-airchat-review"), a person ("human:<name>"), or "self" when the main-thread assistant raised it. Infer from subagent `model:` options, "reviewer A/B" labels, bot comment authors, or relays like "sol said" / "astra says". Use "unknown" if not inferable.',
 		"",
 		'Output ONLY JSON: {"corrections": [{"category": "...", "note": "..."}], "findings": [{"finding": "...", "verdict": "...", "evidence": "...", "reviewer": "..."}]}',
 		"Empty arrays when nothing qualifies. Be conservative: prefer empty over speculative entries.",
